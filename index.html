@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIRTBOXCLUB. — Not For Everyone</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c0c0c;--card:#1c1c1c;--border:#2a2a2a;--white:#fff;--grey:#999;--faded:#777;--red:#e63226}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:'Boldonse',sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--red);color:#fff}
+
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:64px;background:rgba(12,12,12,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-left{display:flex;align-items:center;gap:2.5rem}
+.nav-logo img{height:48px}
+.nav-links{display:flex;gap:1.8rem}
+.nav-link{font-size:0.95rem;transition:color 0.2s}
+.nav-link:hover{color:var(--grey)}
+.nav-right{display:flex;align-items:center;gap:0.7rem}
+.nav-icon{width:34px;height:34px;border-radius:50%;border:1px solid #444;display:inline-flex;align-items:center;justify-content:center;color:var(--grey);transition:all 0.2s}
+.nav-icon:hover{color:var(--red);border-color:var(--red)}
+.nav-login{font-size:0.8rem;padding:0.5rem 1.3rem;background:var(--red);color:#fff;border-radius:6px;transition:opacity 0.2s;margin-left:0.3rem}
+.nav-login:hover{opacity:0.85}
+
+.hero{min-height:75vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem 1.5rem}
+.hero-badge{font-size:0.85rem;letter-spacing:0.12em;color:var(--red);border:1.5px solid var(--red);box-shadow:0 0 25px rgba(230,50,38,0.6),0 0 60px rgba(230,50,38,0.35),0 0 100px rgba(230,50,38,0.15),inset 0 0 20px rgba(230,50,38,0.12);padding:0.5rem 1.8rem;border-radius:6px;display:inline-flex;align-items:center;gap:0.6rem;margin-bottom:3.5rem;animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 25px rgba(230,50,38,0.6),0 0 60px rgba(230,50,38,0.35),0 0 100px rgba(230,50,38,0.15),inset 0 0 20px rgba(230,50,38,0.12)}50%{box-shadow:0 0 45px rgba(230,50,38,0.8),0 0 90px rgba(230,50,38,0.5),0 0 140px rgba(230,50,38,0.25),inset 0 0 35px rgba(230,50,38,0.2)}}
+.hero-badge::before{content:'';width:7px;height:7px;background:var(--red);border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-logo{margin-bottom:2.5rem}
+.hero-logo img{width:min(250px,45vw);height:auto}
+.hero-est{font-size:0.9rem;letter-spacing:0.25em;color:#555}
+.r{color:var(--red)}
+.hero-scroll{margin-top:2rem;color:#444;font-size:1.5rem;animation:bob 2s infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:0.4}50%{transform:translateY(8px);opacity:0.8}}
+
+.about{max-width:1100px;margin:0 auto;padding:2rem 2.5rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.about h2{font-size:clamp(2.2rem,4.5vw,3.5rem);line-height:1.3;margin-bottom:1.5rem}
+.about-copy{font-size:1.1rem;color:var(--faded);line-height:1.75}
+.about-link{display:inline-flex;align-items:center;gap:0.4rem;font-size:1rem;color:var(--grey);margin:1.2rem 0;transition:color 0.2s}
+.about-link:hover{color:var(--white)}
+.btn-red{display:inline-flex;align-items:center;gap:0.6rem;padding:0.85rem 2rem;background:var(--red);color:#fff;font-size:1rem;border-radius:6px;border:none;cursor:pointer;transition:opacity 0.2s}
+.btn-red:hover{opacity:0.85}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.stat{background:var(--card);border-radius:8px;padding:1.5rem 1.3rem}
+.stat-num{font-size:3.2rem;line-height:1}
+.stat-label{font-size:0.65rem;letter-spacing:0.04em;color:var(--grey);margin-top:0.4rem;text-transform:uppercase}
+
+.ticker{overflow:hidden;padding:1rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.ticker-track{display:flex;width:max-content;animation:scroll 30s linear infinite}
+.ti{flex-shrink:0;padding:0 1rem;font-size:0.9rem;letter-spacing:0.08em;color:var(--faded);white-space:nowrap;text-transform:uppercase}
+.dia{color:var(--red);padding:0 0.8rem;font-size:0.65rem;vertical-align:middle}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+.drops{max-width:1100px;margin:0 auto;padding:4rem 2.5rem;text-align:center}
+.drops h2{font-size:clamp(2.5rem,5vw,4rem);line-height:1.3;margin-bottom:0.8rem}
+.drops-sub{font-size:1.05rem;color:var(--faded);line-height:1.7;max-width:550px;margin:0 auto 3rem}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;text-align:left}
+.dc{background:var(--card);border-radius:10px;overflow:hidden;transition:transform 0.2s}
+.dc:hover{transform:translateY(-3px)}
+.dc-img{aspect-ratio:1;background:#111;display:flex;align-items:center;justify-content:center;position:relative}
+.dc-img-n{position:absolute;top:0.8rem;left:0.8rem;font-size:0.72rem;color:rgba(255,255,255,0.3)}
+.dc-lk{width:44px;height:44px;border:2px solid var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--red)}
+.dc-i{padding:1.2rem}
+.dc-m{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
+.tm{font-size:0.55rem;color:var(--red);letter-spacing:0.06em;text-transform:uppercase}
+.te{font-size:0.6rem;color:var(--faded);display:inline-flex;align-items:center;gap:0.3rem}
+.dc-n{font-size:0.95rem;margin-bottom:0.3rem}
+.dc-d{font-size:0.78rem;color:var(--faded);line-height:1.5;margin-bottom:0.8rem}
+.dc-b{display:flex;justify-content:space-between;align-items:center}
+.pb{font-size:0.85rem;color:var(--red);filter:blur(4px);user-select:none}
+.jl{font-size:0.7rem;color:var(--faded);display:inline-flex;align-items:center;gap:0.3rem}
+
+.wi{max-width:650px;margin:2rem auto 4rem;background:var(--card);border-radius:10px;padding:3.5rem 2.5rem;text-align:center}
+.wi-lk{color:var(--red);font-size:2rem;margin-bottom:1.5rem}
+.wi h2{font-size:clamp(2.5rem,5vw,3.5rem);line-height:1.3;margin-bottom:1rem}
+.wi p{font-size:1rem;color:var(--faded);line-height:1.75;max-width:480px;margin:0 auto 2rem}
+
+.priv{max-width:1100px;margin:0 auto;padding:5rem 2.5rem;text-align:center}
+.priv h2{font-size:clamp(2.5rem,5vw,4rem);line-height:1.3;margin-bottom:0.5rem}
+.priv-sub{font-size:1rem;color:var(--faded);margin-bottom:3rem}
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+.pi{font-size:1.8rem;margin-bottom:0.8rem}
+.pt{font-size:0.95rem;margin-bottom:0.5rem}
+.pd{font-size:0.82rem;color:var(--faded);line-height:1.6}
+
+.gv{padding:5rem 2.5rem;text-align:center;background:#0a0a0a;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.gv h2{font-size:clamp(2.5rem,6vw,5rem);line-height:1.3;margin-bottom:1rem}
+.gv>p{font-size:1.05rem;color:var(--faded);line-height:1.7;max-width:580px;margin:0 auto 3rem}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1100px;margin:0 auto 2rem}
+.cc{background:var(--card);border-radius:10px;padding:2rem 1.5rem}
+.ci{font-size:1.5rem;margin-bottom:0.8rem}
+.cn{font-size:1rem;margin-bottom:0.8rem}
+.cd{font-size:0.82rem;color:var(--faded);line-height:1.65}
+.gn{font-size:0.92rem;color:var(--faded)}
+
+.ft{max-width:1100px;margin:0 auto;padding:4rem 2.5rem 1.5rem;border-top:1px solid var(--border)}
+.ftg{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.ftl img{height:50px;margin-bottom:1.5rem}
+.fts{display:flex;gap:0.8rem}
+.fts a{width:36px;height:36px;border-radius:50%;background:var(--card);display:inline-flex;align-items:center;justify-content:center;color:var(--grey);transition:color 0.2s}
+.fts a:hover{color:var(--red)}
+.fc h4{font-size:0.9rem;margin-bottom:1rem}
+.fc a{display:block;font-size:0.85rem;color:var(--faded);margin-bottom:0.5rem;transition:color 0.2s}
+.fc a:hover{color:var(--white)}
+.ftsub{border-top:1px solid var(--border);padding:2.5rem 0;display:flex;align-items:center;justify-content:center;gap:2rem;flex-wrap:wrap}
+.ftsub-logo{flex-shrink:0}
+.ftsub-center{text-align:center;flex:1}
+.ftsub h3{font-size:0.95rem;display:flex;align-items:center;gap:0.5rem}
+.ftsp{font-size:0.82rem;color:var(--faded)}
+.sf{display:flex}
+.sf input{background:var(--card);border:1px solid var(--border);border-right:none;padding:0.65rem 1rem;color:#fff;font-family:'Boldonse',sans-serif;font-size:0.7rem;outline:none;border-radius:6px 0 0 6px;min-width:140px}
+.sf input::placeholder{color:#444}
+.sf input:focus{border-color:var(--red)}
+.sf button{background:var(--red);border:none;color:#fff;padding:0.65rem 1.3rem;font-family:'Boldonse',sans-serif;font-size:0.7rem;cursor:pointer;border-radius:0 6px 6px 0}
+.sf button:hover{opacity:0.85}
+.ftb{border-top:1px solid var(--border);padding:1.5rem 0;text-align:center;font-size:0.8rem;color:var(--faded)}
+.ftb .red{color:var(--red)}
+
+@media(max-width:768px){.nav{padding:0 1.2rem}.nav-links{display:none}.about{grid-template-columns:1fr;padding:3rem 1.2rem}.dg{grid-template-columns:1fr}.pg{grid-template-columns:1fr 1fr}.cg{grid-template-columns:1fr}.ftg{grid-template-columns:1fr}.ftsub{flex-direction:column}.sf{flex-direction:column}.sf input{border-right:1px solid var(--border);border-radius:6px}.sf button{border-radius:6px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="nav-left">
+<a href="#" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a>
+<div class="nav-links">
+<a href="#" class="nav-link">Shop</a>
+<a href="#drops" class="nav-link">Exclusives</a>
+<a href="#charities" class="nav-link">Charities</a>
+<a href="#about" class="nav-link">About</a>
+<a href="#" class="nav-link">FAQ</a>
+</div>
+</div>
+<div class="nav-right">
+<a href="https://instagram.com/dirt.boxclub" class="nav-icon" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+<a href="https://facebook.com/dirt.boxclub" class="nav-icon" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+<a href="https://tiktok.com/@dirt.boxclub" class="nav-icon" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46v-7.15a8.16 8.16 0 005.58 2.17v-3.45a4.85 4.85 0 01-1.99-4.54z"/></svg></a>
+<a href="admin-login.html" class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></a>
+<a href="members-login.html" class="nav-login">Member Login</a>
+</div>
+</nav>
+
+<section class="hero">
+<div class="hero-badge">MEMBERS ONLY</div>
+<div class="hero-logo"><img src="data:image/png;base64,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" alt="DIRT BOX CLUB"></div>
+<div class="hero-est">EST<span class="r">.</span> WHENEVER WE FELT LIKE IT<span class="r">.</span></div>
+<div class="hero-scroll">⌄</div>
+</section>
+
+<section class="about" id="about">
+<div>
+<h2>WE DIDN'T START THIS TO MAKE FRIENDS<span class="r">.</span></h2>
+<p class="about-copy">Not for everyone<span class="r">.</span> That's the whole point<span class="r">.</span> Born from being sick of the nonsense and having zero interest in pretending otherwise<span class="r">.</span></p>
+<a href="#" class="about-link">Our story →</a><br>
+<a href="#" class="btn-red">Apply for Membership →</a>
+</div>
+<div class="stats-grid">
+<div class="stat"><div class="stat-num">0<span class="r">.</span></div><div class="stat-label">APOLOGIES GIVEN<span class="r">.</span><br>EVER<span class="r">.</span></div></div>
+<div class="stat"><div class="stat-num">100%<span class="r">.</span></div><div class="stat-label">COTTON & HONESTY</div></div>
+<div class="stat"><div class="stat-num">∞<span class="r">.</span></div><div class="stat-label">PEOPLE OFFENDED</div></div>
+<div class="stat"><div class="stat-num">1<span class="r">.</span></div><div class="stat-label">RULE: GIVE LESS OF A SHIT</div></div>
+</div>
+</section>
+
+<div class="ticker">
+<div class="ticker-track">
+<span class="ti">EXPECT DISAPPOINTMENT</span><span class="dia">◆</span><span class="ti">I'D RATHER TALK TO A PIGEON</span><span class="dia">◆</span><span class="ti">NO REFUNDS ON HURT FEELINGS</span><span class="dia">◆</span><span class="ti">NOT FOR EVERYONE</span><span class="dia">◆</span><span class="ti">ZERO FILTER</span><span class="dia">◆</span><span class="ti">I ONLY WISH I GAVE MORE OF A SHIT</span><span class="dia">◆</span><span class="ti">EXPECT DISAPPOINTMENT</span><span class="dia">◆</span><span class="ti">I'D RATHER TALK TO A PIGEON</span><span class="dia">◆</span><span class="ti">NO REFUNDS ON HURT FEELINGS</span><span class="dia">◆</span><span class="ti">NOT FOR EVERYONE</span><span class="dia">◆</span><span class="ti">ZERO FILTER</span><span class="dia">◆</span><span class="ti">I ONLY WISH I GAVE MORE OF A SHIT</span><span class="dia">◆</span>
+</div>
+</div>
+
+<section class="drops" id="drops">
+<h2>EXCLUSIVE DROPS<span class="r">.</span></h2>
+<p class="drops-sub">Limited edition merchandise available only to club members<span class="r">.</span> Once they're gone, they're gone forever<span class="r">.</span></p>
+<div class="dg">
+<div class="dc"><div class="dc-img"><div class="dc-img-n">Awkward Since Birth Tee</div><div class="dc-lk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div><div class="dc-i"><div class="dc-m"><span class="tm">MEMBERS ONLY</span><span class="te"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Exclusive</span></div><div class="dc-n">Awkward Since Birth Tee</div><div class="dc-d">Because normal was never an option<span class="r">.</span> Stanley/Stella Freestyler<span class="r">.</span><span class="r">.</span><span class="r">.</span></div><div class="dc-b"><span class="pb">£XX.XX</span><a href="#" class="jl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Join to Access</a></div></div></div>
+<div class="dc"><div class="dc-img"><div class="dc-img-n">Born Defiant Tee</div><div class="dc-lk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div><div class="dc-i"><div class="dc-m"><span class="tm">MEMBERS ONLY</span><span class="te"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Exclusive</span></div><div class="dc-n">Born Defiant Tee</div><div class="dc-d">In support of Teenage Cancer Trust<span class="r">.</span> Born defiant, staying that<span class="r">.</span><span class="r">.</span><span class="r">.</span></div><div class="dc-b"><span class="pb">£XX.XX</span><a href="#" class="jl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Join to Access</a></div></div></div>
+<div class="dc"><div class="dc-img"><div class="dc-img-n">Cancer Can Get Fucked Tee</div><div class="dc-lk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div><div class="dc-i"><div class="dc-m"><span class="tm">MEMBERS ONLY</span><span class="te"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Exclusive</span></div><div class="dc-n">Cancer Can Get Fucked Tee</div><div class="dc-d">In support of Teenage Cancer Trust<span class="r">.</span> Because cancer can get<span class="r">.</span><span class="r">.</span><span class="r">.</span></div><div class="dc-b"><span class="pb">£XX.XX</span><a href="#" class="jl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Join to Access</a></div></div></div>
+<div class="dc"><div class="dc-img"><div class="dc-img-n">I'm With This Idiot Tee</div><div class="dc-lk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div><div class="dc-i"><div class="dc-m"><span class="tm">MEMBERS ONLY</span><span class="te"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Exclusive</span></div><div class="dc-n">I'm With This Idiot Tee</div><div class="dc-d">You know who you are<span class="r">.</span> Stanley/Stella Freestyler relaxed<span class="r">.</span><span class="r">.</span><span class="r">.</span></div><div class="dc-b"><span class="pb">£XX.XX</span><a href="#" class="jl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Join to Access</a></div></div></div>
+<div class="dc"><div class="dc-img"><div class="dc-img-n">Dirt Box Club Cap</div><div class="dc-lk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div><div class="dc-i"><div class="dc-m"><span class="tm">MEMBERS ONLY</span><span class="te"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Exclusive</span></div><div class="dc-n">Dirt Box Club Cap</div><div class="dc-d">Black dad cap with embroidered Dirt Box Club logo<span class="r">.</span> Adjustable<span class="r">.</span><span class="r">.</span><span class="r">.</span></div><div class="dc-b"><span class="pb">£XX.XX</span><a href="#" class="jl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Join to Access</a></div></div></div>
+<div class="dc"><div class="dc-img"><div class="dc-img-n">Mystery Box</div><div class="dc-lk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div></div><div class="dc-i"><div class="dc-m"><span class="tm">MEMBERS ONLY</span><span class="te"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Exclusive</span></div><div class="dc-n">Mystery Box</div><div class="dc-d">You don't know what's inside<span class="r">.</span> That's the point<span class="r">.</span> Every box<span class="r">.</span><span class="r">.</span><span class="r">.</span></div><div class="dc-b"><span class="pb">£XX.XX</span><a href="#" class="jl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Join to Access</a></div></div></div>
+</div>
+</section>
+
+<section style="padding:0 2.5rem;max-width:1100px;margin:0 auto">
+<div class="wi">
+<div class="wi-lk"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+<h2>WANT IN<span class="r">?</span><br>PROVE IT<span class="r">.</span></h2>
+<p>We'll decide if you're club material<span class="r">.</span> No promises<span class="r">.</span> No participation trophies<span class="r">.</span> Just early access to drops, secret codes, and inside info<span class="r">.</span></p>
+<a href="#" class="btn-red">Apply Now →</a>
+</div>
+</section>
+
+<section class="priv">
+<h2>MEMBER PRIVILEGES</h2>
+<p class="priv-sub">(If we let you in<span class="r">.</span>)</p>
+<div class="pg">
+<div><div class="pi" style="color:var(--red)">🎁</div><div class="pt">Welcome Pin</div><div class="pd">Wear your badge with pride<span class="r">.</span> And if you see someone else wearing one, you'll know they're also a piece of shit<span class="r">.</span> In a good way<span class="r">.</span> Yay<span class="r">!</span></div></div>
+<div><div class="pi" style="color:#e63226">🔒</div><div class="pt">Exclusive Access</div><div class="pd">First dibs on limited drops and member-only collections</div></div>
+<div><div class="pi" style="color:#e63226">⬇</div><div class="pt">Digital Downloads</div><div class="pd">Free wallpapers, exclusive rule book, and member-only content</div></div>
+<div><div class="pi" style="color:#e63226">👥</div><div class="pt">Underground Community</div><div class="pd">Join a select group who appreciate blunt, straight to the point people<span class="r">.</span></div></div>
+</div>
+</section>
+
+<section class="gv" id="charities">
+<h2>GIVING BACK<span class="r">.</span></h2>
+<p>We believe in using our platform to make a difference<span class="r">.</span> A portion of every purchase goes to causes we're passionate about<span class="r">.</span></p>
+<div class="cg">
+<div class="cc"><div class="ci" style="color:var(--red)">🏥</div><div class="cn">Ben Automotive Charity</div><div class="cd">Supporting the people who work in the automotive industry with their mental health, physical health and financial wellbeing<span class="r">.</span> Looking after our own<span class="r">.</span></div></div>
+<div class="cc"><div class="ci" style="color:var(--red)">❤️</div><div class="cn">Myeloma UK</div><div class="cd">Funding research, providing support and raising awareness of myeloma, a blood cancer affecting thousands<span class="r">.</span> Together we can make a difference<span class="r">.</span></div></div>
+<div class="cc"><div class="ci" style="color:var(--red)">💛</div><div class="cn">Teenage Cancer Trust</div><div class="cd">Supporting young people aged 13-24 through cancer<span class="r">.</span> Providing specialist nurses, support workers and bringing young people together so they don't face it alone<span class="r">.</span></div></div>
+</div>
+<p class="gn">5% of all profits are donated to these causes<span class="r">.</span> When you shop with us, you're making a difference<span class="r">.</span></p>
+</section>
+
+<div class="ft">
+<div class="ftg">
+<div><div class="ftl"><img src="assets/logo-vertical-cropped.png" alt="DIRT BOX CLUB" style="width:100px;height:auto"></div><div class="fts"><a href="#"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a><a href="#"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a><a href="#"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.047v-3.47h3.047v-2.642c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385c5.738-.9 10.125-5.864 10.125-11.854z"/></svg></a><a href="#"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a></div></div>
+<div class="fc"><h4>Shop</h4><a href="#">New Drops</a><a href="#">Exclusives</a><a href="#">Apparel</a><a href="#">Accessories</a></div>
+<div class="fc"><h4>Boring but necessary<span class="r">.</span></h4><a href="#">About</a><a href="#">FAQ</a><a href="#">Contact</a><a href="#">Size Guide</a><a href="#">Returns</a><a href="#">Privacy Policy</a><a href="disclaimer.html">Disclaimer</a></div>
+</div>
+<div class="ftsub">
+<div class="ftsub-logo"><img src="assets/logo-horizontal-final.png" alt="Dirtbox Club" style="width:90px;height:auto"></div>
+<div class="ftsub-center"><h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg> Get Notified About New Drops</h3><p class="ftsp">Be the first to know when new exclusive items drop<span class="r">.</span></p>
+<div class="sf"><input type="text" placeholder="Name (optional)"><input type="email" placeholder="Enter your email"><button>Subscribe</button></div></div>
+<div class="ftsub-logo"><img src="assets/logo-vertical-final.png" alt="Dirt Box Club" style="width:100px;height:auto"></div>
+</div>
+<div class="ftb">© 2024 Dirt Box Club<span class="r">.</span> All rights reserved<span class="r">.</span> <span class="red">Members only<span class="r">.</span> Access restricted<span class="r">.</span></span></div>
+</div>
+
+</body></html>

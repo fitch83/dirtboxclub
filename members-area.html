@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIRTBOXCLUB. — Members Area</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    background-color: #0c0c0c;
+    color: #fff;
+    font-family: Boldonse, sans-serif;
+    line-height: 1.5;
+  }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #0c0c0c;
+    border-bottom: 1px solid #2a2a2a;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    height: 70px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-logo-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #1c1c1c;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #e63226;
+    font-weight: bold;
+  }
+
+  .nav-logo-text {
+    display: flex;
+    gap: 0.2em;
+  }
+
+  .nav-logo-dot {
+    color: #e63226;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .nav-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover {
+    color: #e63226;
+  }
+
+  /* Main Content */
+  .members-wrap {
+    padding: calc(70px + 3rem) 2rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Welcome Banner */
+  .welcome-banner {
+    background-color: #1c1c1c;
+    border: 1px solid #2a2a2a;
+    padding: 3rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .welcome-banner::before {
+    content: 'MEMBER';
+    position: absolute;
+    right: -1rem;
+    bottom: -2rem;
+    font-family: Boldonse, sans-serif;
+    font-size: 10rem;
+    color: rgba(255, 255, 255, 0.02);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .welcome-banner h1 {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    margin-bottom: 0.5rem;
+    position: relative;
+    color: #fff;
+  }
+
+  .welcome-banner p {
+    font-size: 0.75rem;
+    color: #999;
+    line-height: 1.7;
+    position: relative;
+  }
+
+  .text-accent {
+    color: #e63226;
+  }
+
+  .welcome-banner .diagnosis {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border: 1px solid #e63226;
+    color: #e63226;
+    position: relative;
+    border-radius: 6px;
+  }
+
+  /* Grid Layout */
+  .members-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Member Card */
+  .member-card {
+    background-color: #1c1c1c;
+    border: 1px solid #2a2a2a;
+    padding: 2rem;
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .member-card:hover {
+    border-color: #e63226;
+  }
+
+  .member-card h3 {
+    font-family: Boldonse, sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+
+  .member-card p {
+    font-size: 0.7rem;
+    color: #999;
+    line-height: 1.7;
+  }
+
+  /* Code Box */
+  .code-box {
+    background-color: #0c0c0c;
+    border: 1px dashed #e63226;
+    padding: 1rem;
+    text-align: center;
+    margin-top: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius: 6px;
+  }
+
+  .code-box:hover {
+    background-color: rgba(230, 50, 38, 0.1);
+  }
+
+  .code-box .code {
+    font-family: Boldonse, sans-serif;
+    font-size: 1.5rem;
+    color: #e63226;
+    letter-spacing: 0.15em;
+  }
+
+  .code-box .code-hint {
+    font-size: 0.55rem;
+    color: #999;
+    margin-top: 0.3rem;
+  }
+
+  /* Early Access Grid */
+  .early-access-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* Product Card */
+  .product-card {
+    background-color: #1c1c1c;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .product-card:hover {
+    border-color: #e63226;
+  }
+
+  .product-card-img {
+    position: relative;
+    aspect-ratio: 1;
+    background-color: #0c0c0c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .product-card-img.placeholder {
+    background-color: #2a2a2a;
+  }
+
+  .placeholder-text {
+    font-size: 2rem;
+    color: #e63226;
+    font-weight: bold;
+  }
+
+  .product-card-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-weight: bold;
+  }
+
+  .badge-member {
+    background-color: #e63226;
+    color: #fff;
+  }
+
+  .product-card-info {
+    padding: 1rem;
+  }
+
+  .product-card-name {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .product-card-desc {
+    font-size: 0.65rem;
+    color: #999;
+    line-height: 1.5;
+  }
+
+  .locked-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 8, 8, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    color: #e63226;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    z-index: 5;
+  }
+
+  /* Membership Card Styling */
+  .membership-field {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a2a;
+    padding: 0.4rem 0;
+    font-size: 0.65rem;
+    line-height: 2;
+  }
+
+  .membership-field:last-child {
+    border-bottom: none;
+  }
+
+  .membership-field-label {
+    color: #999;
+  }
+
+  .membership-field-value {
+    color: #fff;
+  }
+
+  /* Data Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.7rem;
+  }
+
+  .data-table thead {
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .data-table th {
+    text-align: left;
+    padding: 0.8rem;
+    color: #e63226;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+  }
+
+  .data-table td {
+    padding: 0.8rem;
+    color: #fff;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .data-table tbody tr:hover {
+    background-color: rgba(230, 50, 38, 0.05);
+  }
+
+  /* Footer */
+  .footer {
+    background-color: #0c0c0c;
+    border-top: 1px solid #2a2a2a;
+    padding: 2rem;
+    margin-top: 4rem;
+  }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-copy {
+    font-size: 0.65rem;
+    color: #777;
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav {
+      flex-direction: column;
+      gap: 1rem;
+      height: auto;
+      padding: 1rem;
+    }
+
+    .nav-links {
+      gap: 1rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .members-wrap {
+      padding: calc(70px + 2rem) 1rem 4rem;
+    }
+
+    .members-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .early-access-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .welcome-banner {
+      padding: 2rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto">
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="shop.html" class="nav-link">Shop</a>
+    <a href="#" class="nav-link" onclick="logout()">Logout</a>
+  </div>
+</nav>
+
+<div class="members-wrap">
+
+  <div class="welcome-banner">
+    <h1>ALRIGHT, <span class="text-accent" id="member-name">MEMBER</span><span class="text-accent">.</span></h1>
+    <p>Welcome back to the bit of the internet that doesn't try to sell you a wellness course.</p>
+    <div class="diagnosis" id="member-diagnosis">CERTIFIED DIRT BOX</div>
+  </div>
+
+  <div class="members-grid">
+    <!-- DISCOUNT CODES -->
+    <div class="member-card">
+      <h3>YOUR CODES</h3>
+      <p>Member-only discount codes. Use them. Don't share them with normies.</p>
+      <div class="code-box" onclick="copyCode(this)">
+        <div class="code" id="member-code">DIRTBOX15</div>
+        <div class="code-hint">Click to copy — 15% off your next order</div>
+      </div>
+    </div>
+
+    <!-- MEMBERSHIP CARD -->
+    <div class="member-card">
+      <h3>YOUR MEMBERSHIP CARD</h3>
+      <div class="membership-field">
+        <span class="membership-field-label">Email</span>
+        <span class="membership-field-value" id="card-email">—</span>
+      </div>
+      <div class="membership-field">
+        <span class="membership-field-label">Diagnosis</span>
+        <span class="membership-field-value" id="card-diagnosis">—</span>
+      </div>
+      <div class="membership-field">
+        <span class="membership-field-label">Size</span>
+        <span class="membership-field-value" id="card-size">—</span>
+      </div>
+      <div class="membership-field">
+        <span class="membership-field-label">Member Since</span>
+        <span class="membership-field-value" id="card-joined">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EARLY ACCESS -->
+  <div class="member-card" style="margin-bottom: 2rem;">
+    <h3>EARLY ACCESS DROPS</h3>
+    <p>These aren't live on the shop yet. You're seeing them first because you took a quiz and gave us your email. The bar was low but you cleared it.</p>
+    <div class="early-access-grid" id="early-access-grid">
+      <div class="product-card">
+        <div class="product-card-img placeholder">
+          <span class="placeholder-text">DBC</span>
+          <div class="product-card-badge"><span class="badge badge-member">Early Access</span></div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-name">COMING SOON</div>
+          <div class="product-card-desc">New designs dropping soon. You'll see them here first.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER HISTORY -->
+  <div class="member-card">
+    <h3>ORDER HISTORY</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Date</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="order-history">
+        <tr>
+          <td colspan="5" style="color: #999; text-align: center; padding: 2rem;">No orders yet. The shop's right there. Just saying.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 DIRTBOXCLUB. Members area. Don't screenshot this and pretend you're special.</div>
+  </div>
+</footer>
+
+<script>
+  const member = JSON.parse(sessionStorage.getItem('dbc_member'));
+  if (!member) {
+    window.location = 'members-login.html';
+  } else {
+    document.getElementById('member-name').textContent = (member.first_name || 'MEMBER').toUpperCase();
+    document.getElementById('member-diagnosis').textContent = (member.quiz_result || 'DIRT BOX').toUpperCase();
+    document.getElementById('card-email').textContent = member.email;
+    document.getElementById('card-diagnosis').textContent = member.quiz_result || '—';
+    document.getElementById('card-size').textContent = member.tshirt_size || '—';
+    document.getElementById('card-joined').textContent = member.signed_up_at ? new Date(member.signed_up_at).toLocaleDateString() : '—';
+  }
+
+  function copyCode(el) {
+    const code = el.querySelector('.code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      el.querySelector('.code-hint').textContent = 'Copied. Go spend money.';
+      setTimeout(() => {
+        el.querySelector('.code-hint').textContent = 'Click to copy — 15% off your next order';
+      }, 2000);
+    });
+  }
+
+  function logout() {
+    sessionStorage.removeItem('dbc_member');
+    window.location = 'members-login.html';
+  }
+</script>
+
+</body>
+</html>

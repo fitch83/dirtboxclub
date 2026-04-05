@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIRTBOXCLUB. — Size Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: #0c0c0c;
+    color: #999;
+    font-family: 'Boldonse', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .r { color: #e63226; }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(12, 12, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 1000;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .nav-logo img {
+    height: 48px;
+    display: block;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .nav-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+  }
+
+  .nav-link:hover {
+    color: #e63226;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav-icon {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .nav-icon:hover {
+    color: #e63226;
+    border-color: #e63226;
+  }
+
+  .nav-login {
+    background: #e63226;
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+  }
+
+  .nav-login:hover {
+    background: #d42a1f;
+  }
+
+  /* Page Content */
+  .page-wrap {
+    padding: 80px 2rem 4rem;
+    max-width: 750px;
+    margin: 0 auto;
+  }
+
+  .page-wrap h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+
+  .page-sub {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #777;
+    margin-bottom: 3rem;
+  }
+
+  .size-section {
+    margin-bottom: 3rem;
+  }
+
+  .size-section h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+  }
+
+  .size-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.7rem;
+    margin-bottom: 2rem;
+  }
+
+  .size-table th {
+    text-align: left;
+    padding: 0.8rem 1rem;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #e63226;
+    border-bottom: 1px solid #2a2a2a;
+    font-weight: 600;
+  }
+
+  .size-table td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #2a2a2a;
+    color: #999;
+  }
+
+  .size-table tr:hover td {
+    background: rgba(255, 255, 255, 0.01);
+  }
+
+  .size-note {
+    font-size: 0.75rem;
+    color: #999;
+    line-height: 1.8;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #2a2a2a;
+  }
+
+  .size-note p {
+    margin-bottom: 1rem;
+  }
+
+  .size-note strong {
+    color: #fff;
+  }
+
+  /* Footer */
+  .footer {
+    background: #0c0c0c;
+    border-top: 1px solid #2a2a2a;
+    padding: 2rem;
+    margin-top: 4rem;
+  }
+
+  .footer-bottom {
+    max-width: 750px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: #777;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav {
+      padding: 0 1rem;
+    }
+
+    .nav-left {
+      gap: 1.5rem;
+    }
+
+    .nav-links {
+      gap: 1rem;
+    }
+
+    .nav-link {
+      font-size: 0.85rem;
+    }
+
+    .size-table {
+      font-size: 0.65rem;
+    }
+
+    .size-table th,
+    .size-table td {
+      padding: 0.6rem 0.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-left">
+    <a href="index.html" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a>
+    <div class="nav-links">
+      <a href="index.html#shop" class="nav-link">Shop</a>
+      <a href="index.html#shop" class="nav-link">Exclusives</a>
+      <a href="index.html#charities" class="nav-link">Charities</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="faq.html" class="nav-link">FAQ</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="https://instagram.com/dirt.boxclub" class="nav-icon" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+    <a href="https://facebook.com/dirt.boxclub" class="nav-icon" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+    <a href="https://tiktok.com/@dirt.boxclub" class="nav-icon" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46v-7.15a8.16 8.16 0 005.58 2.17v-3.45a4.85 4.85 0 01-1.99-4.54z"/></svg></a>
+    <a href="admin-login.html" class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></a>
+    <a href="members-login.html" class="nav-login">Member Login</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <h1>SIZE GUIDE<span class="r">.</span></h1>
+  <p class="page-sub">We use Stanley/Stella blanks<span class="r">.</span> They run true to size<span class="r">.</span> Here's the numbers if you need them<span class="r">.</span></p>
+
+  <div class="size-section">
+    <h2>T-SHIRTS & TEES<span class="r">.</span></h2>
+    <table class="size-table">
+      <thead>
+        <tr>
+          <th>Size</th>
+          <th>Chest (cm)</th>
+          <th>Length (cm)</th>
+          <th>UK Equivalent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>XS</td>
+          <td>91</td>
+          <td>68</td>
+          <td>34-36</td>
+        </tr>
+        <tr>
+          <td>S</td>
+          <td>96</td>
+          <td>70</td>
+          <td>36-38</td>
+        </tr>
+        <tr>
+          <td>M</td>
+          <td>101</td>
+          <td>72</td>
+          <td>38-40</td>
+        </tr>
+        <tr>
+          <td>L</td>
+          <td>106</td>
+          <td>74</td>
+          <td>40-42</td>
+        </tr>
+        <tr>
+          <td>XL</td>
+          <td>111</td>
+          <td>76</td>
+          <td>42-44</td>
+        </tr>
+        <tr>
+          <td>XXL</td>
+          <td>116</td>
+          <td>78</td>
+          <td>44-46</td>
+        </tr>
+        <tr>
+          <td>XXXL</td>
+          <td>121</td>
+          <td>80</td>
+          <td>46-48</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="size-section">
+    <h2>HOODIES<span class="r">.</span></h2>
+    <table class="size-table">
+      <thead>
+        <tr>
+          <th>Size</th>
+          <th>Chest (cm)</th>
+          <th>Length (cm)</th>
+          <th>UK Equivalent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>XS</td>
+          <td>96</td>
+          <td>66</td>
+          <td>34-36</td>
+        </tr>
+        <tr>
+          <td>S</td>
+          <td>101</td>
+          <td>68</td>
+          <td>36-38</td>
+        </tr>
+        <tr>
+          <td>M</td>
+          <td>106</td>
+          <td>70</td>
+          <td>38-40</td>
+        </tr>
+        <tr>
+          <td>L</td>
+          <td>112</td>
+          <td>72</td>
+          <td>40-42</td>
+        </tr>
+        <tr>
+          <td>XL</td>
+          <td>118</td>
+          <td>74</td>
+          <td>42-44</td>
+        </tr>
+        <tr>
+          <td>XXL</td>
+          <td>124</td>
+          <td>76</td>
+          <td>44-46</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="size-note">
+    <p><strong>Not sure?</strong> Our tees are a relaxed fit — if you're between sizes, we'd say go with your usual<span class="r">.</span> If you like it baggy, size up<span class="r">.</span> If you like it tight, that's your business<span class="r">.</span></p>
+    <p>Still confused? Email us at hello@dirtboxclub<span class="r">.</span>co<span class="r">.</span>uk and we'll help<span class="r">.</span> Reluctantly<span class="r">.</span></p>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 DIRTBOXCLUB<span class="r">.</span> <span style="color:#e63226;">Members only<span class="r">.</span> Access restricted<span class="r">.</span></span></div>
+  </div>
+</footer>
+
+</body>
+</html>

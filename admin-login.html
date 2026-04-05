@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIRTBOXCLUB. — Admin Login</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #0c0c0c;
+    color: #fff;
+    font-family: 'Boldonse', sans-serif;
+    min-height: 100vh;
+  }
+
+  .login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .login-box {
+    background: #1c1c1c;
+    border: 1px solid #2a2a2a;
+    padding: 3rem;
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .login-box::before {
+    content: 'ADMIN';
+    position: absolute;
+    right: -1rem;
+    bottom: -1.5rem;
+    font-family: 'Boldonse', sans-serif;
+    font-size: 8rem;
+    color: rgba(232, 226, 214, 0.015);
+    line-height: 1;
+    pointer-events: none;
+    font-weight: 700;
+  }
+
+  .login-icon {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-icon svg {
+    color: #e63226;
+    width: 40px;
+    height: 40px;
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .login-logo h1 {
+    font-size: 1.8rem;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .login-logo .r {
+    color: #e63226;
+  }
+
+  .login-logo p {
+    font-size: 0.6rem;
+    color: #999;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .login-error {
+    display: none;
+    background: rgba(230, 50, 38, 0.15);
+    border: 1px solid #e63226;
+    padding: 0.7rem 1rem;
+    font-size: 0.65rem;
+    color: #e63226;
+    margin-bottom: 1rem;
+    text-align: center;
+    border-radius: 6px;
+  }
+
+  .login-error.show {
+    display: block;
+  }
+
+  /* Form styles */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.65rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+  }
+
+  .form-input {
+    width: 100%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Boldonse', sans-serif;
+    padding: 0.9rem 1.2rem;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: #e63226;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 1rem;
+    background: #e63226;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-family: 'Boldonse', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .btn-primary:hover {
+    background: #d43b2f;
+  }
+
+  .login-info {
+    font-size: 0.5rem;
+    color: #555;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .back-link {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .back-link a {
+    color: #999;
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: color 0.2s;
+  }
+
+  .back-link a:hover {
+    color: #e63226;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .login-box {
+      padding: 2rem;
+    }
+
+    .login-logo h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-box">
+    <div class="login-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    <div class="login-logo">
+      <h1>ADMIN ACCESS</h1>
+      <p>Enter your password to continue</p>
+    </div>
+    <div class="login-error" id="login-error">Wrong credentials<span class="r">.</span> Try again<span class="r">.</span></div>
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input type="text" class="form-input" id="login-user" placeholder="Username" autofocus>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="login-pass" placeholder="Password">
+    </div>
+    <button class="btn-primary" onclick="attemptLogin()">LOGIN</button>
+    <p class="login-info">If you're not supposed to be here, you definitely aren't<span class="r">.</span></p>
+    <div class="back-link">
+      <a href="index.html">← Back to site</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple auth — replace with proper backend auth for production
+  function attemptLogin() {
+    const user = document.getElementById('login-user').value;
+    const pass = document.getElementById('login-pass').value;
+    const stored = JSON.parse(localStorage.getItem('dbc_admin_creds') || '{"user":"admin","pass":"dirtbox2026"}');
+    if (user === stored.user && pass === stored.pass) {
+      sessionStorage.setItem('dbc_admin_auth', 'true');
+      window.location = 'dashboard.html';
+    } else {
+      document.getElementById('login-error').classList.add('show');
+    }
+  }
+  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+  document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
+</script>
+
+</body>
+</html>

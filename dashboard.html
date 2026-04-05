@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIRTBOXCLUB. — Admin Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0c0c0c;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    /* HEADER */
+    .header {
+      background: #0c0c0c;
+      border-bottom: 1px solid #2a2a2a;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-arrow {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .header-content h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+
+    .header-content p {
+      font-size: 0.75rem;
+      color: #777;
+      letter-spacing: 0.05em;
+      margin: 0.2rem 0 0 0;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* TAB BAR */
+    .tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #2a2a2a;
+      background: #0c0c0c;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      background: transparent;
+      border: none;
+      color: #777;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: #e63226;
+      color: #fff;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+    }
+
+    .section-title h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+
+    .section-title p {
+      font-size: 0.75rem;
+      color: #777;
+      letter-spacing: 0.05em;
+      margin: 0.3rem 0 0 0;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 0.6rem 1.2rem;
+      background: #e63226;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Boldonse', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      background: #d42118;
+    }
+
+    .btn-outlined {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #999;
+    }
+
+    .btn-outlined:hover {
+      color: #fff;
+      border-color: #666;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.3rem;
+      transition: color 0.2s;
+    }
+
+    .btn-icon:hover {
+      color: #fff;
+    }
+
+    .btn-icon.delete {
+      color: #e63226;
+    }
+
+    .btn-icon.delete:hover {
+      color: #d42118;
+    }
+
+    /* TAB CONTENT */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* PRODUCT GRID */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-image {
+      width: 100%;
+      aspect-ratio: 1.2;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #666;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .product-price {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e63226;
+    }
+
+    .product-desc {
+      font-size: 0.7rem;
+      color: #777;
+      margin-bottom: 0.8rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #777;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .product-edit-btn {
+      flex: 1;
+      padding: 0.5rem;
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #999;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Boldonse', sans-serif;
+    }
+
+    .product-edit-btn:hover {
+      border-color: #666;
+      color: #fff;
+    }
+
+    /* CARDS */
+    .card {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    /* MEMBER CARD LIST */
+    .member-card {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .member-info {
+      flex: 1;
+    }
+
+    .member-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+
+    .member-detail {
+      font-size: 0.7rem;
+      color: #777;
+      margin: 0.2rem 0;
+    }
+
+    .member-icon {
+      font-size: 1.3rem;
+      color: #777;
+    }
+
+    /* STAT CARDS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+
+    .stat-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      color: #777;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* ANALYTICS GRID */
+    .analytics-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .analytics-full {
+      display: block;
+    }
+
+    /* ACTIVITY LOG */
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-info {
+      flex: 1;
+    }
+
+    .activity-time {
+      font-size: 0.7rem;
+      color: #777;
+    }
+
+    .activity-type {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    .activity-type.page-view {
+      background: rgba(70, 130, 220, 0.2);
+      color: #4682dc;
+    }
+
+    .activity-type.time-on-page {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+
+    .activity-path {
+      font-size: 0.7rem;
+      color: #999;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #777;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-desc {
+      font-size: 0.75rem;
+      color: #777;
+      margin-bottom: 1.5rem;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* APPLICATION CARD */
+    .application-card {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .application-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .application-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .application-meta {
+      font-size: 0.7rem;
+      color: #777;
+      margin-top: 0.3rem;
+    }
+
+    .application-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .application-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Boldonse', sans-serif;
+      text-transform: uppercase;
+    }
+
+    .application-btn.approve {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .application-btn.approve:hover {
+      background: #16a34a;
+    }
+
+    .application-btn.reject {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .application-btn.reject:hover {
+      background: #dc2626;
+    }
+
+    /* LIST */
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #2a2a2a;
+      font-size: 0.75rem;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .list-label {
+      color: #999;
+    }
+
+    .list-value {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .analytics-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .header-right {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <button class="back-arrow" onclick="window.location='index.html'">←</button>
+      <div class="header-content">
+        <h1>Admin Dashboard</h1>
+        <p>Manage products, applications, and members</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button id="add-product-btn" class="btn" style="display: none;" onclick="openProductModal()">+ Add Product</button>
+      <button class="btn btn-outlined" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('products')">📦 Products</button>
+    <button class="tab-btn" onclick="switchTab('applications')">📋 Applications</button>
+    <button class="tab-btn" onclick="switchTab('members')">👥 Members</button>
+    <button class="tab-btn" onclick="switchTab('analytics')">📊 Analytics</button>
+    <button class="tab-btn" onclick="switchTab('announcements')">📢 Announcements</button>
+    <button class="tab-btn" onclick="switchTab('drops')">📅 Scheduled Drops</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <!-- PRODUCTS TAB -->
+    <div id="tab-products" class="tab-content active">
+      <div id="products-grid" class="product-grid"></div>
+    </div>
+
+    <!-- APPLICATIONS TAB -->
+    <div id="tab-applications" class="tab-content">
+      <div id="applications-list"></div>
+    </div>
+
+    <!-- MEMBERS TAB -->
+    <div id="tab-members" class="tab-content">
+      <div id="members-list"></div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div id="tab-analytics" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; font-size: 1.1rem; font-weight: 700;">Analytics</h2>
+        <button class="btn" onclick="sendWeeklyReport()">Send Weekly Report</button>
+      </div>
+
+      <div class="stats-grid" id="analytics-stats"></div>
+
+      <div class="analytics-2col">
+        <div class="card">
+          <div class="card-title">Top Pages</div>
+          <div id="top-pages-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Top Products</div>
+          <div id="top-products-list"></div>
+        </div>
+      </div>
+
+      <div class="card analytics-full">
+        <div class="card-title">Abandoned Carts</div>
+        <div id="abandoned-carts-list"></div>
+      </div>
+
+      <div class="card analytics-full">
+        <div class="card-title">Recent Activity</div>
+        <div id="recent-activity-list"></div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS TAB -->
+    <div id="tab-announcements" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Product Announcements</h2>
+          <p>Create pop-up announcements for new product drops</p>
+        </div>
+        <button class="btn" onclick="openAnnouncementModal()">+ New Announcement</button>
+      </div>
+
+      <div id="announcements-container"></div>
+    </div>
+
+    <!-- SCHEDULED DROPS TAB -->
+    <div id="tab-drops" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Scheduled Drops</h2>
+        </div>
+        <button class="btn" onclick="openDropModal()">+ Schedule Drop</button>
+      </div>
+
+      <div id="drops-container"></div>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <!-- Product Modal -->
+  <div id="product-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center;">
+    <div style="background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 10px; padding: 2rem; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+      <h2 style="margin: 0 0 1.5rem 0; font-size: 1.2rem; font-weight: 700;">Add Product</h2>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product Name</span>
+        <input id="prod-name" type="text" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Price</span>
+        <input id="prod-price" type="number" step="0.01" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Description</span>
+        <textarea id="prod-desc" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; min-height: 80px;"></textarea>
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Category</span>
+        <input id="prod-category" type="text" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Stock</span>
+        <input id="prod-stock" type="number" value="100" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; cursor: pointer;">
+        <input id="prod-live" type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+        <span style="font-size: 0.75rem; color: #999;">Publish to Live Shop</span>
+      </label>
+
+      <div style="display: flex; gap: 0.8rem;">
+        <button class="btn" onclick="saveProduct()" style="flex: 1;">Save Product</button>
+        <button class="btn btn-outlined" onclick="closeModal('product-modal')" style="flex: 1;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drop Modal -->
+  <div id="drop-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center;">
+    <div style="background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 10px; padding: 2rem; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+      <h2 style="margin: 0 0 1.5rem 0; font-size: 1.2rem; font-weight: 700;">Schedule Drop</h2>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product</span>
+        <input id="drop-product" type="text" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Date</span>
+        <input id="drop-date" type="datetime-local" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Quantity</span>
+        <input id="drop-quantity" type="number" value="100" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <div style="display: flex; gap: 0.8rem;">
+        <button class="btn" onclick="scheduleDrop()" style="flex: 1;">Schedule</button>
+        <button class="btn btn-outlined" onclick="closeModal('drop-modal')" style="flex: 1;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Auth check
+    window.addEventListener('load', function() {
+      if (!sessionStorage.getItem('dbc_admin_auth')) {
+        window.location = 'admin-login.html';
+        return;
+      }
+      initializeData();
+      refreshAllData();
+    });
+
+    // Data store
+    const DB = {
+      get(key) {
+        try {
+          return JSON.parse(localStorage.getItem('dbc_' + key)) || [];
+        } catch {
+          return [];
+        }
+      },
+      set(key, val) {
+        localStorage.setItem('dbc_' + key, JSON.stringify(val));
+      },
+      getOne(key) {
+        try {
+          return JSON.parse(localStorage.getItem('dbc_' + key));
+        } catch {
+          return null;
+        }
+      },
+      setOne(key, val) {
+        localStorage.setItem('dbc_' + key, JSON.stringify(val));
+      }
+    };
+
+    // Initialize with default products
+    function initializeData() {
+      const defaultProducts = [
+        { id: 1, name: 'Awkward Since Birth Tee', price: 35.00, desc: 'Express your personality', category: 'Apparel', stock: 100, image: 'assets/awkward-since-birth-tee.png' },
+        { id: 2, name: 'Born Defiant Tee', price: 35.00, desc: 'Stand out with confidence', category: 'Apparel', stock: 100, image: 'assets/born-defiant-tee.png' },
+        { id: 3, name: 'Dirtbox Club Classic', price: 40.00, desc: 'Premium quality essential', category: 'Apparel', stock: 100, image: 'assets/dirtbox-club-classic.png' },
+        { id: 4, name: 'Haters Fuel Tank', price: 38.00, desc: 'Turn negativity into motivation', category: 'Apparel', stock: 100, image: 'assets/haters-fuel-tank.png' },
+        { id: 5, name: 'I Might Be Toxic Hoodie', price: 55.00, desc: 'Bold statement hoodie', category: 'Apparel', stock: 100, image: 'assets/i-might-be-toxic-hoodie.png' },
+        { id: 6, name: 'Naughty List Hoodie', price: 55.00, desc: 'Cozy and rebellious', category: 'Apparel', stock: 100, image: 'assets/naughty-list-hoodie.png' },
+        { id: 7, name: 'Sarcasm Loading Tee', price: 35.00, desc: 'For the sarcastic soul', category: 'Apparel', stock: 100, image: 'assets/sarcasm-loading-tee.png' },
+        { id: 8, name: 'Talk Shit Energy Tee', price: 35.00, desc: 'Unapologetic confidence', category: 'Apparel', stock: 100, image: 'assets/talk-shit-energy-tee.png' },
+        { id: 9, name: 'Too Blessed to be Stressed Cap', price: 25.00, desc: 'Stylish baseball cap', category: 'Accessories', stock: 100, image: 'assets/too-blessed-to-be-stressed-cap.png' },
+        { id: 10, name: 'Unbothered Sweatpants', price: 48.00, desc: 'Maximum comfort and style', category: 'Apparel', stock: 100, image: 'assets/unbothered-sweatpants.png' },
+        { id: 11, name: 'Villain Era Hoodie', price: 55.00, desc: 'Embrace your dark side', category: 'Apparel', stock: 100, image: 'assets/villain-era-hoodie.png' },
+        { id: 12, name: 'Watch Me Rise Tee', price: 35.00, desc: 'Inspirational classic', category: 'Apparel', stock: 100, image: 'assets/watch-me-rise-tee.png' },
+        { id: 13, name: 'Wealthy Mindset Tee', price: 35.00, desc: 'Manifest abundance', category: 'Apparel', stock: 100, image: 'assets/wealthy-mindset-tee.png' },
+        { id: 14, name: 'Zero Fucks Tee', price: 35.00, desc: 'Carefree attitude wear', category: 'Apparel', stock: 100, image: 'assets/zero-fucks-tee.png' },
+        { id: 15, name: 'Dirtbox Snap Backpack', price: 65.00, desc: 'Durable and stylish', category: 'Accessories', stock: 100, image: 'assets/dirtbox-snap-backpack.png' },
+        { id: 16, name: 'Crown Adjustment Tee', price: 35.00, desc: 'Royalty vibes', category: 'Apparel', stock: 100, image: 'assets/crown-adjustment-tee.png' }
+      ];
+
+      if (DB.get('products').length === 0) {
+        DB.set('products', defaultProducts);
+      }
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.target.classList.add('active');
+
+      document.getElementById('add-product-btn').style.display = tabName === 'products' ? 'block' : 'none';
+
+      refreshAllData();
+    }
+
+    function openProductModal() {
+      document.getElementById('product-modal').style.display = 'flex';
+    }
+
+    function openDropModal() {
+      document.getElementById('drop-modal').style.display = 'flex';
+    }
+
+    function openAnnouncementModal() {
+      document.querySelector('.announcement-textarea')?.focus();
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function saveProduct() {
+      const name = document.getElementById('prod-name').value.trim();
+      const price = parseFloat(document.getElementById('prod-price').value);
+
+      if (!name || !price) {
+        alert('Name and price are required.');
+        return;
+      }
+
+      const products = DB.get('products');
+      products.push({
+        id: Date.now(),
+        name,
+        desc: document.getElementById('prod-desc').value.trim(),
+        price,
+        category: document.getElementById('prod-category').value || 'Apparel',
+        stock: parseInt(document.getElementById('prod-stock').value) || 100,
+        live: document.getElementById('prod-live').checked,
+        image: null,
+        created: new Date().toISOString()
+      });
+
+      DB.set('products', products);
+      closeModal('product-modal');
+      document.getElementById('prod-name').value = '';
+      document.getElementById('prod-price').value = '';
+      document.getElementById('prod-desc').value = '';
+      document.getElementById('prod-category').value = '';
+      document.getElementById('prod-stock').value = '100';
+      document.getElementById('prod-live').checked = false;
+      refreshAllData();
+    }
+
+    function deleteProduct(id) {
+      if (!confirm('Delete this product?')) return;
+      const products = DB.get('products').filter(p => p.id !== id);
+      DB.set('products', products);
+      refreshAllData();
+    }
+
+    function scheduleDrop() {
+      const product = document.getElementById('drop-product').value.trim();
+      const date = document.getElementById('drop-date').value;
+      const quantity = parseInt(document.getElementById('drop-quantity').value);
+
+      if (!product || !date || !quantity) {
+        alert('All fields are required.');
+        return;
+      }
+
+      const drops = DB.get('drops');
+      drops.push({
+        id: Date.now(),
+        product,
+        date,
+        quantity,
+        created: new Date().toISOString()
+      });
+
+      DB.set('drops', drops);
+      closeModal('drop-modal');
+      document.getElementById('drop-product').value = '';
+      document.getElementById('drop-date').value = '';
+      document.getElementById('drop-quantity').value = '100';
+      refreshAllData();
+    }
+
+    function refreshAllData() {
+      refreshProducts();
+      refreshApplications();
+      refreshMembers();
+      refreshAnalytics();
+      refreshAnnouncements();
+      refreshDrops();
+    }
+
+    function refreshProducts() {
+      const container = document.getElementById('products-grid');
+      const products = DB.get('products');
+
+      if (products.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-icon">📦</div><div class="empty-title">No Products Yet</div></div>';
+        return;
+      }
+
+      container.innerHTML = products.map(p => `
+        <div class="product-card">
+          <div class="product-image">
+            ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<span>${p.name}</span>`}
+          </div>
+          <div class="product-info">
+            <div class="product-header">
+              <div class="product-name">${p.name}</div>
+              <div class="product-price">$${p.price.toFixed(2)}</div>
+            </div>
+            <div class="product-desc">${p.desc}</div>
+            <div class="product-meta">
+              <span>${p.category}</span>
+              <span>Stock: ${p.stock}</span>
+            </div>
+            <div class="product-actions">
+              <button class="product-edit-btn">✏ Edit</button>
+              <button class="btn-icon" onclick="alert('Email feature coming soon')">✉</button>
+              <button class="btn-icon delete" onclick="deleteProduct(${p.id})">🗑</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function refreshApplications() {
+      const container = document.getElementById('applications-list');
+      const applications = DB.get('applications');
+
+      if (applications.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No Applications Yet</div></div>';
+        return;
+      }
+
+      container.innerHTML = applications.map(app => `
+        <div class="application-card">
+          <div class="application-header">
+            <div>
+              <div class="application-name">${app.name}</div>
+              <div class="application-meta">${app.email}</div>
+              <div class="application-meta">Quiz Result: ${app.quizResult || 'N/A'}</div>
+            </div>
+            <div class="application-actions">
+              <button class="application-btn approve" onclick="approveApplication(${app.id})">Approve</button>
+              <button class="application-btn reject" onclick="rejectApplication(${app.id})">Reject</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function approveApplication(id) {
+      const applications = DB.get('applications').filter(a => a.id !== id);
+      DB.set('applications', applications);
+      const members = DB.get('members');
+      const app = DB.get('applications').find(a => a.id === id);
+      if (app) {
+        members.push({ id: Date.now(), name: app.name, email: app.email, joined: new Date().toISOString() });
+        DB.set('members', members);
+      }
+      refreshAllData();
+    }
+
+    function rejectApplication(id) {
+      const applications = DB.get('applications').filter(a => a.id !== id);
+      DB.set('applications', applications);
+      refreshAllData();
+    }
+
+    function refreshMembers() {
+      const container = document.getElementById('members-list');
+      const members = DB.get('members');
+
+      if (members.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No Members Yet</div></div>';
+        return;
+      }
+
+      container.innerHTML = members.map(m => {
+        const joined = new Date(m.joined);
+        const dateStr = joined.toLocaleDateString('en-GB');
+        return `
+          <div class="member-card">
+            <div class="member-info">
+              <div class="member-name">${m.name}</div>
+              <div class="member-detail">${m.email}</div>
+              <div class="member-detail">Joined: ${dateStr}</div>
+            </div>
+            <div class="member-icon">👤</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function refreshAnalytics() {
+      const statsContainer = document.getElementById('analytics-stats');
+      statsContainer.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-label">Page Views</div>
+          <div class="stat-value">1,234</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👁</div>
+          <div class="stat-label">Unique Sessions</div>
+          <div class="stat-value">456</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱</div>
+          <div class="stat-label">Avg Time on Page</div>
+          <div class="stat-value">3m 24s</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-label">Abandoned Carts</div>
+          <div class="stat-value">23</div>
+        </div>
+      `;
+
+      document.getElementById('top-pages-list').innerHTML = `
+        <div class="list-item">
+          <span class="list-label">/shop</span>
+          <span class="list-value">456 views</span>
+        </div>
+        <div class="list-item">
+          <span class="list-label">/products/featured</span>
+          <span class="list-value">234 views</span>
+        </div>
+        <div class="list-item">
+          <span class="list-label">/membership</span>
+          <span class="list-value">189 views</span>
+        </div>
+      `;
+
+      document.getElementById('top-products-list').innerHTML = `
+        <div class="empty-state" style="padding: 2rem;">
+          <div class="empty-icon">📦</div>
+          <div class="empty-title">No product views yet</div>
+        </div>
+      `;
+
+      document.getElementById('abandoned-carts-list').innerHTML = `
+        <div class="list-item">
+          <span class="list-label">user@example.com</span>
+          <span class="list-value">$127.50</span>
+        </div>
+        <div class="list-item">
+          <span class="list-label">member@dirtbox.com</span>
+          <span class="list-value">$89.99</span>
+        </div>
+        <div class="list-item">
+          <span class="list-label">customer@mail.com</span>
+          <span class="list-value">$199.00</span>
+        </div>
+      `;
+
+      document.getElementById('recent-activity-list').innerHTML = `
+        <div class="activity-item">
+          <div class="activity-info">
+            <div class="activity-time">2:34 PM - /shop</div>
+            <span class="activity-type page-view">page view</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-info">
+            <div class="activity-time">2:12 PM - /products/villain-era-hoodie</div>
+            <span class="activity-type time-on-page">time on page</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-info">
+            <div class="activity-time">1:45 PM - /membership</div>
+            <span class="activity-type page-view">page view</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function refreshAnnouncements() {
+      const container = document.getElementById('announcements-container');
+      const announcements = DB.get('announcements');
+
+      if (announcements.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📢</div>
+            <div class="empty-title">No Announcements Yet</div>
+            <div class="empty-desc">Create your first announcement to promote new products</div>
+            <button class="btn" onclick="createAnnouncementCard()">Create Announcement</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = announcements.map(a => `
+        <div class="card">
+          <div class="card-title">${a.title || 'Announcement'}</div>
+          <p style="color: #999; font-size: 0.75rem; margin-bottom: 1rem;">${a.content}</p>
+          <button class="btn-icon delete" onclick="deleteAnnouncement(${a.id})">🗑</button>
+        </div>
+      `).join('');
+    }
+
+    function createAnnouncementCard() {
+      const text = prompt('Enter announcement text:');
+      if (!text) return;
+
+      const announcements = DB.get('announcements');
+      announcements.push({
+        id: Date.now(),
+        title: 'New Announcement',
+        content: text,
+        created: new Date().toISOString()
+      });
+
+      DB.set('announcements', announcements);
+      refreshAllData();
+    }
+
+    function deleteAnnouncement(id) {
+      const announcements = DB.get('announcements').filter(a => a.id !== id);
+      DB.set('announcements', announcements);
+      refreshAllData();
+    }
+
+    function refreshDrops() {
+      const container = document.getElementById('drops-container');
+      const drops = DB.get('drops');
+
+      if (drops.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <div class="empty-title">No Scheduled Drops Yet</div>
+            <div class="empty-desc">Create a drop to build anticipation among your members</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = drops.map(d => `
+        <div class="card">
+          <div class="card-title">${d.product}</div>
+          <div style="font-size: 0.75rem; color: #777; margin-bottom: 1rem;">
+            <div>Date: ${new Date(d.date).toLocaleString()}</div>
+            <div>Quantity: ${d.quantity}</div>
+          </div>
+          <button class="btn-icon delete" onclick="deleteDrop(${d.id})">🗑</button>
+        </div>
+      `).join('');
+    }
+
+    function deleteDrop(id) {
+      if (!confirm('Delete this drop?')) return;
+      const drops = DB.get('drops').filter(d => d.id !== id);
+      DB.set('drops', drops);
+      refreshAllData();
+    }
+
+    function sendWeeklyReport() {
+      alert('Weekly report would be sent via email.');
+    }
+
+    function logout() {
+      sessionStorage.removeItem('dbc_admin_auth');
+      window.location = 'admin-login.html';
+    }
+  </script>
+</body>
+</html>
