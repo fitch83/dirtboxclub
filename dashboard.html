@@ -614,12 +614,12 @@
 
   <!-- TAB BAR -->
   <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('products')">📦 Products</button>
-    <button class="tab-btn" onclick="switchTab('applications')">📋 Applications</button>
-    <button class="tab-btn" onclick="switchTab('members')">👥 Members</button>
-    <button class="tab-btn" onclick="switchTab('analytics')">📊 Analytics</button>
-    <button class="tab-btn" onclick="switchTab('announcements')">📢 Announcements</button>
-    <button class="tab-btn" onclick="switchTab('drops')">📅 Scheduled Drops</button>
+    <button class="tab-btn active" onclick="switchTab('products', this)">📦 Products</button>
+    <button class="tab-btn" onclick="switchTab('applications', this)">📋 Applications</button>
+    <button class="tab-btn" onclick="switchTab('members', this)">👥 Members</button>
+    <button class="tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
+    <button class="tab-btn" onclick="switchTab('announcements', this)">📢 Announcements</button>
+    <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -766,106 +766,98 @@
     </div>
   </div>
 
-  <script>
-    // Auth check
-    window.addEventListener('load', function() {
-      if (!sessionStorage.getItem('dbc_admin_auth')) {
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+      authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+      projectId: "dirtboxclub-3d7a7",
+      storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+      messagingSenderId: "883493757389",
+      appId: "1:883493757389:web:749f668e2655fd168fe484"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Hide page until auth confirmed
+    document.body.style.visibility = 'hidden';
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
         window.location = 'admin-login.html';
         return;
       }
-      initializeData();
-      refreshAllData();
+      document.body.style.visibility = 'visible';
+      await initializeData();
+      await refreshAllData();
     });
 
-    // Data store
-    const DB = {
-      get(key) {
-        try {
-          return JSON.parse(localStorage.getItem('dbc_' + key)) || [];
-        } catch {
-          return [];
-        }
-      },
-      set(key, val) {
-        localStorage.setItem('dbc_' + key, JSON.stringify(val));
-      },
-      getOne(key) {
-        try {
-          return JSON.parse(localStorage.getItem('dbc_' + key));
-        } catch {
-          return null;
-        }
-      },
-      setOne(key, val) {
-        localStorage.setItem('dbc_' + key, JSON.stringify(val));
-      }
-    };
+    const defaultProducts = [
+      { name: 'Awkward Since Birth Tee', price: 35.00, desc: 'Express your personality', category: 'Apparel', stock: 100, image: 'assets/awkward-since-birth-tee.png' },
+      { name: 'Born Defiant Tee', price: 35.00, desc: 'Stand out with confidence', category: 'Apparel', stock: 100, image: 'assets/born-defiant-tee.png' },
+      { name: 'Dirtbox Club Classic', price: 40.00, desc: 'Premium quality essential', category: 'Apparel', stock: 100, image: 'assets/dirtbox-club-classic.png' },
+      { name: 'Haters Fuel Tank', price: 38.00, desc: 'Turn negativity into motivation', category: 'Apparel', stock: 100, image: 'assets/haters-fuel-tank.png' },
+      { name: 'I Might Be Toxic Hoodie', price: 55.00, desc: 'Bold statement hoodie', category: 'Apparel', stock: 100, image: 'assets/i-might-be-toxic-hoodie.png' },
+      { name: 'Naughty List Hoodie', price: 55.00, desc: 'Cozy and rebellious', category: 'Apparel', stock: 100, image: 'assets/naughty-list-hoodie.png' },
+      { name: 'Sarcasm Loading Tee', price: 35.00, desc: 'For the sarcastic soul', category: 'Apparel', stock: 100, image: 'assets/sarcasm-loading-tee.png' },
+      { name: 'Talk Shit Energy Tee', price: 35.00, desc: 'Unapologetic confidence', category: 'Apparel', stock: 100, image: 'assets/talk-shit-energy-tee.png' },
+      { name: 'Too Blessed to be Stressed Cap', price: 25.00, desc: 'Stylish baseball cap', category: 'Accessories', stock: 100, image: 'assets/too-blessed-to-be-stressed-cap.png' },
+      { name: 'Unbothered Sweatpants', price: 48.00, desc: 'Maximum comfort and style', category: 'Apparel', stock: 100, image: 'assets/unbothered-sweatpants.png' },
+      { name: 'Villain Era Hoodie', price: 55.00, desc: 'Embrace your dark side', category: 'Apparel', stock: 100, image: 'assets/villain-era-hoodie.png' },
+      { name: 'Watch Me Rise Tee', price: 35.00, desc: 'Inspirational classic', category: 'Apparel', stock: 100, image: 'assets/watch-me-rise-tee.png' },
+      { name: 'Wealthy Mindset Tee', price: 35.00, desc: 'Manifest abundance', category: 'Apparel', stock: 100, image: 'assets/wealthy-mindset-tee.png' },
+      { name: 'Zero Fucks Tee', price: 35.00, desc: 'Carefree attitude wear', category: 'Apparel', stock: 100, image: 'assets/zero-fucks-tee.png' },
+      { name: 'Dirtbox Snap Backpack', price: 65.00, desc: 'Durable and stylish', category: 'Accessories', stock: 100, image: 'assets/dirtbox-snap-backpack.png' },
+      { name: 'Crown Adjustment Tee', price: 35.00, desc: 'Royalty vibes', category: 'Apparel', stock: 100, image: 'assets/crown-adjustment-tee.png' }
+    ];
 
-    // Initialize with default products
-    function initializeData() {
-      const defaultProducts = [
-        { id: 1, name: 'Awkward Since Birth Tee', price: 35.00, desc: 'Express your personality', category: 'Apparel', stock: 100, image: 'assets/awkward-since-birth-tee.png' },
-        { id: 2, name: 'Born Defiant Tee', price: 35.00, desc: 'Stand out with confidence', category: 'Apparel', stock: 100, image: 'assets/born-defiant-tee.png' },
-        { id: 3, name: 'Dirtbox Club Classic', price: 40.00, desc: 'Premium quality essential', category: 'Apparel', stock: 100, image: 'assets/dirtbox-club-classic.png' },
-        { id: 4, name: 'Haters Fuel Tank', price: 38.00, desc: 'Turn negativity into motivation', category: 'Apparel', stock: 100, image: 'assets/haters-fuel-tank.png' },
-        { id: 5, name: 'I Might Be Toxic Hoodie', price: 55.00, desc: 'Bold statement hoodie', category: 'Apparel', stock: 100, image: 'assets/i-might-be-toxic-hoodie.png' },
-        { id: 6, name: 'Naughty List Hoodie', price: 55.00, desc: 'Cozy and rebellious', category: 'Apparel', stock: 100, image: 'assets/naughty-list-hoodie.png' },
-        { id: 7, name: 'Sarcasm Loading Tee', price: 35.00, desc: 'For the sarcastic soul', category: 'Apparel', stock: 100, image: 'assets/sarcasm-loading-tee.png' },
-        { id: 8, name: 'Talk Shit Energy Tee', price: 35.00, desc: 'Unapologetic confidence', category: 'Apparel', stock: 100, image: 'assets/talk-shit-energy-tee.png' },
-        { id: 9, name: 'Too Blessed to be Stressed Cap', price: 25.00, desc: 'Stylish baseball cap', category: 'Accessories', stock: 100, image: 'assets/too-blessed-to-be-stressed-cap.png' },
-        { id: 10, name: 'Unbothered Sweatpants', price: 48.00, desc: 'Maximum comfort and style', category: 'Apparel', stock: 100, image: 'assets/unbothered-sweatpants.png' },
-        { id: 11, name: 'Villain Era Hoodie', price: 55.00, desc: 'Embrace your dark side', category: 'Apparel', stock: 100, image: 'assets/villain-era-hoodie.png' },
-        { id: 12, name: 'Watch Me Rise Tee', price: 35.00, desc: 'Inspirational classic', category: 'Apparel', stock: 100, image: 'assets/watch-me-rise-tee.png' },
-        { id: 13, name: 'Wealthy Mindset Tee', price: 35.00, desc: 'Manifest abundance', category: 'Apparel', stock: 100, image: 'assets/wealthy-mindset-tee.png' },
-        { id: 14, name: 'Zero Fucks Tee', price: 35.00, desc: 'Carefree attitude wear', category: 'Apparel', stock: 100, image: 'assets/zero-fucks-tee.png' },
-        { id: 15, name: 'Dirtbox Snap Backpack', price: 65.00, desc: 'Durable and stylish', category: 'Accessories', stock: 100, image: 'assets/dirtbox-snap-backpack.png' },
-        { id: 16, name: 'Crown Adjustment Tee', price: 35.00, desc: 'Royalty vibes', category: 'Apparel', stock: 100, image: 'assets/crown-adjustment-tee.png' }
-      ];
-
-      if (DB.get('products').length === 0) {
-        DB.set('products', defaultProducts);
+    async function initializeData() {
+      const snap = await getDocs(collection(db, 'products'));
+      if (snap.empty) {
+        const batch = writeBatch(db);
+        defaultProducts.forEach(p => {
+          const ref = doc(collection(db, 'products'));
+          batch.set(ref, { ...p, created: new Date().toISOString() });
+        });
+        await batch.commit();
       }
     }
 
-    function switchTab(tabName) {
+    window.switchTab = function(tabName, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + tabName).classList.add('active');
-      event.target.classList.add('active');
-
+      if (btn) btn.classList.add('active');
       document.getElementById('add-product-btn').style.display = tabName === 'products' ? 'block' : 'none';
-
       refreshAllData();
-    }
+    };
 
-    function openProductModal() {
+    window.openProductModal = function() {
       document.getElementById('product-modal').style.display = 'flex';
-    }
+    };
 
-    function openDropModal() {
+    window.openDropModal = function() {
       document.getElementById('drop-modal').style.display = 'flex';
-    }
+    };
 
-    function openAnnouncementModal() {
-      document.querySelector('.announcement-textarea')?.focus();
-    }
+    window.openAnnouncementModal = function() {
+      window.createAnnouncementCard();
+    };
 
-    function closeModal(modalId) {
+    window.closeModal = function(modalId) {
       document.getElementById(modalId).style.display = 'none';
-    }
+    };
 
-    function saveProduct() {
+    window.saveProduct = async function() {
       const name = document.getElementById('prod-name').value.trim();
       const price = parseFloat(document.getElementById('prod-price').value);
-
-      if (!name || !price) {
-        alert('Name and price are required.');
-        return;
-      }
-
-      const products = DB.get('products');
-      products.push({
-        id: Date.now(),
+      if (!name || !price) { alert('Name and price are required.'); return; }
+      await addDoc(collection(db, 'products'), {
         name,
         desc: document.getElementById('prod-desc').value.trim(),
         price,
@@ -875,70 +867,55 @@
         image: null,
         created: new Date().toISOString()
       });
-
-      DB.set('products', products);
-      closeModal('product-modal');
-      document.getElementById('prod-name').value = '';
+      window.closeModal('product-modal');
+      ['prod-name', 'prod-desc', 'prod-category'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('prod-price').value = '';
-      document.getElementById('prod-desc').value = '';
-      document.getElementById('prod-category').value = '';
       document.getElementById('prod-stock').value = '100';
       document.getElementById('prod-live').checked = false;
-      refreshAllData();
-    }
+      await refreshAllData();
+    };
 
-    function deleteProduct(id) {
+    window.deleteProduct = async function(id) {
       if (!confirm('Delete this product?')) return;
-      const products = DB.get('products').filter(p => p.id !== id);
-      DB.set('products', products);
-      refreshAllData();
-    }
+      await deleteDoc(doc(db, 'products', id));
+      await refreshAllData();
+    };
 
-    function scheduleDrop() {
+    window.scheduleDrop = async function() {
       const product = document.getElementById('drop-product').value.trim();
       const date = document.getElementById('drop-date').value;
       const quantity = parseInt(document.getElementById('drop-quantity').value);
-
-      if (!product || !date || !quantity) {
-        alert('All fields are required.');
-        return;
-      }
-
-      const drops = DB.get('drops');
-      drops.push({
-        id: Date.now(),
-        product,
-        date,
-        quantity,
+      if (!product || !date || !quantity) { alert('All fields are required.'); return; }
+      await addDoc(collection(db, 'drops'), {
+        product, date, quantity,
         created: new Date().toISOString()
       });
-
-      DB.set('drops', drops);
-      closeModal('drop-modal');
+      window.closeModal('drop-modal');
       document.getElementById('drop-product').value = '';
       document.getElementById('drop-date').value = '';
       document.getElementById('drop-quantity').value = '100';
-      refreshAllData();
-    }
+      await refreshAllData();
+    };
 
-    function refreshAllData() {
-      refreshProducts();
-      refreshApplications();
-      refreshMembers();
+    async function refreshAllData() {
+      await Promise.all([
+        refreshProducts(),
+        refreshApplications(),
+        refreshMembers(),
+        refreshAnnouncements(),
+        refreshDrops()
+      ]);
       refreshAnalytics();
-      refreshAnnouncements();
-      refreshDrops();
     }
 
-    function refreshProducts() {
+    async function refreshProducts() {
       const container = document.getElementById('products-grid');
-      const products = DB.get('products');
-
+      const snap = await getDocs(collection(db, 'products'));
+      const products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if (products.length === 0) {
         container.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-icon">📦</div><div class="empty-title">No Products Yet</div></div>';
         return;
       }
-
       container.innerHTML = products.map(p => `
         <div class="product-card">
           <div class="product-image">
@@ -947,84 +924,86 @@
           <div class="product-info">
             <div class="product-header">
               <div class="product-name">${p.name}</div>
-              <div class="product-price">$${p.price.toFixed(2)}</div>
+              <div class="product-price">£${parseFloat(p.price).toFixed(2)}</div>
             </div>
-            <div class="product-desc">${p.desc}</div>
+            <div class="product-desc">${p.desc || ''}</div>
             <div class="product-meta">
-              <span>${p.category}</span>
-              <span>Stock: ${p.stock}</span>
+              <span>${p.category || 'Apparel'}</span>
+              <span>Stock: ${p.stock || 0}</span>
             </div>
             <div class="product-actions">
               <button class="product-edit-btn">✏ Edit</button>
               <button class="btn-icon" onclick="alert('Email feature coming soon')">✉</button>
-              <button class="btn-icon delete" onclick="deleteProduct(${p.id})">🗑</button>
+              <button class="btn-icon delete" onclick="deleteProduct('${p.id}')">🗑</button>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    function refreshApplications() {
+    async function refreshApplications() {
       const container = document.getElementById('applications-list');
-      const applications = DB.get('applications');
-
+      const snap = await getDocs(collection(db, 'applications'));
+      const applications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if (applications.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No Applications Yet</div></div>';
         return;
       }
-
       container.innerHTML = applications.map(app => `
         <div class="application-card">
           <div class="application-header">
             <div>
-              <div class="application-name">${app.name}</div>
-              <div class="application-meta">${app.email}</div>
+              <div class="application-name">${app.name || '—'}</div>
+              <div class="application-meta">${app.email || '—'}</div>
               <div class="application-meta">Quiz Result: ${app.quizResult || 'N/A'}</div>
             </div>
             <div class="application-actions">
-              <button class="application-btn approve" onclick="approveApplication(${app.id})">Approve</button>
-              <button class="application-btn reject" onclick="rejectApplication(${app.id})">Reject</button>
+              <button class="application-btn approve" onclick="approveApplication('${app.id}')">Approve</button>
+              <button class="application-btn reject" onclick="rejectApplication('${app.id}')">Reject</button>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    function approveApplication(id) {
-      const applications = DB.get('applications').filter(a => a.id !== id);
-      DB.set('applications', applications);
-      const members = DB.get('members');
-      const app = DB.get('applications').find(a => a.id === id);
-      if (app) {
-        members.push({ id: Date.now(), name: app.name, email: app.email, joined: new Date().toISOString() });
-        DB.set('members', members);
+    window.approveApplication = async function(id) {
+      const snap = await getDocs(collection(db, 'applications'));
+      const appDoc = snap.docs.find(d => d.id === id);
+      if (appDoc) {
+        const appData = appDoc.data();
+        await addDoc(collection(db, 'members'), {
+          name: appData.name || '',
+          email: appData.email || '',
+          quizResult: appData.quizResult || '',
+          tshirt_size: appData.tshirt_size || '',
+          joined: new Date().toISOString()
+        });
+        await deleteDoc(doc(db, 'applications', id));
       }
-      refreshAllData();
-    }
+      await refreshAllData();
+    };
 
-    function rejectApplication(id) {
-      const applications = DB.get('applications').filter(a => a.id !== id);
-      DB.set('applications', applications);
-      refreshAllData();
-    }
+    window.rejectApplication = async function(id) {
+      await deleteDoc(doc(db, 'applications', id));
+      await refreshAllData();
+    };
 
-    function refreshMembers() {
+    async function refreshMembers() {
       const container = document.getElementById('members-list');
-      const members = DB.get('members');
-
+      const snap = await getDocs(collection(db, 'members'));
+      const members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if (members.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No Members Yet</div></div>';
         return;
       }
-
       container.innerHTML = members.map(m => {
         const joined = new Date(m.joined);
-        const dateStr = joined.toLocaleDateString('en-GB');
+        const dateStr = isNaN(joined) ? '—' : joined.toLocaleDateString('en-GB');
         return `
           <div class="member-card">
             <div class="member-info">
-              <div class="member-name">${m.name}</div>
-              <div class="member-detail">${m.email}</div>
+              <div class="member-name">${m.name || m.email || '—'}</div>
+              <div class="member-detail">${m.email || '—'}</div>
               <div class="member-detail">Joined: ${dateStr}</div>
             </div>
             <div class="member-icon">👤</div>
@@ -1034,93 +1013,23 @@
     }
 
     function refreshAnalytics() {
-      const statsContainer = document.getElementById('analytics-stats');
-      statsContainer.innerHTML = `
-        <div class="stat-card">
-          <div class="stat-icon">📊</div>
-          <div class="stat-label">Page Views</div>
-          <div class="stat-value">1,234</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">👁</div>
-          <div class="stat-label">Unique Sessions</div>
-          <div class="stat-value">456</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏱</div>
-          <div class="stat-label">Avg Time on Page</div>
-          <div class="stat-value">3m 24s</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">🛒</div>
-          <div class="stat-label">Abandoned Carts</div>
-          <div class="stat-value">23</div>
-        </div>
+      document.getElementById('analytics-stats').innerHTML = `
+        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">Page Views</div><div class="stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-icon">👁</div><div class="stat-label">Unique Sessions</div><div class="stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-icon">⏱</div><div class="stat-label">Avg Time on Page</div><div class="stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-label">Abandoned Carts</div><div class="stat-value">—</div></div>
       `;
-
-      document.getElementById('top-pages-list').innerHTML = `
-        <div class="list-item">
-          <span class="list-label">/shop</span>
-          <span class="list-value">456 views</span>
-        </div>
-        <div class="list-item">
-          <span class="list-label">/products/featured</span>
-          <span class="list-value">234 views</span>
-        </div>
-        <div class="list-item">
-          <span class="list-label">/membership</span>
-          <span class="list-value">189 views</span>
-        </div>
-      `;
-
-      document.getElementById('top-products-list').innerHTML = `
-        <div class="empty-state" style="padding: 2rem;">
-          <div class="empty-icon">📦</div>
-          <div class="empty-title">No product views yet</div>
-        </div>
-      `;
-
-      document.getElementById('abandoned-carts-list').innerHTML = `
-        <div class="list-item">
-          <span class="list-label">user@example.com</span>
-          <span class="list-value">$127.50</span>
-        </div>
-        <div class="list-item">
-          <span class="list-label">member@dirtbox.com</span>
-          <span class="list-value">$89.99</span>
-        </div>
-        <div class="list-item">
-          <span class="list-label">customer@mail.com</span>
-          <span class="list-value">$199.00</span>
-        </div>
-      `;
-
-      document.getElementById('recent-activity-list').innerHTML = `
-        <div class="activity-item">
-          <div class="activity-info">
-            <div class="activity-time">2:34 PM - /shop</div>
-            <span class="activity-type page-view">page view</span>
-          </div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-info">
-            <div class="activity-time">2:12 PM - /products/villain-era-hoodie</div>
-            <span class="activity-type time-on-page">time on page</span>
-          </div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-info">
-            <div class="activity-time">1:45 PM - /membership</div>
-            <span class="activity-type page-view">page view</span>
-          </div>
-        </div>
-      `;
+      const placeholder = '<div class="empty-state" style="padding:1.5rem;"><div class="empty-desc" style="font-size:0.75rem;color:#777;">Analytics integration coming soon</div></div>';
+      document.getElementById('top-pages-list').innerHTML = placeholder;
+      document.getElementById('top-products-list').innerHTML = placeholder;
+      document.getElementById('abandoned-carts-list').innerHTML = placeholder;
+      document.getElementById('recent-activity-list').innerHTML = placeholder;
     }
 
-    function refreshAnnouncements() {
+    async function refreshAnnouncements() {
       const container = document.getElementById('announcements-container');
-      const announcements = DB.get('announcements');
-
+      const snap = await getDocs(collection(db, 'announcements'));
+      const announcements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if (announcements.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
@@ -1132,42 +1041,35 @@
         `;
         return;
       }
-
       container.innerHTML = announcements.map(a => `
         <div class="card">
           <div class="card-title">${a.title || 'Announcement'}</div>
           <p style="color: #999; font-size: 0.75rem; margin-bottom: 1rem;">${a.content}</p>
-          <button class="btn-icon delete" onclick="deleteAnnouncement(${a.id})">🗑</button>
+          <button class="btn-icon delete" onclick="deleteAnnouncement('${a.id}')">🗑</button>
         </div>
       `).join('');
     }
 
-    function createAnnouncementCard() {
+    window.createAnnouncementCard = async function() {
       const text = prompt('Enter announcement text:');
       if (!text) return;
-
-      const announcements = DB.get('announcements');
-      announcements.push({
-        id: Date.now(),
+      await addDoc(collection(db, 'announcements'), {
         title: 'New Announcement',
         content: text,
         created: new Date().toISOString()
       });
+      await refreshAllData();
+    };
 
-      DB.set('announcements', announcements);
-      refreshAllData();
-    }
+    window.deleteAnnouncement = async function(id) {
+      await deleteDoc(doc(db, 'announcements', id));
+      await refreshAllData();
+    };
 
-    function deleteAnnouncement(id) {
-      const announcements = DB.get('announcements').filter(a => a.id !== id);
-      DB.set('announcements', announcements);
-      refreshAllData();
-    }
-
-    function refreshDrops() {
+    async function refreshDrops() {
       const container = document.getElementById('drops-container');
-      const drops = DB.get('drops');
-
+      const snap = await getDocs(collection(db, 'drops'));
+      const drops = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if (drops.length === 0) {
         container.innerHTML = `
           <div class="empty-state">
@@ -1178,7 +1080,6 @@
         `;
         return;
       }
-
       container.innerHTML = drops.map(d => `
         <div class="card">
           <div class="card-title">${d.product}</div>
@@ -1186,26 +1087,25 @@
             <div>Date: ${new Date(d.date).toLocaleString()}</div>
             <div>Quantity: ${d.quantity}</div>
           </div>
-          <button class="btn-icon delete" onclick="deleteDrop(${d.id})">🗑</button>
+          <button class="btn-icon delete" onclick="deleteDrop('${d.id}')">🗑</button>
         </div>
       `).join('');
     }
 
-    function deleteDrop(id) {
+    window.deleteDrop = async function(id) {
       if (!confirm('Delete this drop?')) return;
-      const drops = DB.get('drops').filter(d => d.id !== id);
-      DB.set('drops', drops);
-      refreshAllData();
-    }
+      await deleteDoc(doc(db, 'drops', id));
+      await refreshAllData();
+    };
 
-    function sendWeeklyReport() {
+    window.sendWeeklyReport = function() {
       alert('Weekly report would be sent via email.');
-    }
+    };
 
-    function logout() {
-      sessionStorage.removeItem('dbc_admin_auth');
+    window.logout = async function() {
+      await signOut(auth);
       window.location = 'admin-login.html';
-    }
+    };
   </script>
 </body>
 </html>

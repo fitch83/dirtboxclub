@@ -280,20 +280,46 @@
   </div>
 </div>
 
-<script>
-  function memberLogin() {
-    const email = document.getElementById('member-email').value;
-    const pass = document.getElementById('member-pass').value;
-    const members = JSON.parse(localStorage.getItem('dbc_members') || '[]');
-    const member = members.find(m => m.email === email);
-    if (member) {
-      sessionStorage.setItem('dbc_member', JSON.stringify(member));
-      window.location = 'members-area.html';
-    } else {
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+    authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+    projectId: "dirtboxclub-3d7a7",
+    storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+    messagingSenderId: "883493757389",
+    appId: "1:883493757389:web:749f668e2655fd168fe484"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.memberLogin = async function() {
+    const email = document.getElementById('member-email').value.trim().toLowerCase();
+    if (!email) {
+      document.getElementById('login-error').classList.add('show');
+      return;
+    }
+    try {
+      const q = query(collection(db, 'members'), where('email', '==', email));
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const memberData = { id: snap.docs[0].id, ...snap.docs[0].data() };
+        sessionStorage.setItem('dbc_member', JSON.stringify(memberData));
+        window.location = 'members-area.html';
+      } else {
+        document.getElementById('login-error').classList.add('show');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
       document.getElementById('login-error').classList.add('show');
     }
-  }
-  document.getElementById('member-pass').addEventListener('keydown', e => { if (e.key === 'Enter') memberLogin(); });
+  };
+
+  document.getElementById('member-pass').addEventListener('keydown', e => { if (e.key === 'Enter') window.memberLogin(); });
+  document.getElementById('member-email').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('member-pass').focus(); });
 </script>
 
 </body>

@@ -516,12 +516,17 @@
   if (!member) {
     window.location = 'members-login.html';
   } else {
-    document.getElementById('member-name').textContent = (member.first_name || 'MEMBER').toUpperCase();
-    document.getElementById('member-diagnosis').textContent = (member.quiz_result || 'DIRT BOX').toUpperCase();
-    document.getElementById('card-email').textContent = member.email;
-    document.getElementById('card-diagnosis').textContent = member.quiz_result || '—';
+    // Support both old localStorage field names and new Firestore field names
+    const firstName = (member.first_name || (member.name ? member.name.split(' ')[0] : '') || 'MEMBER').toUpperCase();
+    const diagnosis = (member.quiz_result || member.quizResult || 'DIRT BOX').toUpperCase();
+    const joinedDate = member.signed_up_at || member.joined;
+
+    document.getElementById('member-name').textContent = firstName;
+    document.getElementById('member-diagnosis').textContent = diagnosis;
+    document.getElementById('card-email').textContent = member.email || '—';
+    document.getElementById('card-diagnosis').textContent = member.quiz_result || member.quizResult || '—';
     document.getElementById('card-size').textContent = member.tshirt_size || '—';
-    document.getElementById('card-joined').textContent = member.signed_up_at ? new Date(member.signed_up_at).toLocaleDateString() : '—';
+    document.getElementById('card-joined').textContent = joinedDate ? new Date(joinedDate).toLocaleDateString() : '—';
   }
 
   function copyCode(el) {

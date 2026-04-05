@@ -224,22 +224,37 @@
   </div>
 </div>
 
-<script>
-  // Auth — credentials hardcoded here (will be replaced by Firebase Auth)
-  const ADMIN_USER = 'admin';
-  const ADMIN_PASS = 'dirtbox2026';
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  function attemptLogin() {
-    const user = document.getElementById('login-user').value.trim();
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+    authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+    projectId: "dirtboxclub-3d7a7",
+    storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+    messagingSenderId: "883493757389",
+    appId: "1:883493757389:web:749f668e2655fd168fe484"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  window.attemptLogin = async function() {
     const pass = document.getElementById('login-pass').value;
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
-      sessionStorage.setItem('dbc_admin_auth', 'true');
+    if (!pass) {
+      document.getElementById('login-error').classList.add('show');
+      return;
+    }
+    try {
+      await signInWithEmailAndPassword(auth, 'admin@dirtboxclub.com', pass);
       window.location = 'dashboard.html';
-    } else {
+    } catch (err) {
       document.getElementById('login-error').classList.add('show');
     }
-  }
-  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
+  };
+
+  document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') window.attemptLogin(); });
   document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
 </script>
 
