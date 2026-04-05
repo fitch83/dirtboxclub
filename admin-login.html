@@ -225,12 +225,14 @@
 </div>
 
 <script>
-  // Simple auth — replace with proper backend auth for production
+  // Auth — credentials hardcoded here (will be replaced by Firebase Auth)
+  const ADMIN_USER = 'admin';
+  const ADMIN_PASS = 'dirtbox2026';
+
   function attemptLogin() {
-    const user = document.getElementById('login-user').value;
+    const user = document.getElementById('login-user').value.trim();
     const pass = document.getElementById('login-pass').value;
-    const stored = JSON.parse(localStorage.getItem('dbc_admin_creds') || '{"user":"admin","pass":"dirtbox2026"}');
-    if (user === stored.user && pass === stored.pass) {
+    if (user === ADMIN_USER && pass === ADMIN_PASS) {
       sessionStorage.setItem('dbc_admin_auth', 'true');
       window.location = 'dashboard.html';
     } else {
