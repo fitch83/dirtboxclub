@@ -559,6 +559,172 @@
       font-weight: 600;
     }
 
+    /* ORDERS BADGE */
+    .orders-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #e63226;
+      color: #fff;
+      font-size: 0.6rem;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      padding: 0 5px;
+      margin-left: 4px;
+      animation: pulse-badge 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-badge {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    /* ORDER CARDS */
+    .order-card {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s;
+    }
+    .order-card.unreviewed {
+      border-left: 3px solid #e63226;
+    }
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .order-ref {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .order-meta {
+      font-size: 0.7rem;
+      color: #777;
+      margin-top: 0.2rem;
+    }
+    .order-status-badge {
+      font-size: 0.6rem;
+      letter-spacing: 0.06em;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .status-pending    { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .status-confirmed  { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+    .status-dispatched { background: rgba(14,165,233,0.15); color: #38bdf8; border: 1px solid rgba(14,165,233,0.3); }
+    .status-delivered  { background: rgba(34,197,94,0.15);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+
+    .order-items-preview {
+      font-size: 0.72rem;
+      color: #999;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+    .order-total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #777;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .order-total-row span:last-child { color: #e63226; font-size: 0.9rem; }
+
+    .order-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .order-actions select {
+      background: #111;
+      border: 1px solid #2a2a2a;
+      color: #fff;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.65rem;
+      cursor: pointer;
+      flex: 1;
+      min-width: 150px;
+    }
+    .btn-small {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.65rem;
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #999;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Boldonse', sans-serif;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-small:hover { color: #fff; border-color: #666; }
+    .btn-small.blue  { border-color: rgba(14,165,233,0.4); color: #38bdf8; }
+    .btn-small.blue:hover { background: rgba(14,165,233,0.1); }
+    .btn-small.green { border-color: rgba(34,197,94,0.4); color: #22c55e; }
+    .btn-small.green:hover { background: rgba(34,197,94,0.1); }
+
+    /* MODAL BASE */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-box {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 1.1rem; margin-bottom: 1.5rem; }
+    .modal-label {
+      display: block;
+      font-size: 0.7rem;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+    .modal-input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+    .modal-input:focus { outline: none; border-color: #e63226; }
+    textarea.modal-input { min-height: 100px; resize: vertical; }
+    .modal-info {
+      font-size: 0.7rem;
+      color: #777;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+    .modal-info strong { color: #fff; }
+
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .product-grid {
@@ -615,6 +781,7 @@
   <!-- TAB BAR -->
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('products', this)">📦 Products</button>
+    <button class="tab-btn" id="orders-tab-btn" onclick="switchTab('orders', this)">🛒 Orders <span id="new-orders-badge" class="orders-badge" style="display:none">0</span></button>
     <button class="tab-btn" onclick="switchTab('applications', this)">📋 Applications</button>
     <button class="tab-btn" onclick="switchTab('members', this)">👥 Members</button>
     <button class="tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
@@ -627,6 +794,26 @@
     <!-- PRODUCTS TAB -->
     <div id="tab-products" class="tab-content active">
       <div id="products-grid" class="product-grid"></div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div id="tab-orders" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Orders</h2>
+          <p>Manage customer orders and send updates</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <select id="orders-status-filter" onchange="filterOrders(this.value)" style="background:#1c1c1c;border:1px solid #2a2a2a;color:#999;padding:0.5rem 0.8rem;border-radius:6px;font-family:'Boldonse',sans-serif;font-size:0.7rem;cursor:pointer">
+            <option value="all">All Orders</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="dispatched">Dispatched</option>
+            <option value="delivered">Delivered</option>
+          </select>
+        </div>
+      </div>
+      <div id="orders-list"></div>
     </div>
 
     <!-- APPLICATIONS TAB -->
@@ -696,7 +883,47 @@
     </div>
   </div>
 
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
   <!-- MODALS -->
+
+  <!-- Shipping Update Modal -->
+  <div id="shipping-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h2 class="modal-title">📦 Send Shipping Update</h2>
+      <div class="modal-info" id="shipping-modal-info">Sending shipping update to <strong id="shipping-to-email">—</strong> for order <strong id="shipping-order-ref">—</strong></div>
+      <label class="modal-label">Tracking Number</label>
+      <input id="shipping-tracking" type="text" class="modal-input" placeholder="e.g. JD123456789GB">
+      <label class="modal-label">Carrier</label>
+      <input id="shipping-carrier" type="text" class="modal-input" placeholder="e.g. Royal Mail, DPD, Evri">
+      <label class="modal-label">Estimated Delivery</label>
+      <input id="shipping-eta" type="text" class="modal-input" placeholder="e.g. 2–3 business days">
+      <label class="modal-label">Tracking URL (optional)</label>
+      <input id="shipping-tracking-url" type="text" class="modal-input" placeholder="https://track.royalmail.com/...">
+      <div style="display:flex;gap:0.8rem;margin-top:0.5rem">
+        <button class="btn" onclick="confirmSendShipping()" style="flex:1">Send Update</button>
+        <button class="btn btn-outlined" onclick="closeOrderModal('shipping-modal')" style="flex:1">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Message Modal -->
+  <div id="custom-msg-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h2 class="modal-title">✉ Send Message to Customer</h2>
+      <div class="modal-info">Sending to <strong id="msg-to-email">—</strong> for order <strong id="msg-order-ref">—</strong></div>
+      <label class="modal-label">Subject</label>
+      <input id="msg-subject" type="text" class="modal-input" placeholder="e.g. Update on your order">
+      <label class="modal-label">Message</label>
+      <textarea id="msg-body" class="modal-input" placeholder="Type your message to the customer..."></textarea>
+      <div style="display:flex;gap:0.8rem;margin-top:0.5rem">
+        <button class="btn" onclick="confirmSendCustomMsg()" style="flex:1">Send Message</button>
+        <button class="btn btn-outlined" onclick="closeOrderModal('custom-msg-modal')" style="flex:1">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Product Modal -->
   <div id="product-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center;">
     <div style="background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 10px; padding: 2rem; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
@@ -769,7 +996,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, writeBatch, updateDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
@@ -783,6 +1010,21 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    // ─── EmailJS config ─────────────────────────────────────────────
+    // Matt: fill these in after setting up EmailJS (see setup guide)
+    const EMAILJS_PUBLIC_KEY          = 'YOUR_EMAILJS_PUBLIC_KEY';
+    const EMAILJS_SERVICE_ID          = 'YOUR_EMAILJS_SERVICE_ID';
+    const EMAILJS_SHIPPING_TEMPLATE   = 'dbc_shipping_update';
+    const EMAILJS_CUSTOM_MSG_TEMPLATE = 'dbc_custom_message';
+    const EMAILJS_STATUS_TEMPLATE     = 'dbc_status_update';
+
+    if (EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+
+    // Helper: format currency
+    function fmt(p) { return '£' + parseFloat(p || 0).toFixed(2); }
 
     // Hide page until auth confirmed
     document.body.style.visibility = 'hidden';
@@ -834,7 +1076,9 @@
       document.getElementById('tab-' + tabName).classList.add('active');
       if (btn) btn.classList.add('active');
       document.getElementById('add-product-btn').style.display = tabName === 'products' ? 'block' : 'none';
-      refreshAllData();
+      // When switching to orders tab, refresh and clear badge
+      if (tabName === 'orders') refreshOrders();
+      else refreshAllData();
     };
 
     window.openProductModal = function() {
@@ -900,6 +1144,7 @@
     async function refreshAllData() {
       await Promise.all([
         refreshProducts(),
+        refreshOrders(),
         refreshApplications(),
         refreshMembers(),
         refreshAnnouncements(),
@@ -1097,6 +1342,309 @@
       await deleteDoc(doc(db, 'drops', id));
       await refreshAllData();
     };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  ORDERS
+    // ─────────────────────────────────────────────────────────────────
+
+    let allOrders      = [];
+    let activeOrderFilter = 'all';
+    let pendingShipOrder  = null;
+    let pendingMsgOrder   = null;
+
+    const STATUS_ORDER = ['pending', 'confirmed', 'dispatched', 'delivered'];
+
+    function statusLabel(s) {
+      const map = { pending: '⏳ Pending', confirmed: '✅ Confirmed', dispatched: '🚚 Dispatched', delivered: '📬 Delivered' };
+      return map[s] || s;
+    }
+
+    function statusClass(s) { return 'status-' + (s || 'pending'); }
+
+    async function refreshOrders() {
+      const container = document.getElementById('orders-list');
+      if (!container) return;
+      container.innerHTML = '<div style="color:#777;font-size:0.75rem;padding:1rem 0">Loading orders...</div>';
+
+      try {
+        const snap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt', 'desc')));
+        allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch(e) {
+        // Fallback if index not ready
+        const snap = await getDocs(collection(db, 'orders'));
+        allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        allOrders.sort((a, b) => {
+          const ta = a.createdAt?.seconds || 0;
+          const tb = b.createdAt?.seconds || 0;
+          return tb - ta;
+        });
+      }
+
+      // Update badge
+      const unreviewed = allOrders.filter(o => !o.reviewed).length;
+      const badge = document.getElementById('new-orders-badge');
+      if (badge) {
+        if (unreviewed > 0) { badge.textContent = unreviewed; badge.style.display = 'inline-flex'; }
+        else { badge.style.display = 'none'; }
+      }
+
+      renderOrderList();
+    }
+
+    function renderOrderList() {
+      const container = document.getElementById('orders-list');
+      if (!container) return;
+
+      const filtered = activeOrderFilter === 'all'
+        ? allOrders
+        : allOrders.filter(o => (o.status || 'pending') === activeOrderFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🛒</div>
+            <div class="empty-title">No Orders Yet</div>
+            <div class="empty-desc">Orders will appear here when customers complete checkout via Stripe.</div>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(order => {
+        const status    = order.status || 'pending';
+        const items     = order.items || [];
+        const itemsText = items.length > 0
+          ? items.map(i => `${i.name} × ${i.qty || 1}`).join(', ')
+          : 'No item details';
+        const createdStr = order.createdAt
+          ? (order.createdAt.seconds
+              ? new Date(order.createdAt.seconds * 1000).toLocaleString('en-GB')
+              : new Date(order.createdAt).toLocaleString('en-GB'))
+          : '—';
+        const isUnreviewed = !order.reviewed;
+
+        // Status step progress bar
+        const stepIdx = STATUS_ORDER.indexOf(status);
+        const stepsHtml = STATUS_ORDER.map((s, i) => `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;flex:1">
+            <div style="width:24px;height:24px;border-radius:50%;border:2px solid ${i <= stepIdx ? '#e63226' : '#2a2a2a'};background:${i <= stepIdx ? '#e63226' : 'transparent'};display:flex;align-items:center;justify-content:center;font-size:0.5rem;color:${i <= stepIdx ? '#fff' : '#555'}">${i <= stepIdx ? '✓' : i + 1}</div>
+            <span style="font-size:0.55rem;color:${i <= stepIdx ? '#fff' : '#555'};text-transform:uppercase;letter-spacing:0.05em">${s}</span>
+          </div>
+          ${i < STATUS_ORDER.length - 1 ? `<div style="flex:1;height:2px;background:${i < stepIdx ? '#e63226' : '#2a2a2a'};margin-top:11px;max-width:40px"></div>` : ''}
+        `).join('');
+
+        // Next status options
+        const nextOptions = STATUS_ORDER
+          .filter(s => s !== status)
+          .map(s => `<option value="${s}">${statusLabel(s)}</option>`)
+          .join('');
+
+        return `
+          <div class="order-card ${isUnreviewed ? 'unreviewed' : ''}" id="order-card-${order.id}">
+            <div class="order-card-header">
+              <div>
+                <div class="order-ref">${order.ref || order.id.slice(0,8).toUpperCase()}</div>
+                <div class="order-meta">${order.customerName || '—'} &nbsp;·&nbsp; ${order.customerEmail || '—'}</div>
+                <div class="order-meta">${createdStr}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem">
+                <span class="order-status-badge ${statusClass(status)}">${statusLabel(status)}</span>
+                ${isUnreviewed ? `<button class="btn-small" onclick="markReviewed('${order.id}')">Mark reviewed</button>` : ''}
+              </div>
+            </div>
+
+            <div class="order-items-preview">${itemsText}</div>
+
+            <div class="order-total-row">
+              <span>Order Total</span>
+              <span>${fmt(order.total)}</span>
+            </div>
+
+            <!-- Status progress -->
+            <div style="display:flex;align-items:center;margin-bottom:1.2rem">${stepsHtml}</div>
+
+            <!-- Actions -->
+            <div class="order-actions">
+              <select onchange="updateOrderStatus('${order.id}', this.value, this)">
+                <option value="">Change status...</option>
+                ${nextOptions}
+              </select>
+              <button class="btn-small blue" onclick="openShippingModal('${order.id}')">📦 Shipping Update</button>
+              <button class="btn-small" onclick="openCustomMsgModal('${order.id}')">✉ Send Message</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.filterOrders = function(val) {
+      activeOrderFilter = val;
+      renderOrderList();
+    };
+
+    window.markReviewed = async function(orderId) {
+      try {
+        await updateDoc(doc(db, 'orders', orderId), { reviewed: true });
+        const o = allOrders.find(x => x.id === orderId);
+        if (o) o.reviewed = true;
+        // Update badge
+        const unreviewed = allOrders.filter(o => !o.reviewed).length;
+        const badge = document.getElementById('new-orders-badge');
+        if (badge) {
+          if (unreviewed > 0) { badge.textContent = unreviewed; badge.style.display = 'inline-flex'; }
+          else { badge.style.display = 'none'; }
+        }
+        renderOrderList();
+      } catch(e) { alert('Could not update order: ' + e.message); }
+    };
+
+    window.updateOrderStatus = async function(orderId, newStatus, selectEl) {
+      if (!newStatus) return;
+      const order = allOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const confirmMsg = `Move order ${order.ref || orderId} to "${statusLabel(newStatus)}"?`;
+      if (!confirm(confirmMsg)) { if (selectEl) selectEl.value = ''; return; }
+
+      try {
+        await updateDoc(doc(db, 'orders', orderId), {
+          status: newStatus,
+          [`statusHistory.${newStatus}`]: new Date().toISOString()
+        });
+        order.status = newStatus;
+
+        // Optionally send a status update email to customer
+        if (order.customerEmail && newStatus !== 'pending') {
+          const sendEmail = confirm(`Send a status update email to ${order.customerEmail}?`);
+          if (sendEmail && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+            try {
+              await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_STATUS_TEMPLATE, {
+                to_email:    order.customerEmail,
+                to_name:     order.customerName || 'there',
+                order_ref:   order.ref || orderId,
+                new_status:  statusLabel(newStatus),
+                shop_url:    'https://fitch83.github.io/dirtboxclub/shop.html'
+              });
+            } catch(e) { console.warn('Status email failed:', e); }
+          }
+        }
+
+        renderOrderList();
+      } catch(e) { alert('Could not update status: ' + e.message); if (selectEl) selectEl.value = ''; }
+    };
+
+    // ── Shipping Update Modal ──────────────────────────────────────
+
+    window.openShippingModal = function(orderId) {
+      pendingShipOrder = allOrders.find(o => o.id === orderId);
+      if (!pendingShipOrder) return;
+      document.getElementById('shipping-to-email').textContent  = pendingShipOrder.customerEmail || '—';
+      document.getElementById('shipping-order-ref').textContent = pendingShipOrder.ref || orderId;
+      document.getElementById('shipping-tracking').value     = '';
+      document.getElementById('shipping-carrier').value      = '';
+      document.getElementById('shipping-eta').value          = '3–5 business days';
+      document.getElementById('shipping-tracking-url').value = '';
+      document.getElementById('shipping-modal').style.display = 'flex';
+    };
+
+    window.confirmSendShipping = async function() {
+      if (!pendingShipOrder) return;
+      const tracking    = document.getElementById('shipping-tracking').value.trim();
+      const carrier     = document.getElementById('shipping-carrier').value.trim();
+      const eta         = document.getElementById('shipping-eta').value.trim();
+      const trackingUrl = document.getElementById('shipping-tracking-url').value.trim();
+
+      if (!tracking) { alert('Please enter a tracking number.'); return; }
+
+      // Update order status to dispatched
+      try {
+        await updateDoc(doc(db, 'orders', pendingShipOrder.id), {
+          status: 'dispatched',
+          trackingNumber: tracking,
+          carrier: carrier,
+          shippedAt: new Date().toISOString()
+        });
+        pendingShipOrder.status = 'dispatched';
+      } catch(e) { console.warn('Could not update order:', e); }
+
+      // Send shipping email
+      if (pendingShipOrder.customerEmail && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+        try {
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_SHIPPING_TEMPLATE, {
+            to_email:       pendingShipOrder.customerEmail,
+            to_name:        pendingShipOrder.customerName || 'there',
+            order_ref:      pendingShipOrder.ref || pendingShipOrder.id,
+            tracking_number: tracking,
+            carrier:        carrier || 'your carrier',
+            delivery_estimate: eta,
+            tracking_url:   trackingUrl || '#',
+            shop_url:       'https://fitch83.github.io/dirtboxclub/shop.html'
+          });
+          alert('✓ Shipping update sent to ' + pendingShipOrder.customerEmail);
+        } catch(e) {
+          alert('⚠ Order updated but email failed: ' + e.text || e.message);
+        }
+      } else if (EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY') {
+        alert('Order status updated to Dispatched. (EmailJS not yet configured — no email sent)');
+      } else {
+        alert('Order status updated to Dispatched. (No customer email on file)');
+      }
+
+      closeOrderModal('shipping-modal');
+      renderOrderList();
+    };
+
+    // ── Custom Message Modal ───────────────────────────────────────
+
+    window.openCustomMsgModal = function(orderId) {
+      pendingMsgOrder = allOrders.find(o => o.id === orderId);
+      if (!pendingMsgOrder) return;
+      document.getElementById('msg-to-email').textContent  = pendingMsgOrder.customerEmail || '—';
+      document.getElementById('msg-order-ref').textContent = pendingMsgOrder.ref || orderId;
+      document.getElementById('msg-subject').value = 'Update on your Dirtbox Club order';
+      document.getElementById('msg-body').value    = '';
+      document.getElementById('custom-msg-modal').style.display = 'flex';
+    };
+
+    window.confirmSendCustomMsg = async function() {
+      if (!pendingMsgOrder) return;
+      const subject = document.getElementById('msg-subject').value.trim();
+      const body    = document.getElementById('msg-body').value.trim();
+
+      if (!body) { alert('Please enter a message.'); return; }
+      if (!pendingMsgOrder.customerEmail) { alert('No customer email on this order.'); return; }
+
+      if (EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY') {
+        alert('EmailJS not yet configured — set up EmailJS first to send emails.');
+        return;
+      }
+
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOM_MSG_TEMPLATE, {
+          to_email:    pendingMsgOrder.customerEmail,
+          to_name:     pendingMsgOrder.customerName || 'there',
+          order_ref:   pendingMsgOrder.ref || pendingMsgOrder.id,
+          subject:     subject,
+          message:     body,
+          shop_url:    'https://fitch83.github.io/dirtboxclub/shop.html'
+        });
+        alert('✓ Message sent to ' + pendingMsgOrder.customerEmail);
+        closeOrderModal('custom-msg-modal');
+      } catch(e) {
+        alert('⚠ Could not send message: ' + (e.text || e.message));
+      }
+    };
+
+    window.closeOrderModal = function(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    };
+
+    // Close modals on overlay click
+    document.getElementById('shipping-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeOrderModal('shipping-modal');
+    });
+    document.getElementById('custom-msg-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeOrderModal('custom-msg-modal');
+    });
 
     window.sendWeeklyReport = function() {
       alert('Weekly report would be sent via email.');

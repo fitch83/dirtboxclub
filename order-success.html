@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIRTBOXCLUB. — Order Confirmed</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c0c0c;--card:#1c1c1c;--border:#2a2a2a;--white:#fff;--grey:#999;--faded:#777;--red:#e63226}
+body{background:var(--bg);color:var(--white);font-family:'Boldonse',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--red);color:#fff}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:0 2.5rem;height:64px;background:rgba(12,12,12,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.nav-logo img{height:48px}
+.nav-right{display:flex;align-items:center;gap:0.7rem}
+.nav-link{font-size:0.8rem;padding:0.5rem 1.3rem;background:var(--red);color:#fff;border-radius:6px;transition:opacity 0.2s}
+.nav-link:hover{opacity:0.85}
+
+/* MAIN */
+.page{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6rem 2rem 4rem;text-align:center}
+
+/* SUCCESS BADGE */
+.success-badge{display:inline-flex;align-items:center;gap:0.7rem;font-size:0.8rem;letter-spacing:0.12em;color:#22c55e;border:1.5px solid #22c55e;box-shadow:0 0 25px rgba(34,197,94,0.4),0 0 60px rgba(34,197,94,0.2);padding:0.5rem 1.8rem;border-radius:6px;margin-bottom:2.5rem;animation:greenglow 2s ease-in-out infinite}
+@keyframes greenglow{0%,100%{box-shadow:0 0 25px rgba(34,197,94,0.4),0 0 60px rgba(34,197,94,0.2)}50%{box-shadow:0 0 45px rgba(34,197,94,0.7),0 0 90px rgba(34,197,94,0.4)}}
+.success-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* CHECK MARK */
+.check-circle{width:90px;height:90px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes popIn{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.check-svg{width:40px;height:40px;stroke:#22c55e;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.check-path{stroke-dasharray:50;stroke-dashoffset:50;animation:drawCheck 0.5s 0.3s ease forwards}
+@keyframes drawCheck{to{stroke-dashoffset:0}}
+
+.page-title{font-size:clamp(2.5rem,6vw,4.5rem);line-height:1.1;margin-bottom:1rem}
+.page-title .r{color:var(--red)}
+.page-subtitle{font-size:1rem;color:var(--faded);line-height:1.8;max-width:500px;margin:0 auto 3rem}
+
+/* ORDER CARD */
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:560px;margin:0 auto 2rem;text-align:left}
+.order-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.order-id-label{font-size:0.65rem;letter-spacing:0.1em;color:var(--grey);text-transform:uppercase;margin-bottom:0.3rem}
+.order-id-val{font-size:0.95rem;color:var(--white)}
+.order-status-badge{font-size:0.65rem;letter-spacing:0.08em;padding:0.4rem 0.9rem;border-radius:20px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3)}
+
+.order-items{margin-bottom:1.5rem}
+.order-item{display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.order-item:last-child{border-bottom:none}
+.item-name{font-size:0.85rem;color:var(--white)}
+.item-qty{font-size:0.7rem;color:var(--grey);margin-top:0.2rem}
+.item-price{font-size:0.9rem;color:var(--red)}
+
+.order-totals{border-top:1px solid var(--border);padding-top:1.2rem}
+.total-row{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--grey);margin-bottom:0.6rem}
+.total-row.final{font-size:1rem;color:var(--white);margin-top:0.6rem;padding-top:0.6rem;border-top:1px solid var(--border)}
+.total-row.final span:last-child{color:var(--red)}
+
+/* NEXT STEPS */
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:560px;margin:0 auto 2.5rem;width:100%}
+@media(max-width:600px){.steps-grid{grid-template-columns:1fr}}
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.2rem;text-align:center}
+.step-icon{font-size:1.8rem;margin-bottom:0.8rem}
+.step-title{font-size:0.75rem;letter-spacing:0.05em;margin-bottom:0.5rem}
+.step-desc{font-size:0.65rem;color:var(--faded);line-height:1.6}
+
+/* ACTIONS */
+.actions{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:3rem}
+.btn-red{display:inline-flex;align-items:center;gap:0.6rem;padding:0.85rem 2rem;background:var(--red);color:#fff;font-size:0.85rem;border-radius:6px;border:none;cursor:pointer;transition:opacity 0.2s;font-family:'Boldonse',sans-serif}
+.btn-red:hover{opacity:0.85}
+.btn-outline{display:inline-flex;align-items:center;gap:0.6rem;padding:0.85rem 2rem;background:transparent;color:var(--grey);font-size:0.85rem;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:all 0.2s;font-family:'Boldonse',sans-serif}
+.btn-outline:hover{color:var(--white);border-color:#666}
+
+/* LOADING STATE */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;padding:4rem 0}
+.spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--red);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMAIL STATUS */
+.email-notice{font-size:0.75rem;color:var(--faded);display:flex;align-items:center;gap:0.5rem;justify-content:center;margin-bottom:1.5rem}
+.email-notice .dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
+.email-notice.sending .dot{background:#f59e0b;animation:blink 1s infinite}
+.email-notice.error .dot{background:var(--red)}
+
+/* FOOTER */
+.footer-strip{text-align:center;padding:2rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--faded)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html"><img src="assets/logo-nav-grid.png" alt="DIRTBOXCLUB" style="height:48px;width:auto"></a>
+  <div class="nav-right">
+    <a href="shop.html" class="nav-link">Continue Shopping</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="page" id="main-content">
+  <!-- Loading state shown first -->
+  <div class="loading-wrap" id="loading-state">
+    <div class="spinner"></div>
+    <div style="font-size:0.8rem;color:var(--faded)">Loading your order...</div>
+  </div>
+
+  <!-- Success content (hidden until order loads) -->
+  <div id="success-content" style="display:none;width:100%;max-width:560px;margin:0 auto">
+    <div class="success-badge">
+      <span class="success-dot"></span>
+      ORDER CONFIRMED
+    </div>
+
+    <div class="check-circle">
+      <svg class="check-svg" viewBox="0 0 24 24">
+        <polyline class="check-path" points="4 12 9 17 20 7"/>
+      </svg>
+    </div>
+
+    <h1 class="page-title">ORDER<br>PLACED<span class="r">.</span></h1>
+    <p class="page-subtitle">Nice one. Your order is in and we're on it. You'll get a confirmation email shortly — check your inbox (and spam, just in case).</p>
+
+    <!-- Email notice -->
+    <div class="email-notice sending" id="email-notice">
+      <span class="dot"></span>
+      <span id="email-notice-text">Sending confirmation email...</span>
+    </div>
+
+    <!-- Order card -->
+    <div class="order-card">
+      <div class="order-card-header">
+        <div>
+          <div class="order-id-label">Order Reference</div>
+          <div class="order-id-val" id="order-ref">—</div>
+        </div>
+        <div class="order-status-badge">Confirmed</div>
+      </div>
+
+      <div class="order-items" id="order-items-list">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="order-totals">
+        <div class="total-row"><span>Subtotal</span><span id="subtotal-val">—</span></div>
+        <div class="total-row"><span>Shipping</span><span id="shipping-val">—</span></div>
+        <div class="total-row final"><span>Total Paid</span><span id="total-val">—</span></div>
+      </div>
+    </div>
+
+    <!-- What happens next -->
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon">📧</div>
+        <div class="step-title">Confirmation Email</div>
+        <div class="step-desc">We've sent a confirmation to your inbox with your full order details.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">📦</div>
+        <div class="step-title">Order Preparing</div>
+        <div class="step-desc">Your order is being picked and packed. Usually ready within 1–2 business days.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🚚</div>
+        <div class="step-title">Shipping Updates</div>
+        <div class="step-desc">You'll receive a shipping email with your tracking number once dispatched.</div>
+      </div>
+    </div>
+
+    <!-- Delivery estimate -->
+    <div style="background:rgba(230,50,38,0.06);border:1px solid rgba(230,50,38,0.2);border-radius:8px;padding:1rem 1.5rem;max-width:560px;width:100%;margin:0 auto 2rem;font-size:0.75rem;color:var(--faded);text-align:center">
+      <span style="color:var(--red);margin-right:0.5rem">📅</span>
+      Estimated delivery: <span style="color:var(--white)" id="delivery-estimate">5–7 business days</span>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <a href="shop.html" class="btn-red">← Keep Shopping</a>
+      <a href="index.html" class="btn-outline">Go Home</a>
+    </div>
+  </div>
+</main>
+
+<footer class="footer-strip">
+  © 2025 DIRTBOXCLUB<span style="color:var(--red)">.</span> &nbsp;|&nbsp; Questions? <a href="mailto:info@dirtboxclub.co.uk" style="color:var(--red)">info@dirtboxclub.co.uk</a>
+</footer>
+
+<!-- Firebase + EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+    authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+    projectId: "dirtboxclub-3d7a7",
+    storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+    messagingSenderId: "883493757389",
+    appId: "1:883493757389:web:749f668e2655fd168fe484"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ─── EmailJS config ─────────────────────────────────────────────
+  // Matt: fill these in after setting up EmailJS (see setup guide)
+  const EMAILJS_PUBLIC_KEY  = 'YOUR_EMAILJS_PUBLIC_KEY';
+  const EMAILJS_SERVICE_ID  = 'YOUR_EMAILJS_SERVICE_ID';
+  const EMAILJS_CUSTOMER_TEMPLATE = 'dbc_order_confirmation';
+  const EMAILJS_ADMIN_TEMPLATE    = 'dbc_admin_new_order';
+  const ADMIN_EMAIL = 'info@dirtboxclub.co.uk';
+  // ────────────────────────────────────────────────────────────────
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  // Helper: format date for estimated delivery
+  function getDeliveryEstimate() {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+
+  // Helper: format currency
+  function fmt(p) { return '£' + parseFloat(p || 0).toFixed(2); }
+
+  // Helper: generate order reference
+  function genRef() {
+    return 'DBC-' + Date.now().toString(36).toUpperCase().slice(-6);
+  }
+
+  // Build the order items HTML string for email (plain text table)
+  function buildEmailItemsText(items) {
+    return items.map(i => `${i.name} (x${i.qty}) — ${fmt(i.price * i.qty)}`).join('\n');
+  }
+
+  // Build the order items HTML for the email template
+  function buildEmailItemsHTML(items) {
+    return items.map(i =>
+      `<tr>
+        <td style="padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:14px;color:#fff">${i.name}</td>
+        <td style="padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:14px;color:#999;text-align:center">x${i.qty}</td>
+        <td style="padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:14px;color:#e63226;text-align:right">${fmt(i.price * i.qty)}</td>
+      </tr>`
+    ).join('');
+  }
+
+  async function init() {
+    // Get order data from URL params (set by Stripe redirect) or sessionStorage
+    const params = new URLSearchParams(window.location.search);
+    const sessionId  = params.get('session_id');  // Stripe session ID
+    const orderId    = params.get('order_id');     // Our Firestore order ID
+
+    let orderData = null;
+
+    // Try loading from sessionStorage first (set at checkout)
+    const storedOrder = sessionStorage.getItem('dbc_pending_order');
+    if (storedOrder) {
+      try { orderData = JSON.parse(storedOrder); } catch(e) {}
+    }
+
+    // If we have a Firestore order ID, load from DB
+    if (orderId && !orderData) {
+      try {
+        const snap = await getDoc(doc(db, 'orders', orderId));
+        if (snap.exists()) orderData = { id: snap.id, ...snap.data() };
+      } catch(e) { console.warn('Could not load order from Firestore:', e); }
+    }
+
+    // If still no order data, show a generic confirmation
+    if (!orderData) {
+      orderData = {
+        ref: genRef(),
+        customerName: params.get('customer_name') || 'Valued Customer',
+        customerEmail: params.get('customer_email') || '',
+        items: [],
+        subtotal: 0,
+        shipping: 0,
+        total: parseFloat(params.get('total') || 0),
+        stripeSessionId: sessionId || null,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        reviewed: false
+      };
+    }
+
+    // Ensure order has a reference
+    if (!orderData.ref) orderData.ref = genRef();
+
+    // Save order to Firestore (if not already saved)
+    let firestoreId = orderData.id || orderId;
+    if (!firestoreId) {
+      try {
+        const docRef = await addDoc(collection(db, 'orders'), {
+          ref: orderData.ref,
+          customerName: orderData.customerName || '',
+          customerEmail: orderData.customerEmail || '',
+          items: orderData.items || [],
+          subtotal: orderData.subtotal || 0,
+          shipping: orderData.shipping || 0,
+          total: orderData.total || 0,
+          stripeSessionId: orderData.stripeSessionId || null,
+          status: 'pending',
+          createdAt: serverTimestamp(),
+          reviewed: false
+        });
+        firestoreId = docRef.id;
+        orderData.id = firestoreId;
+      } catch(e) { console.warn('Could not save order to Firestore:', e); }
+    }
+
+    // Clear sessionStorage
+    sessionStorage.removeItem('dbc_pending_order');
+
+    // Render the page
+    renderOrder(orderData);
+
+    // Send emails
+    await sendEmails(orderData);
+  }
+
+  function renderOrder(order) {
+    // Hide loading, show content
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('success-content').style.display = 'block';
+
+    // Order reference
+    document.getElementById('order-ref').textContent = order.ref || '—';
+
+    // Items
+    const items = order.items || [];
+    if (items.length > 0) {
+      document.getElementById('order-items-list').innerHTML = items.map(i => `
+        <div class="order-item">
+          <div>
+            <div class="item-name">${i.name}</div>
+            <div class="item-qty">Qty: ${i.qty || 1}${i.size ? ' · Size: ' + i.size : ''}</div>
+          </div>
+          <div class="item-price">${fmt((i.price || 0) * (i.qty || 1))}</div>
+        </div>
+      `).join('');
+    } else {
+      document.getElementById('order-items-list').innerHTML =
+        '<div style="color:var(--faded);font-size:0.75rem;padding:0.5rem 0">Order items will appear in your confirmation email.</div>';
+    }
+
+    // Totals
+    document.getElementById('subtotal-val').textContent = fmt(order.subtotal || order.total || 0);
+    document.getElementById('shipping-val').textContent = (order.shipping && order.shipping > 0) ? fmt(order.shipping) : 'FREE';
+    document.getElementById('total-val').textContent = fmt(order.total || 0);
+
+    // Delivery estimate
+    document.getElementById('delivery-estimate').textContent = getDeliveryEstimate();
+  }
+
+  async function sendEmails(order) {
+    // Don't attempt if EmailJS not configured
+    if (EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY') {
+      setEmailNotice('error', '⚠ Email system not yet configured — set up EmailJS to enable emails');
+      return;
+    }
+
+    setEmailNotice('sending', 'Sending confirmation email...');
+
+    const items      = order.items || [];
+    const itemsText  = buildEmailItemsText(items);
+    const itemsHTML  = buildEmailItemsHTML(items);
+
+    // ── 1. Customer confirmation email ──
+    if (order.customerEmail) {
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOMER_TEMPLATE, {
+          to_email:       order.customerEmail,
+          to_name:        order.customerName || 'there',
+          order_ref:      order.ref,
+          order_items:    itemsText,
+          order_items_html: itemsHTML,
+          subtotal:       fmt(order.subtotal || order.total || 0),
+          shipping:       (order.shipping && order.shipping > 0) ? fmt(order.shipping) : 'FREE',
+          order_total:    fmt(order.total || 0),
+          delivery_estimate: getDeliveryEstimate(),
+          shop_url:       'https://fitch83.github.io/dirtboxclub/shop.html'
+        });
+        setEmailNotice('sent', `✓ Confirmation sent to ${order.customerEmail}`);
+      } catch(e) {
+        console.error('Customer email failed:', e);
+        setEmailNotice('error', '⚠ Could not send confirmation email — check EmailJS setup');
+      }
+    } else {
+      setEmailNotice('sent', '✓ Order saved — no email address provided');
+    }
+
+    // ── 2. Admin sale notification email ──
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ADMIN_TEMPLATE, {
+        to_email:      ADMIN_EMAIL,
+        order_ref:     order.ref,
+        customer_name: order.customerName || 'Unknown',
+        customer_email: order.customerEmail || 'Unknown',
+        order_items:   itemsText,
+        order_items_html: itemsHTML,
+        order_total:   fmt(order.total || 0),
+        order_date:    new Date().toLocaleString('en-GB'),
+        dashboard_url: 'https://fitch83.github.io/dirtboxclub/dashboard.html'
+      });
+    } catch(e) {
+      console.warn('Admin notification email failed:', e);
+    }
+  }
+
+  function setEmailNotice(state, msg) {
+    const el = document.getElementById('email-notice');
+    const txt = document.getElementById('email-notice-text');
+    el.className = 'email-notice ' + state;
+    txt.textContent = msg;
+  }
+
+  init();
+</script>
+
+</body>
+</html>
