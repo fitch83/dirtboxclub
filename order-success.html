@@ -143,9 +143,26 @@ a{color:inherit;text-decoration:none}
         <!-- Populated by JS -->
       </div>
 
+      <!-- Discount Code Entry -->
+      <div id="discount-section" style="margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)">
+        <div style="font-size:0.72rem;color:var(--grey);margin-bottom:0.7rem;letter-spacing:0.03em">Have a discount code?</div>
+        <div style="display:flex;gap:0.5rem">
+          <input id="discount-input" type="text" placeholder="Enter code..." autocomplete="off" spellcheck="false"
+            style="flex:1;padding:0.6rem 0.8rem;background:#111;border:1px solid var(--border);border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;font-size:0.78rem;text-transform:uppercase;outline:none;transition:border-color 0.2s"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter')applyDiscountCode()"
+            onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'">
+          <button id="apply-code-btn" onclick="applyDiscountCode()"
+            style="padding:0.6rem 1.1rem;background:var(--red);color:#fff;border:none;border-radius:6px;font-family:'Boldonse',sans-serif;font-size:0.7rem;cursor:pointer;transition:opacity 0.2s;white-space:nowrap"
+            onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Apply</button>
+        </div>
+        <div id="discount-feedback" style="margin-top:0.5rem;font-size:0.72rem;display:none;letter-spacing:0.02em"></div>
+      </div>
+
       <div class="order-totals">
         <div class="total-row"><span>Subtotal</span><span id="subtotal-val">—</span></div>
         <div class="total-row"><span>Shipping</span><span id="shipping-val">—</span></div>
+        <div class="total-row" id="discount-row" style="display:none;color:#22c55e"><span id="discount-row-label">Discount</span><span id="discount-val">—</span></div>
         <div class="total-row final"><span>Total Paid</span><span id="total-val">—</span></div>
       </div>
     </div>
@@ -191,7 +208,7 @@ a{color:inherit;text-decoration:none}
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, doc, getDoc, getDocs, query, where, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
@@ -246,6 +263,88 @@ a{color:inherit;text-decoration:none}
       </tr>`
     ).join('');
   }
+
+  // ─── Discount Code Logic ──────────────────────────────────────────
+  let appliedDiscount = null;
+  let originalTotal   = 0;
+  let orderSavedId    = null;
+
+  window.applyDiscountCode = async function() {
+    const input    = document.getElementById('discount-input');
+    const btn      = document.getElementById('apply-code-btn');
+    const feedback = document.getElementById('discount-feedback');
+    const code     = input.value.trim().toUpperCase();
+
+    if (!code) { input.focus(); return; }
+    if (appliedDiscount) return;
+
+    btn.disabled = true;
+    btn.textContent = '...';
+    feedback.style.display = 'block';
+    feedback.style.color = '#777';
+    feedback.textContent = 'Validating code...';
+
+    try {
+      const q    = query(collection(db, 'discountCodes'), where('code', '==', code));
+      const snap = await getDocs(q);
+
+      if (snap.empty) { showFeedback('error', '✗ Code not recognised'); btn.disabled = false; btn.textContent = 'Apply'; return; }
+
+      const codeDoc  = snap.docs[0];
+      const codeData = { id: codeDoc.id, ...codeDoc.data() };
+
+      if (!codeData.active) { showFeedback('error', '✗ This code is no longer active'); btn.disabled = false; btn.textContent = 'Apply'; return; }
+      if (codeData.expiryDate && new Date(codeData.expiryDate) < new Date()) { showFeedback('error', '✗ This code has expired'); btn.disabled = false; btn.textContent = 'Apply'; return; }
+      if (codeData.maxUses > 0 && (codeData.usedCount || 0) >= codeData.maxUses) { showFeedback('error', '✗ This code has reached its usage limit'); btn.disabled = false; btn.textContent = 'Apply'; return; }
+      if (codeData.minOrder > 0 && originalTotal < codeData.minOrder) { showFeedback('error', `✗ Minimum order of £${parseFloat(codeData.minOrder).toFixed(2)} required`); btn.disabled = false; btn.textContent = 'Apply'; return; }
+
+      let discountAmount = codeData.type === 'percent'
+        ? (originalTotal * codeData.value) / 100
+        : codeData.value;
+      discountAmount = Math.min(discountAmount, originalTotal);
+      const newTotal = Math.max(0, originalTotal - discountAmount);
+
+      appliedDiscount = { ...codeData, discountAmount, newTotal };
+
+      document.getElementById('discount-row').style.display = 'flex';
+      document.getElementById('discount-row-label').textContent = `Discount (${code})`;
+      document.getElementById('discount-val').textContent = '-' + fmt(discountAmount);
+      document.getElementById('total-val').textContent = fmt(newTotal);
+
+      input.disabled = true;
+      btn.disabled   = true;
+      btn.textContent = '✓ Applied';
+      btn.style.background = '#22c55e';
+
+      const desc = codeData.type === 'percent' ? `${codeData.value}% off` : `£${parseFloat(codeData.value).toFixed(2)} off`;
+      showFeedback('success', `✓ ${desc} applied — you save ${fmt(discountAmount)}`);
+
+      if (orderSavedId) await recordDiscountUsage(orderSavedId, codeData, discountAmount, newTotal);
+
+    } catch (e) {
+      console.error('Discount validation error:', e);
+      showFeedback('error', '✗ Could not validate code — please try again');
+      btn.disabled = false; btn.textContent = 'Apply';
+    }
+  };
+
+  function showFeedback(type, msg) {
+    const el = document.getElementById('discount-feedback');
+    el.style.display = 'block';
+    el.style.color = type === 'success' ? '#22c55e' : type === 'error' ? '#e63226' : '#777';
+    el.textContent = msg;
+  }
+
+  async function recordDiscountUsage(firestoreOrderId, codeData, discountAmount, newTotal) {
+    try {
+      await updateDoc(doc(db, 'discountCodes', codeData.id), { usedCount: increment(1) });
+      await updateDoc(doc(db, 'orders', firestoreOrderId), {
+        discountCode: codeData.code, discountType: codeData.type,
+        discountValue: codeData.value, discountAmount, total: newTotal
+      });
+    } catch (e) { console.warn('Could not record discount usage:', e); }
+  }
+  // ─────────────────────────────────────────────────────────────────
 
   async function init() {
     // Get order data from URL params (set by Stripe redirect) or sessionStorage
@@ -333,14 +432,25 @@ a{color:inherit;text-decoration:none}
     // Clear sessionStorage
     sessionStorage.removeItem('dbc_pending_order');
 
-    // Render the page
+    // Render the page (also sets originalTotal for discount validation)
     renderOrder(orderData);
+
+    // Make Firestore order ID available for discount recording
+    orderSavedId = firestoreId || null;
+
+    // If user somehow applied a code before page fully loaded, record it now
+    if (appliedDiscount && firestoreId) {
+      await recordDiscountUsage(firestoreId, appliedDiscount, appliedDiscount.discountAmount, appliedDiscount.newTotal);
+    }
 
     // Send emails
     await sendEmails(orderData);
   }
 
   function renderOrder(order) {
+    // Capture original total for discount calculations
+    originalTotal = parseFloat(order.total || 0);
+
     // Hide loading, show content
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('success-content').style.display = 'block';

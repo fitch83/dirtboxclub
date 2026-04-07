@@ -1146,6 +1146,7 @@
     <button class="tab-btn" onclick="switchTab('announcements', this)">📢 Announcements</button>
     <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
     <button class="tab-btn" onclick="switchTab('crm', this)">💌 CRM</button>
+    <button class="tab-btn" onclick="switchTab('discounts', this)">🏷️ Discount Codes</button>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -1441,6 +1442,18 @@
         </div>
       </div>
     </div>
+
+    <!-- DISCOUNT CODES TAB -->
+    <div id="tab-discounts" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Discount Codes</h2>
+          <p>Create and manage promotional discount codes</p>
+        </div>
+        <button class="btn" onclick="openDiscountModal()">+ New Code</button>
+      </div>
+      <div id="discounts-container"></div>
+    </div>
   </div>
 
   <!-- EmailJS SDK -->
@@ -1553,10 +1566,40 @@
     </div>
   </div>
 
+  <!-- Discount Code Modal -->
+  <div id="discount-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h2 class="modal-title">🏷️ New Discount Code</h2>
+      <label class="modal-label">Code Name (e.g. LAUNCH20)</label>
+      <input id="dc-code" type="text" class="modal-input" placeholder="LAUNCH20" oninput="this.value=this.value.toUpperCase()">
+      <label class="modal-label">Discount Type</label>
+      <select id="dc-type" class="modal-input" style="appearance:auto">
+        <option value="percent">% Percentage Off</option>
+        <option value="fixed">£ Fixed Amount Off</option>
+      </select>
+      <label class="modal-label">Value (number only)</label>
+      <input id="dc-value" type="number" min="0.01" step="0.01" class="modal-input" placeholder="e.g. 20 for 20% or £20">
+      <label class="modal-label">Minimum Order Amount (£, 0 = no minimum)</label>
+      <input id="dc-min-order" type="number" min="0" step="0.01" class="modal-input" placeholder="0" value="0">
+      <label class="modal-label">Expiry Date (leave blank for no expiry)</label>
+      <input id="dc-expiry" type="date" class="modal-input">
+      <label class="modal-label">Max Uses (0 = unlimited)</label>
+      <input id="dc-max-uses" type="number" min="0" class="modal-input" placeholder="0" value="0">
+      <label style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;cursor:pointer">
+        <input id="dc-active" type="checkbox" checked style="width:18px;height:18px;cursor:pointer;accent-color:#e63226">
+        <span style="font-size:0.75rem;color:#999">Active (visible to customers)</span>
+      </label>
+      <div style="display:flex;gap:0.8rem">
+        <button class="btn" onclick="saveDiscountCode()" style="flex:1">Create Code</button>
+        <button class="btn btn-outlined" onclick="closeDiscountModal()" style="flex:1">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, writeBatch, updateDoc, query, orderBy, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, writeBatch, updateDoc, query, orderBy, where, setDoc, getDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
@@ -1729,6 +1772,7 @@
       // When switching to orders tab, refresh and clear badge
       if (tabName === 'orders') refreshOrders();
       else if (tabName === 'inventory') loadInventory();
+      else if (tabName === 'discounts') refreshDiscountCodes();
       else refreshAllData();
     };
 
@@ -1799,7 +1843,8 @@
         refreshApplications(),
         refreshMembers(),
         refreshAnnouncements(),
-        refreshDrops()
+        refreshDrops(),
+        refreshDiscountCodes()
       ]);
       refreshAnalytics();
     }
@@ -2737,6 +2782,163 @@
       if (tabName === 'crm') {
         loadCrmCustomers();
       }
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  DISCOUNT CODES
+    // ─────────────────────────────────────────────────────────────────
+
+    window.openDiscountModal = function() {
+      ['dc-code','dc-value','dc-expiry'].forEach(id => { document.getElementById(id).value = ''; });
+      document.getElementById('dc-min-order').value = '0';
+      document.getElementById('dc-max-uses').value = '0';
+      document.getElementById('dc-active').checked = true;
+      document.getElementById('dc-type').value = 'percent';
+      document.getElementById('discount-modal').style.display = 'flex';
+    };
+
+    window.closeDiscountModal = function() {
+      document.getElementById('discount-modal').style.display = 'none';
+    };
+
+    document.getElementById('discount-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeDiscountModal();
+    });
+
+    window.saveDiscountCode = async function() {
+      const code     = document.getElementById('dc-code').value.trim().toUpperCase();
+      const type     = document.getElementById('dc-type').value;
+      const value    = parseFloat(document.getElementById('dc-value').value);
+      const minOrder = parseFloat(document.getElementById('dc-min-order').value) || 0;
+      const expiry   = document.getElementById('dc-expiry').value || null;
+      const maxUses  = parseInt(document.getElementById('dc-max-uses').value) || 0;
+      const active   = document.getElementById('dc-active').checked;
+
+      if (!code) { alert('Code name is required.'); return; }
+      if (!value || value <= 0) { alert('Please enter a valid discount value.'); return; }
+      if (type === 'percent' && value > 100) { alert('Percentage cannot exceed 100%.'); return; }
+
+      const existingSnap = await getDocs(query(collection(db, 'discountCodes'), where('code', '==', code)));
+      if (!existingSnap.empty) { alert(`Code "${code}" already exists.`); return; }
+
+      await addDoc(collection(db, 'discountCodes'), {
+        code, type, value, minOrder, expiryDate: expiry,
+        maxUses, usedCount: 0, active,
+        createdAt: new Date().toISOString()
+      });
+
+      window.closeDiscountModal();
+      await refreshDiscountCodes();
+    };
+
+    async function seedDiscountCodes() {
+      const seeds = [
+        { code: 'LAUNCH20',  type: 'percent', value: 20, minOrder: 0,  expiryDate: null, maxUses: 0, usedCount: 0, active: true, createdAt: new Date().toISOString() },
+        { code: 'MEMBER10',  type: 'fixed',   value: 10, minOrder: 50, expiryDate: null, maxUses: 0, usedCount: 0, active: true, createdAt: new Date().toISOString() },
+        { code: 'FRIENDS15', type: 'percent', value: 15, minOrder: 0,  expiryDate: null, maxUses: 0, usedCount: 0, active: true, createdAt: new Date().toISOString() },
+      ];
+      const batch = writeBatch(db);
+      seeds.forEach(s => {
+        const ref = doc(collection(db, 'discountCodes'));
+        batch.set(ref, s);
+      });
+      await batch.commit();
+    }
+
+    async function refreshDiscountCodes() {
+      const container = document.getElementById('discounts-container');
+      if (!container) return;
+
+      let snap = await getDocs(collection(db, 'discountCodes'));
+      if (snap.empty) {
+        await seedDiscountCodes();
+        snap = await getDocs(collection(db, 'discountCodes'));
+      }
+
+      const codes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      if (codes.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🏷️</div>
+            <div class="empty-title">No Discount Codes Yet</div>
+            <div class="empty-desc">Create your first discount code to start rewarding customers</div>
+            <button class="btn" onclick="openDiscountModal()">Create Code</button>
+          </div>`;
+        return;
+      }
+
+      const totalUses = codes.reduce((s, c) => s + (c.usedCount || 0), 0);
+      const activeCnt = codes.filter(c => c.active).length;
+
+      container.innerHTML = `
+        <div class="stats-grid" style="margin-bottom:2rem">
+          <div class="stat-card"><div class="stat-icon">🏷️</div><div class="stat-label">Total Codes</div><div class="stat-value">${codes.length}</div></div>
+          <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Active Codes</div><div class="stat-value">${activeCnt}</div></div>
+          <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">Total Redemptions</div><div class="stat-value">${totalUses}</div></div>
+          <div class="stat-card"><div class="stat-icon">⏸️</div><div class="stat-label">Inactive Codes</div><div class="stat-value">${codes.length - activeCnt}</div></div>
+        </div>
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:1rem 1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Code</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Type</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Value</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Min Order</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Expiry</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Uses</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Status</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${codes.map(c => {
+                  const isExpired  = c.expiryDate && new Date(c.expiryDate) < new Date();
+                  const isMaxed    = c.maxUses > 0 && (c.usedCount || 0) >= c.maxUses;
+                  const statusText = !c.active ? 'Inactive' : isExpired ? 'Expired' : isMaxed ? 'Maxed Out' : 'Active';
+                  const statusColor = !c.active ? '#777' : (isExpired || isMaxed) ? '#f59e0b' : '#22c55e';
+                  const usesStr = c.maxUses > 0 ? `${c.usedCount || 0} / ${c.maxUses}` : `${c.usedCount || 0}`;
+                  const expiryStr = c.expiryDate ? new Date(c.expiryDate).toLocaleDateString('en-GB') : '—';
+                  const valueStr  = c.type === 'percent' ? `${c.value}%` : `£${parseFloat(c.value).toFixed(2)}`;
+                  const minStr    = c.minOrder > 0 ? `£${parseFloat(c.minOrder).toFixed(2)}` : '—';
+                  return `
+                    <tr style="border-bottom:1px solid #1a1a1a;transition:background 0.15s" onmouseover="this.style.background='#202020'" onmouseout="this.style.background=''">
+                      <td style="padding:0.9rem 1rem"><span style="font-size:0.85rem;font-weight:700;color:#e63226;letter-spacing:0.1em">${c.code}</span></td>
+                      <td style="padding:0.9rem 0.8rem;color:#999;font-size:0.72rem">${c.type === 'percent' ? '% Off' : '£ Fixed'}</td>
+                      <td style="padding:0.9rem 0.8rem;font-size:0.85rem;color:#fff">${valueStr}</td>
+                      <td style="padding:0.9rem 0.8rem;color:#999;font-size:0.72rem">${minStr}</td>
+                      <td style="padding:0.9rem 0.8rem;color:#999;font-size:0.72rem">${expiryStr}</td>
+                      <td style="padding:0.9rem 0.8rem;font-size:0.8rem">${usesStr}</td>
+                      <td style="padding:0.9rem 0.8rem"><span style="color:${statusColor};font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">${statusText}</span></td>
+                      <td style="padding:0.9rem 0.8rem">
+                        <div style="display:flex;gap:0.5rem;align-items:center">
+                          <button class="btn-small" onclick="toggleDiscountCode('${c.id}', ${!c.active})"
+                            style="${c.active ? 'border-color:rgba(245,158,11,0.4);color:#f59e0b' : 'border-color:rgba(34,197,94,0.4);color:#22c55e'}">
+                            ${c.active ? 'Deactivate' : 'Activate'}
+                          </button>
+                          <button class="btn-icon delete" onclick="deleteDiscountCode('${c.id}', '${c.code}')">🗑</button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    window.toggleDiscountCode = async function(id, newActive) {
+      await updateDoc(doc(db, 'discountCodes', id), { active: newActive });
+      await refreshDiscountCodes();
+    };
+
+    window.deleteDiscountCode = async function(id, code) {
+      if (!confirm(`Delete code "${code}"? This cannot be undone.`)) return;
+      await deleteDoc(doc(db, 'discountCodes', id));
+      await refreshDiscountCodes();
     };
 
   </script>
