@@ -1147,6 +1147,7 @@
     <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
     <button class="tab-btn" onclick="switchTab('crm', this)">💌 CRM</button>
     <button class="tab-btn" onclick="switchTab('discounts', this)">🏷️ Discount Codes</button>
+    <button class="tab-btn" id="abandoned-tab-btn" onclick="switchTab('abandoned', this)">🛒 Abandoned Carts <span id="abandoned-carts-badge" class="orders-badge" style="display:none">0</span></button>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -1454,6 +1455,34 @@
       </div>
       <div id="discounts-container"></div>
     </div>
+
+    <!-- ABANDONED CARTS TAB -->
+    <div id="tab-abandoned" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Abandoned Carts</h2>
+          <p>Customers who added items but didn't check out within 1 hour</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;font-size:0.75rem;color:#999">
+            <div id="auto-recover-toggle" onclick="toggleAutoRecover()"
+              style="width:44px;height:24px;background:#2a2a2a;border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;border:1px solid #333">
+              <div id="auto-recover-knob"
+                style="width:18px;height:18px;background:#777;border-radius:9px;position:absolute;top:2px;left:2px;transition:left 0.2s,background 0.2s"></div>
+            </div>
+            <span id="auto-recover-label">Auto-Recover: OFF</span>
+          </label>
+        </div>
+      </div>
+      <!-- Stats row -->
+      <div class="stats-grid" style="margin-bottom:2rem">
+        <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-label">Last 7 Days</div><div class="stat-value" id="abandoned-stat-total">—</div></div>
+        <div class="stat-card"><div class="stat-icon">📧</div><div class="stat-label">Emails Sent</div><div class="stat-value" id="abandoned-stat-sent">—</div></div>
+        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Value at Risk</div><div class="stat-value" id="abandoned-stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Recovered</div><div class="stat-value" id="abandoned-stat-recovered">—</div></div>
+      </div>
+      <div id="abandoned-carts-container"></div>
+    </div>
   </div>
 
   <!-- EmailJS SDK -->
@@ -1676,20 +1705,34 @@
     // ─── INVENTORY MANAGEMENT ──────────────────────────────────────────
     window.loadInventory = async function() {
       try {
-        const invSnap = await getDocs(collection(db, 'inventory'));
-        let html = '<table style="width:100%;border-collapse:collapse;font-size:0.85rem">';
+        const [invSnap, notifSnap] = await Promise.all([
+          getDocs(collection(db, 'inventory')),
+          getDocs(query(collection(db, 'stock_notifications'), where('notified', '==', false)))
+        ]);
+
+        // Build notification count map: { "sku|size": count }
+        const notifMap = {};
+        notifSnap.forEach(d => {
+          const { productId, size } = d.data();
+          const key = `${productId}|${size}`;
+          notifMap[key] = (notifMap[key] || 0) + 1;
+        });
+
+        const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+        let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.85rem">';
         html += '<thead style="border-bottom:2px solid #333"><tr>';
-        html += '<th style="text-align:left;padding:0.8rem 0;font-weight:700;color:#999">SKU</th>';
-        html += '<th style="text-align:left;padding:0.8rem 0;font-weight:700;color:#999">Product Name</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">S</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">M</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">L</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">XL</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">Status</th>';
+        html += '<th style="text-align:left;padding:0.8rem 0.5rem;font-weight:700;color:#999">SKU</th>';
+        html += '<th style="text-align:left;padding:0.8rem 0.5rem;font-weight:700;color:#999">Product Name</th>';
+        allSizes.forEach(s => {
+          html += `<th style="text-align:center;padding:0.8rem 0.3rem;font-weight:700;color:#999">${s}</th>`;
+        });
+        html += '<th style="text-align:center;padding:0.8rem 0.5rem;font-weight:700;color:#999">Status</th>';
+        html += '<th style="text-align:center;padding:0.8rem 0.5rem;font-weight:700;color:#999">🔔 Waiting</th>';
         html += '</tr></thead><tbody>';
 
-        invSnap.forEach(doc => {
-          const inv = doc.data();
+        invSnap.forEach(docSnap => {
+          const inv = docSnap.data();
+          const sku  = docSnap.id;
           const sizes = inv.sizes || {};
           const reorder = inv.reorderThreshold || 3;
 
@@ -1698,24 +1741,59 @@
             if (qty <= reorder) lowStock = true;
           });
 
+          // Count total pending notifications for this SKU
+          let totalNotifs = 0;
+          allSizes.forEach(s => {
+            totalNotifs += notifMap[`${sku}|${s}`] || 0;
+          });
+          // Also check "One Size"
+          totalNotifs += notifMap[`${sku}|One Size`] || 0;
+
           const rowBg = lowStock ? 'background:#2a1a1a' : '';
           html += `<tr style="border-bottom:1px solid #2a2a2a;${rowBg}">`;
-          html += `<td style="padding:0.8rem 0;color:#e63226;font-weight:600">${doc.id}</td>`;
-          html += `<td style="padding:0.8rem 0">${inv.name || 'N/A'}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.S || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.S || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.M || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.M || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.L || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.L || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.XL || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.XL || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center">`;
+          html += `<td style="padding:0.8rem 0.5rem;color:#e63226;font-weight:600">${sku}</td>`;
+          html += `<td style="padding:0.8rem 0.5rem">${inv.name || 'N/A'}</td>`;
+
+          // All size columns
+          allSizes.forEach(s => {
+            const qty = sizes[s];
+            const notifCount = notifMap[`${sku}|${s}`] || 0;
+            if (qty === undefined) {
+              // Size not in inventory — show '-'
+              html += `<td style="padding:0.8rem 0.3rem;text-align:center;color:#333">—</td>`;
+            } else if (qty === 0) {
+              // Out of stock — show notify button if subscribers waiting
+              html += `<td style="padding:0.8rem 0.3rem;text-align:center">`;
+              html += `<span style="color:#e63226;font-size:0.75rem">0</span>`;
+              if (notifCount > 0) {
+                html += `<br><button class="btn-small" style="margin-top:0.3rem;font-size:0.55rem;padding:0.2rem 0.4rem;border-color:rgba(245,158,11,0.4);color:#f59e0b"
+                  onclick="notifyStockSubscribers('${sku}','${s}','${inv.name||sku}')">🔔 ${notifCount}</button>`;
+              }
+              html += `</td>`;
+            } else {
+              html += `<td style="padding:0.8rem 0.3rem;text-align:center;color:${qty <= reorder ? '#f59e0b' : '#22c55e'}">${qty}</td>`;
+            }
+          });
+
+          html += `<td style="padding:0.8rem 0.5rem;text-align:center">`;
           if (lowStock) {
-            html += `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">⚠ LOW STOCK</span>`;
+            html += `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">⚠ LOW</span>`;
           } else {
             html += `<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">✓ OK</span>`;
+          }
+          html += `</td>`;
+
+          // Waiting column
+          html += `<td style="padding:0.8rem 0.5rem;text-align:center">`;
+          if (totalNotifs > 0) {
+            html += `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">🔔 ${totalNotifs}</span>`;
+          } else {
+            html += `<span style="color:#444;font-size:0.7rem">—</span>`;
           }
           html += `</td></tr>`;
         });
 
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         if (invSnap.empty) {
           html = '<div style="color:#999;text-align:center;padding:2rem">No inventory data. Create products to manage stock.</div>';
         }
@@ -1754,6 +1832,12 @@
         }
 
         alert('✓ Stock updated');
+
+        // Check for back-in-stock notification subscribers
+        if (qty > 0) {
+          await checkStockNotifications(sku, size);
+        }
+
         document.getElementById('update-sku').value = '';
         document.getElementById('update-size').value = '';
         document.getElementById('update-qty').value = '';
@@ -1763,16 +1847,251 @@
       }
     };
 
+    // ── BACK-IN-STOCK NOTIFICATIONS ──────────────────────────────────────
+    async function checkStockNotifications(sku, size) {
+      try {
+        const q = query(
+          collection(db, 'stock_notifications'),
+          where('productId', '==', String(sku)),
+          where('size', '==', size),
+          where('notified', '==', false)
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) return;
+
+        const count = snap.size;
+        const productName = snap.docs[0].data().productName || sku;
+        const confirmed = confirm(`🔔 ${count} customer${count > 1 ? 's' : ''} want to be notified that ${productName} (${size}) is back in stock.\n\nSend notification emails now?`);
+        if (confirmed) {
+          await sendStockNotificationEmails(snap.docs, productName, size);
+        }
+      } catch (e) {
+        console.error('Error checking stock notifications:', e);
+      }
+    }
+
+    window.sendStockNotificationEmails = async function(docs, productName, size) {
+      let sent = 0, failed = 0;
+      for (const d of docs) {
+        const data = d.data();
+        try {
+          await emailjs.send(EMAILJS_SERVICE_ID, 'dbc_back_in_stock', {
+            to_email:     data.email,
+            product_name: productName,
+            size:         size,
+            shop_url:     'https://fitch83.github.io/dirtboxclub/shop.html'
+          });
+          await updateDoc(doc(db, 'stock_notifications', d.id), { notified: true, notifiedAt: new Date().toISOString() });
+          sent++;
+        } catch (e) {
+          console.warn('Failed to notify', data.email, e);
+          failed++;
+        }
+      }
+      alert(`✓ Sent ${sent} back-in-stock notification${sent !== 1 ? 's' : ''}${failed ? ` (${failed} failed)` : ''}.`);
+    };
+
+    // Manual "Notify subscribers" button in inventory
+    window.notifyStockSubscribers = async function(sku, size, productName) {
+      try {
+        const q = query(
+          collection(db, 'stock_notifications'),
+          where('productId', '==', String(sku)),
+          where('size', '==', size),
+          where('notified', '==', false)
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          alert('No pending subscribers for this product/size.');
+          return;
+        }
+        await sendStockNotificationEmails(snap.docs, productName, size);
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    };
+
+    // ── ABANDONED CARTS ──────────────────────────────────────────────────
+    let autoRecoverEnabled = false;
+
+    window.loadAbandonedCarts = async function() {
+      const container = document.getElementById('abandoned-carts-container');
+      if (!container) return;
+      container.innerHTML = '<div style="color:#777;text-align:center;padding:2rem">Loading…</div>';
+
+      try {
+        // Load auto-recover setting
+        try {
+          const settingSnap = await getDoc(doc(db, 'settings', 'autoRecover'));
+          autoRecoverEnabled = settingSnap.exists() && settingSnap.data().enabled;
+          updateAutoRecoverUI(autoRecoverEnabled);
+        } catch (e) { /* not available */ }
+
+        // Load carts from last 7 days
+        const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const q = query(collection(db, 'abandoned_carts'), orderBy('timestamp', 'desc'));
+        const snap = await getDocs(q);
+        const carts = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(c => c.timestamp && c.timestamp.toDate && c.timestamp.toDate() > cutoff);
+
+        // Update stats
+        const totalValue  = carts.reduce((s, c) => s + (c.total || 0), 0);
+        const sentCount   = carts.filter(c => c.emailSent).length;
+        const recoverCount = carts.filter(c => c.recovered).length;
+        document.getElementById('abandoned-stat-total').textContent     = carts.length;
+        document.getElementById('abandoned-stat-sent').textContent      = sentCount;
+        document.getElementById('abandoned-stat-value').textContent     = '£' + totalValue.toFixed(2);
+        document.getElementById('abandoned-stat-recovered').textContent = recoverCount;
+
+        // Update badge
+        const unsentCount = carts.filter(c => !c.emailSent && !c.recovered).length;
+        const badge = document.getElementById('abandoned-carts-badge');
+        badge.textContent     = unsentCount;
+        badge.style.display   = unsentCount > 0 ? 'inline-flex' : 'none';
+
+        if (carts.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">🛒</div>
+              <div class="empty-title">No Abandoned Carts</div>
+              <div class="empty-desc">No carts have been abandoned in the last 7 days.</div>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = carts.map(cart => {
+          const date    = cart.timestamp ? cart.timestamp.toDate().toLocaleString('en-GB') : '—';
+          const items   = (cart.items || []).map(i =>
+            `<span style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:0.2rem 0.5rem;font-size:0.65rem;color:#ccc;margin:0.2rem">${i.name}${i.size && i.size !== 'One Size' ? ' ('+i.size+')' : ''} ×${i.qty}</span>`
+          ).join('');
+          const statusBadge = cart.recovered
+            ? `<span style="background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);padding:0.25rem 0.6rem;border-radius:12px;font-size:0.6rem">✓ RECOVERED</span>`
+            : cart.emailSent
+            ? `<span style="background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);padding:0.25rem 0.6rem;border-radius:12px;font-size:0.6rem">📧 EMAIL SENT</span>`
+            : `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:0.25rem 0.6rem;border-radius:12px;font-size:0.6rem">⏳ PENDING</span>`;
+
+          return `
+            <div class="order-card${!cart.emailSent && !cart.recovered ? ' unreviewed' : ''}" style="margin-bottom:1rem">
+              <div class="order-card-header">
+                <div>
+                  <div class="order-ref">🛒 ${cart.email || '—'}</div>
+                  <div class="order-meta">${date} · ${(cart.items||[]).length} item${(cart.items||[]).length !== 1 ? 's' : ''}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem">
+                  ${statusBadge}
+                  <span style="color:#e63226;font-size:1rem;font-family:'Boldonse',sans-serif">£${(cart.total||0).toFixed(2)}</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem">${items}</div>
+              <div class="order-actions">
+                ${!cart.recovered ? `
+                  <button class="btn" onclick="sendRecoveryEmail('${cart.id}','${(cart.email||'').replace(/'/g,"\\'")}',${JSON.stringify(cart.items||[]).replace(/"/g,'&quot;')},${cart.total||0})"
+                    ${cart.emailSent ? 'style="background:#444"' : ''}>
+                    ${cart.emailSent ? '📧 Re-send Recovery Email' : '📧 Send Recovery Email'}
+                  </button>
+                  <button class="btn btn-outlined" onclick="markCartRecovered('${cart.id}')">✓ Mark Recovered</button>
+                ` : ''}
+              </div>
+            </div>`;
+        }).join('');
+
+      } catch (e) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error loading carts</div><div class="empty-desc">${e.message}</div></div>`;
+        console.error(e);
+      }
+    };
+
+    window.sendRecoveryEmail = async function(cartId, email, items, total) {
+      if (!confirm(`Send a 10% recovery discount email to ${email}?`)) return;
+
+      // Generate unique discount code
+      const code = 'COMEBACK' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      const expiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      try {
+        // Save discount code
+        await addDoc(collection(db, 'discountCodes'), {
+          code,
+          type:       'percent',
+          value:      10,
+          minOrder:   0,
+          maxUses:    1,
+          usedCount:  0,
+          active:     true,
+          expiryDate: expiry,
+          createdAt:  new Date().toISOString(),
+          note:       `Abandoned cart recovery — ${email}`
+        });
+
+        const itemsList = Array.isArray(items) ? items : [];
+        const itemsText = itemsList.map(i => `${i.name} (${i.size||'One Size'}) ×${i.qty} — £${(i.price*i.qty).toFixed(2)}`).join('\n');
+
+        await emailjs.send(EMAILJS_SERVICE_ID, 'dbc_abandoned_cart', {
+          to_email:      email,
+          cart_items:    itemsText,
+          cart_total:    '£' + parseFloat(total).toFixed(2),
+          discount_code: code,
+          shop_url:      'https://fitch83.github.io/dirtboxclub/shop.html'
+        });
+
+        await updateDoc(doc(db, 'abandoned_carts', cartId), {
+          emailSent:    true,
+          emailSentAt:  new Date().toISOString(),
+          discountCode: code
+        });
+
+        alert(`✓ Recovery email sent to ${email} with code ${code}`);
+        await loadAbandonedCarts();
+      } catch (e) {
+        alert('Error sending email: ' + e.message);
+        console.error(e);
+      }
+    };
+
+    window.markCartRecovered = async function(cartId) {
+      await updateDoc(doc(db, 'abandoned_carts', cartId), {
+        recovered:   true,
+        recoveredAt: new Date().toISOString()
+      });
+      await loadAbandonedCarts();
+    };
+
+    function updateAutoRecoverUI(enabled) {
+      const toggle = document.getElementById('auto-recover-toggle');
+      const knob   = document.getElementById('auto-recover-knob');
+      const label  = document.getElementById('auto-recover-label');
+      if (!toggle) return;
+      toggle.style.background = enabled ? '#e63226' : '#2a2a2a';
+      knob.style.left         = enabled ? '22px' : '2px';
+      knob.style.background   = enabled ? '#fff' : '#777';
+      label.textContent       = 'Auto-Recover: ' + (enabled ? 'ON' : 'OFF');
+    }
+
+    window.toggleAutoRecover = async function() {
+      autoRecoverEnabled = !autoRecoverEnabled;
+      try {
+        await setDoc(doc(db, 'settings', 'autoRecover'), {
+          enabled:   autoRecoverEnabled,
+          updatedAt: new Date().toISOString()
+        });
+        updateAutoRecoverUI(autoRecoverEnabled);
+      } catch (e) {
+        autoRecoverEnabled = !autoRecoverEnabled; // revert
+        alert('Could not save setting: ' + e.message);
+      }
+    };
+
     window.switchTab = function(tabName, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + tabName).classList.add('active');
       if (btn) btn.classList.add('active');
       document.getElementById('add-product-btn').style.display = tabName === 'products' ? 'block' : 'none';
-      // When switching to orders tab, refresh and clear badge
       if (tabName === 'orders') refreshOrders();
       else if (tabName === 'inventory') loadInventory();
       else if (tabName === 'discounts') refreshDiscountCodes();
+      else if (tabName === 'abandoned') loadAbandonedCarts();
       else refreshAllData();
     };
 

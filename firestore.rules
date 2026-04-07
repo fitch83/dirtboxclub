@@ -73,6 +73,54 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // ─── INVENTORY Collection ────────────────────────────────────────
+    // Public: read (so shop.html can load stock levels)
+    // Admin: write
+    match /inventory/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ─── DISCOUNT CODES Collection ───────────────────────────────────
+    // Public: read (so checkout can validate codes)
+    // Authenticated: create (for auto-generated recovery codes from shop)
+    // Admin: read, write
+    match /discountCodes/{document=**} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if isAdmin();
+    }
+
+    // ─── ABANDONED CARTS Collection ──────────────────────────────────
+    // Authenticated users: create their own cart records
+    // Admin: read, write
+    match /abandoned_carts/{document=**} {
+      allow create: if request.auth != null &&
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.email is string &&
+                       request.resource.data.items is list;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ─── STOCK NOTIFICATIONS Collection ─────────────────────────────
+    // Anyone: create (email-only, no auth required for notify forms)
+    // Admin: read, write
+    match /stock_notifications/{document=**} {
+      allow create: if request.resource.data.email is string &&
+                       request.resource.data.email.size() > 0 &&
+                       request.resource.data.productId is string &&
+                       request.resource.data.size is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ─── SETTINGS Collection ─────────────────────────────────────────
+    // Public: read (shop.html reads autoRecover setting)
+    // Admin: write
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // ─── Default Deny ───────────────────────────────────────────────
     // Deny all other access
     match /{document=**} {

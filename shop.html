@@ -457,6 +457,8 @@ a {
   }
 }
 </style>
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -586,7 +588,8 @@ a {
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, getDocs, doc, getDoc, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
@@ -597,16 +600,39 @@ a {
     appId: "1:883493757389:web:749f668e2655fd168fe484"
   };
 
+  const EMAILJS_PUBLIC_KEY = 'Se-YqzqLV7Zr-AYVt';
+  const EMAILJS_SERVICE_ID = 'service_hpy2gvj';
+  const EMAILJS_ABANDONED_TEMPLATE = 'dbc_abandoned_cart';
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const db = getFirestore(app);
   let inventoryMap = {};
+  let currentUser = null;
+  let cartAbandonTimer = null;
 
-  // Load inventory on page load
+  const CART_KEY      = 'dbc_cart';
+  const CART_TIME_KEY = 'dbc_cart_time';
+  const CART_SAVED_KEY = 'dbc_cart_saved';
+
+  // ── Auth ────────────────────────────────────────────────────────────
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    // Restore nav state for logged-in users
+    if (user) {
+      document.querySelectorAll('.cart-login-hint').forEach(el => el.style.display = 'none');
+      await checkOldCart();
+    }
+  });
+
+  // ── Inventory ───────────────────────────────────────────────────────
   async function loadInventory() {
     try {
       const invSnap = await getDocs(collection(db, 'inventory'));
-      invSnap.forEach(doc => {
-        inventoryMap[doc.id] = doc.data().sizes || {};
+      invSnap.forEach(d => {
+        inventoryMap[d.id] = d.data().sizes || {};
       });
       renderProducts();
     } catch (e) {
@@ -616,6 +642,239 @@ a {
   }
 
   window.getInventory = (sku) => inventoryMap[sku] || {};
+
+  // ── Cart (localStorage) ─────────────────────────────────────────────
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+    catch { return []; }
+  }
+
+  function saveCartLocal(items) {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+    if (!localStorage.getItem(CART_TIME_KEY)) {
+      localStorage.setItem(CART_TIME_KEY, Date.now().toString());
+    }
+    localStorage.removeItem(CART_SAVED_KEY);
+    scheduleAbandonedCheck();
+  }
+
+  function scheduleAbandonedCheck() {
+    if (cartAbandonTimer) clearTimeout(cartAbandonTimer);
+    const cartTime = parseInt(localStorage.getItem(CART_TIME_KEY) || '0');
+    const elapsed  = Date.now() - cartTime;
+    const remaining = Math.max(0, 60 * 60 * 1000 - elapsed);
+    cartAbandonTimer = setTimeout(maybeSaveAbandonedCart, remaining);
+  }
+
+  async function maybeSaveAbandonedCart() {
+    if (!currentUser) return;
+    const cart = getCart();
+    if (!cart.length) return;
+    if (localStorage.getItem(CART_SAVED_KEY)) return;
+
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+    try {
+      await addDoc(collection(db, 'abandoned_carts'), {
+        email:     currentUser.email,
+        userId:    currentUser.uid,
+        items:     cart,
+        total,
+        timestamp: serverTimestamp(),
+        emailSent: false,
+        recovered: false
+      });
+      localStorage.setItem(CART_SAVED_KEY, 'true');
+
+      // Check auto-recover setting
+      try {
+        const settingSnap = await getDoc(doc(db, 'settings', 'autoRecover'));
+        if (settingSnap.exists() && settingSnap.data().enabled) {
+          await sendAbandonedEmail(currentUser.email, cart, total);
+        }
+      } catch (e) { /* settings not available */ }
+
+    } catch (e) {
+      console.warn('Could not save abandoned cart:', e);
+    }
+  }
+
+  async function sendAbandonedEmail(email, items, total) {
+    const code = 'COMEBACK' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    const itemsText = items.map(i => `${i.name} (${i.size || 'One Size'}) x${i.qty} — £${(i.price * i.qty).toFixed(2)}`).join('\n');
+    try {
+      // Save discount code to Firestore
+      await addDoc(collection(db, 'discountCodes'), {
+        code,
+        type:       'percent',
+        value:      10,
+        minOrder:   0,
+        maxUses:    1,
+        usedCount:  0,
+        active:     true,
+        expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        createdAt:  new Date().toISOString(),
+        note:       'Auto-generated abandoned cart recovery code'
+      });
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ABANDONED_TEMPLATE, {
+        to_email:      email,
+        cart_items:    itemsText,
+        cart_total:    '£' + total.toFixed(2),
+        discount_code: code,
+        shop_url:      'https://fitch83.github.io/dirtboxclub/shop.html'
+      });
+    } catch (e) {
+      console.warn('Could not send abandoned cart email:', e);
+    }
+  }
+
+  async function checkOldCart() {
+    const cartTime = localStorage.getItem(CART_TIME_KEY);
+    const cartSaved = localStorage.getItem(CART_SAVED_KEY);
+    const cart = getCart();
+    if (!cartTime || cartSaved || !cart.length) return;
+    const elapsed = Date.now() - parseInt(cartTime);
+    if (elapsed >= 60 * 60 * 1000) {
+      await maybeSaveAbandonedCart();
+    } else {
+      scheduleAbandonedCheck();
+    }
+  }
+
+  // Expose cart functions globally
+  window.getCart     = getCart;
+  window.saveCartLocal = saveCartLocal;
+  window.clearCart   = function() {
+    localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(CART_TIME_KEY);
+    localStorage.removeItem(CART_SAVED_KEY);
+    if (cartAbandonTimer) clearTimeout(cartAbandonTimer);
+  };
+
+  // ── Add to Cart ─────────────────────────────────────────────────────
+  window.addToCart = function(productId, productName, size, price) {
+    if (!currentUser) {
+      document.getElementById('cart-login-modal').style.display = 'flex';
+      return;
+    }
+    const cart = getCart();
+    const key  = productId + '|' + size;
+    const existing = cart.find(i => i.key === key);
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ key, id: productId, name: productName, size, price, qty: 1 });
+    }
+    saveCartLocal(cart);
+    window.renderCartDrawer();
+    showCartToast(productName, size);
+  };
+
+  window.removeFromCart = function(key) {
+    const cart = getCart().filter(i => i.key !== key);
+    saveCartLocal(cart);
+    window.renderCartDrawer();
+  };
+
+  window.renderCartDrawer = function() {
+    const cart = getCart();
+    const drawer = document.getElementById('cart-drawer');
+    const count  = cart.reduce((s, i) => s + i.qty, 0);
+    const total  = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    document.getElementById('cart-item-count').textContent = count;
+    document.getElementById('cart-item-count').style.display = count ? 'flex' : 'none';
+
+    if (!cart.length) {
+      document.getElementById('cart-items').innerHTML = '<p style="color:#777;font-size:0.8rem;text-align:center;padding:2rem 0">Your cart is empty</p>';
+      document.getElementById('cart-total').textContent = '£0.00';
+      return;
+    }
+    document.getElementById('cart-items').innerHTML = cart.map(i => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 0;border-bottom:1px solid #2a2a2a">
+        <div>
+          <div style="font-size:0.8rem;color:#fff">${i.name}</div>
+          <div style="font-size:0.7rem;color:#999">${i.size !== 'One Size' ? 'Size: ' + i.size + ' · ' : ''}Qty: ${i.qty}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.8rem">
+          <span style="color:#e63226;font-size:0.85rem">£${(i.price * i.qty).toFixed(2)}</span>
+          <button onclick="window.removeFromCart('${i.key}')" style="background:none;border:none;color:#777;cursor:pointer;font-size:1rem">✕</button>
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('cart-total').textContent = '£' + total.toFixed(2);
+  };
+
+  function showCartToast(name, size) {
+    const toast = document.getElementById('cart-toast');
+    toast.querySelector('#toast-text').textContent = `${name}${size && size !== 'One Size' ? ' ('+size+')' : ''} added to cart`;
+    toast.style.display = 'flex';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  }
+
+  // ── Stock Notifications ─────────────────────────────────────────────
+  window.openNotifyModal = function(productId, productName, size) {
+    document.getElementById('notify-product-id').value = productId;
+    document.getElementById('notify-product-name').value = productName;
+    document.getElementById('notify-size').value = size;
+    document.getElementById('notify-size-label').textContent = size;
+    document.getElementById('notify-product-label').textContent = productName;
+    if (currentUser) {
+      document.getElementById('notify-email').value = currentUser.email;
+    } else {
+      document.getElementById('notify-email').value = '';
+    }
+    document.getElementById('notify-modal').style.display = 'flex';
+  };
+
+  window.saveStockNotification = async function() {
+    const email       = document.getElementById('notify-email').value.trim();
+    const productId   = document.getElementById('notify-product-id').value;
+    const productName = document.getElementById('notify-product-name').value;
+    const size        = document.getElementById('notify-size').value;
+
+    if (!email || !email.includes('@')) {
+      alert('Please enter a valid email address');
+      return;
+    }
+
+    try {
+      // Check for duplicate
+      const q = query(
+        collection(db, 'stock_notifications'),
+        where('email', '==', email),
+        where('productId', '==', productId),
+        where('size', '==', size),
+        where('notified', '==', false)
+      );
+      const existing = await getDocs(q);
+      if (!existing.empty) {
+        document.getElementById('notify-modal').style.display = 'none';
+        alert('You\'re already on the list for this item!');
+        return;
+      }
+
+      await addDoc(collection(db, 'stock_notifications'), {
+        email,
+        productId,
+        productName,
+        size,
+        timestamp: serverTimestamp(),
+        notified:  false
+      });
+      document.getElementById('notify-modal').style.display = 'none';
+      showNotifyConfirm();
+    } catch (e) {
+      alert('Could not save notification. Please try again.');
+      console.error(e);
+    }
+  };
+
+  function showNotifyConfirm() {
+    const toast = document.getElementById('notify-toast');
+    toast.style.display = 'flex';
+    setTimeout(() => { toast.style.display = 'none'; }, 4000);
+  }
+
   loadInventory();
 </script>
 <script>
@@ -640,21 +899,93 @@ const PRODUCTS = [
 
 let currentFilter = 'all';
 
+// Categories that have sizes
+const SIZED_CATS = ['tshirt', 'hoodie', 'tank'];
+const ALL_SIZES  = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
 function renderProducts() {
-  const filtered = currentFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === currentFilter);
-  const isMember = sessionStorage.getItem('dbc_member');
+  const filtered  = currentFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === currentFilter);
+  const isMember  = sessionStorage.getItem('dbc_member');
+  const getInv    = window.getInventory || (() => ({}));
 
   document.getElementById('shop-grid').innerHTML = filtered.map(p => {
-    const sizes = window.getInventory(p.id);
-    const totalStock = Object.values(sizes).reduce((sum, qty) => sum + qty, 0);
-    const isSoldOut = totalStock === 0 && Object.keys(sizes).length > 0;
+    const invSizes  = getInv(p.id);
+    const hasSizes  = SIZED_CATS.includes(p.cat);
+    const isMembersLocked = p.exclusive && !isMember;
+
+    // Determine overall sold-out for non-sized items
+    let overallSoldOut = false;
+    if (!hasSizes) {
+      const totalStock = Object.values(invSizes).reduce((s, q) => s + q, 0);
+      overallSoldOut   = Object.keys(invSizes).length > 0 && totalStock === 0;
+    }
+
+    // Build bottom section
+    let bottomHtml = '';
+    if (isMembersLocked) {
+      bottomHtml = `
+        <span class="price-blurred">£XX<span class="r">.</span>XX</span>
+        <a href="membership.html" class="join-link">🔒 Join to Access</a>
+      `;
+    } else {
+      // Price line
+      bottomHtml += `<span style="font-family:'Boldonse',sans-serif;font-size:1rem;color:#fff">£${p.price.toFixed(2)}</span>`;
+
+      if (hasSizes) {
+        // Show sizes from inventory if available, else default set
+        const availableSizes = ALL_SIZES.filter(s => s in invSizes);
+        const showSizes = availableSizes.length > 0 ? availableSizes : ALL_SIZES;
+        const sizeButtons = showSizes.map(s => {
+          const qty = invSizes[s];
+          const isInStock = qty === undefined || qty > 0;
+          if (isInStock) {
+            return `<button onclick="window.addToCart(${p.id},'${p.name.replace(/'/g,"\\'")}','${s}',${p.price})"
+              style="padding:0.3rem 0.6rem;background:transparent;border:1px solid #444;color:#fff;border-radius:4px;font-size:0.6rem;font-family:'Boldonse',sans-serif;cursor:pointer;transition:all 0.2s"
+              onmouseover="this.style.borderColor='#e63226';this.style.color='#e63226'"
+              onmouseout="this.style.borderColor='#444';this.style.color='#fff'"
+            >${s}</button>`;
+          } else {
+            // Out of stock size
+            return `<button onclick="window.openNotifyModal(${p.id},'${p.name.replace(/'/g,"\\'")}','${s}')"
+              title="Notify me when back in stock"
+              style="padding:0.3rem 0.6rem;background:transparent;border:1px solid #2a2a2a;color:#555;border-radius:4px;font-size:0.6rem;font-family:'Boldonse',sans-serif;cursor:pointer;position:relative;transition:all 0.2s"
+              onmouseover="this.style.borderColor='#f59e0b';this.style.color='#f59e0b'"
+              onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#555'"
+            >${s} 🔔</button>`;
+          }
+        }).join(' ');
+
+        bottomHtml += `<div style="margin-top:0.8rem;display:flex;flex-wrap:wrap;gap:0.4rem">${sizeButtons}</div>`;
+
+      } else if (overallSoldOut) {
+        // Whole product sold out — notify for "One Size"
+        bottomHtml += `
+          <div style="margin-top:0.8rem">
+            <span style="color:#e63226;font-size:0.7rem">OUT OF STOCK · </span>
+            <button onclick="window.openNotifyModal(${p.id},'${p.name.replace(/'/g,"\\'")}','One Size')"
+              style="background:none;border:none;color:#f59e0b;font-family:'Boldonse',sans-serif;font-size:0.7rem;cursor:pointer;padding:0">
+              🔔 Notify Me
+            </button>
+          </div>`;
+      } else {
+        // In-stock, no size (hat, mug, mystery)
+        bottomHtml += `
+          <div style="margin-top:0.8rem">
+            <button onclick="window.addToCart(${p.id},'${p.name.replace(/'/g,"\\'")}','One Size',${p.price})"
+              style="padding:0.4rem 1rem;background:#e63226;border:none;color:#fff;border-radius:6px;font-size:0.65rem;font-family:'Boldonse',sans-serif;cursor:pointer;transition:opacity 0.2s"
+              onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+              + Add to Cart
+            </button>
+          </div>`;
+      }
+    }
 
     return `
-    <div class="drop-card" style="${isSoldOut ? 'opacity:0.6' : ''}">
+    <div class="drop-card" style="${overallSoldOut && !hasSizes ? 'opacity:0.65' : ''}">
       <div class="drop-card-img">
         <div class="drop-card-name-overlay">${p.name}</div>
-        ${p.exclusive && !isMember ? '<div class="lock-icon">🔒</div>' : ''}
-        ${isSoldOut ? '<div style="position:absolute;top:0.8rem;right:0.8rem;background:#e63226;color:#fff;padding:0.4rem 0.8rem;border-radius:4px;font-size:0.6rem;font-weight:700">SOLD OUT</div>' : ''}
+        ${isMembersLocked ? '<div class="lock-icon">🔒</div>' : ''}
+        ${overallSoldOut && !hasSizes ? '<div style="position:absolute;top:0.8rem;right:0.8rem;background:#e63226;color:#fff;padding:0.4rem 0.8rem;border-radius:4px;font-size:0.6rem;font-weight:700">SOLD OUT</div>' : ''}
       </div>
       <div class="drop-card-info">
         <div class="drop-card-meta">
@@ -662,15 +993,12 @@ function renderProducts() {
         </div>
         <div class="drop-card-title">${p.name}</div>
         <div class="drop-card-desc">${p.desc}</div>
-        <div class="drop-card-bottom">
-          ${p.exclusive && !isMember ?
-            `<span class="price-blurred">£XX<span class="r">.</span>XX</span><a href="membership.html" class="join-link">🔒 Join to Access</a>`
-            : `<span style="font-family: 'Boldonse', sans-serif; font-size: 1rem; color: #fff;">£${p.price.toFixed(2)}</span>${isSoldOut ? '<span style="color:#e63226;font-size:0.75rem;margin-left:0.5rem">• Out of Stock</span>' : ''}`
-          }
+        <div class="drop-card-bottom" style="flex-direction:column;align-items:flex-start">
+          ${bottomHtml}
         </div>
       </div>
-    </div>
-  `}).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterProducts(category, button) {
@@ -682,6 +1010,204 @@ function filterProducts(category, button) {
 
 renderProducts();
 </script>
+
+
+<!-- Cart Icon in Nav (injected via script) -->
+<style>
+  .cart-nav-btn {
+    width:34px;height:34px;border:1px solid #444;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#999;cursor:pointer;background:none;transition:all 0.3s;position:relative;
+  }
+  .cart-nav-btn:hover { color:#e63226;border-color:#e63226; }
+  .cart-count-badge {
+    position:absolute;top:-4px;right:-4px;
+    background:#e63226;color:#fff;font-size:0.55rem;
+    min-width:16px;height:16px;border-radius:8px;
+    display:none;align-items:center;justify-content:center;padding:0 3px;
+  }
+  .cart-drawer-overlay {
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1100;
+  }
+  .cart-drawer {
+    position:fixed;top:0;right:-420px;width:400px;max-width:95vw;height:100%;
+    background:#111;border-left:1px solid #2a2a2a;z-index:1200;
+    display:flex;flex-direction:column;transition:right 0.3s ease;padding:1.5rem;
+  }
+  .cart-drawer.open { right:0; }
+  .cart-drawer-header {
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #2a2a2a;
+  }
+  .cart-drawer-title { font-family:'Boldonse',sans-serif;font-size:1rem; }
+  .cart-close-btn {
+    background:none;border:none;color:#777;font-size:1.4rem;cursor:pointer;
+    transition:color 0.2s;
+  }
+  .cart-close-btn:hover { color:#fff; }
+  #cart-items { flex:1;overflow-y:auto; }
+  .cart-footer {
+    border-top:1px solid #2a2a2a;padding-top:1rem;margin-top:1rem;
+  }
+  .cart-total-row {
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Boldonse',sans-serif;margin-bottom:1rem;
+  }
+  .cart-checkout-btn {
+    width:100%;padding:0.8rem;background:#e63226;color:#fff;
+    border:none;border-radius:8px;font-family:'Boldonse',sans-serif;
+    font-size:0.8rem;cursor:pointer;transition:opacity 0.2s;
+  }
+  .cart-checkout-btn:hover { opacity:0.9; }
+  /* Cart toast */
+  #cart-toast {
+    display:none;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+    background:#1c1c1c;border:1px solid #2a2a2a;border-left:3px solid #22c55e;
+    color:#fff;padding:0.8rem 1.5rem;border-radius:8px;z-index:2000;
+    align-items:center;gap:0.6rem;font-size:0.8rem;font-family:'Boldonse',sans-serif;
+    white-space:nowrap;
+  }
+  /* Notify toast */
+  #notify-toast {
+    display:none;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+    background:#1c1c1c;border:1px solid #2a2a2a;border-left:3px solid #f59e0b;
+    color:#fff;padding:0.8rem 1.5rem;border-radius:8px;z-index:2000;
+    align-items:center;gap:0.6rem;font-size:0.8rem;font-family:'Boldonse',sans-serif;
+    white-space:nowrap;
+  }
+  /* Notify modal */
+  .notify-overlay {
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1300;
+    align-items:center;justify-content:center;
+  }
+  .notify-box {
+    background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;
+    padding:2rem;width:90%;max-width:380px;
+  }
+  .notify-title {
+    font-family:'Boldonse',sans-serif;font-size:1rem;margin-bottom:0.3rem;
+  }
+  .notify-subtitle {
+    font-size:0.7rem;color:#777;margin-bottom:1.5rem;
+  }
+  .notify-label {
+    display:block;font-size:0.65rem;color:#777;text-transform:uppercase;
+    letter-spacing:0.05em;margin-bottom:0.4rem;
+  }
+  .notify-input {
+    width:100%;padding:0.6rem 0.8rem;background:#111;border:1px solid #2a2a2a;
+    border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;font-size:0.8rem;
+    margin-bottom:1rem;
+  }
+  .notify-input:focus { outline:none;border-color:#e63226; }
+  .notify-actions { display:flex;gap:0.8rem;margin-top:0.5rem; }
+  .notify-submit-btn {
+    flex:1;padding:0.7rem;background:#e63226;color:#fff;border:none;
+    border-radius:6px;font-family:'Boldonse',sans-serif;font-size:0.75rem;
+    cursor:pointer;transition:opacity 0.2s;
+  }
+  .notify-submit-btn:hover { opacity:0.9; }
+  .notify-cancel-btn {
+    flex:1;padding:0.7rem;background:transparent;color:#777;
+    border:1px solid #2a2a2a;border-radius:6px;font-family:'Boldonse',sans-serif;
+    font-size:0.75rem;cursor:pointer;transition:all 0.2s;
+  }
+  .notify-cancel-btn:hover { color:#fff;border-color:#666; }
+  /* Cart login modal */
+  .cart-login-overlay {
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1300;
+    align-items:center;justify-content:center;
+  }
+</style>
+
+<!-- Cart button in nav (appended to nav-right) -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const navRight = document.querySelector('.nav-right');
+    if (navRight) {
+      const cartBtn = document.createElement('button');
+      cartBtn.className = 'cart-nav-btn';
+      cartBtn.onclick = () => {
+        window.renderCartDrawer && window.renderCartDrawer();
+        document.getElementById('cart-drawer').classList.add('open');
+        document.getElementById('cart-drawer-overlay').style.display = 'block';
+      };
+      cartBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="cart-count-badge" id="cart-item-count">0</span>
+      `;
+      navRight.insertBefore(cartBtn, navRight.firstChild);
+    }
+  });
+</script>
+
+<!-- Cart Drawer Overlay -->
+<div id="cart-drawer-overlay" class="cart-drawer-overlay" onclick="document.getElementById('cart-drawer').classList.remove('open');this.style.display='none'"></div>
+
+<!-- Cart Drawer -->
+<div id="cart-drawer" class="cart-drawer">
+  <div class="cart-drawer-header">
+    <div class="cart-drawer-title">YOUR CART<span style="color:#e63226">.</span></div>
+    <button class="cart-close-btn" onclick="document.getElementById('cart-drawer').classList.remove('open');document.getElementById('cart-drawer-overlay').style.display='none'">&times;</button>
+  </div>
+  <div id="cart-items">
+    <p style="color:#777;font-size:0.8rem;text-align:center;padding:2rem 0">Your cart is empty</p>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span style="font-size:0.8rem;color:#999">TOTAL</span>
+      <span style="color:#e63226" id="cart-total">£0.00</span>
+    </div>
+    <button class="cart-checkout-btn" onclick="alert('Checkout coming soon — the team is setting it up!')">Checkout</button>
+  </div>
+</div>
+
+<!-- Cart Toast -->
+<div id="cart-toast">
+  <span style="color:#22c55e">✓</span>
+  <span id="toast-text">Item added to cart</span>
+</div>
+
+<!-- Notify Toast -->
+<div id="notify-toast">
+  <span>🔔</span>
+  <span>We'll email you when it's back in stock!</span>
+</div>
+
+<!-- Back-in-Stock Notify Modal -->
+<div id="notify-modal" class="notify-overlay" onclick="if(event.target===this)this.style.display='none'">
+  <div class="notify-box">
+    <div class="notify-title">🔔 Back in Stock Alert</div>
+    <div class="notify-subtitle">
+      <strong id="notify-product-label" style="color:#fff"></strong>
+      — Size: <strong id="notify-size-label" style="color:#e63226"></strong>
+    </div>
+    <input type="hidden" id="notify-product-id">
+    <input type="hidden" id="notify-product-name">
+    <input type="hidden" id="notify-size">
+    <label class="notify-label">Your Email</label>
+    <input type="email" id="notify-email" class="notify-input" placeholder="you@example.com">
+    <div class="notify-actions">
+      <button class="notify-submit-btn" onclick="window.saveStockNotification()">Notify Me</button>
+      <button class="notify-cancel-btn" onclick="document.getElementById('notify-modal').style.display='none'">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cart Login Prompt Modal -->
+<div id="cart-login-modal" class="cart-login-overlay" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:12px;padding:2rem;width:90%;max-width:340px;text-align:center">
+    <div style="font-family:'Boldonse',sans-serif;font-size:1rem;margin-bottom:0.5rem">MEMBERS ONLY<span style="color:#e63226">.</span></div>
+    <p style="font-size:0.75rem;color:#777;margin-bottom:1.5rem">You need to be logged in to add items to your cart.</p>
+    <div style="display:flex;gap:0.8rem">
+      <a href="members-login.html" style="flex:1;padding:0.7rem;background:#e63226;color:#fff;border-radius:6px;font-family:'Boldonse',sans-serif;font-size:0.75rem;text-align:center">Login</a>
+      <button onclick="document.getElementById('cart-login-modal').style.display='none'" style="flex:1;padding:0.7rem;background:transparent;color:#777;border:1px solid #2a2a2a;border-radius:6px;font-family:'Boldonse',sans-serif;font-size:0.75rem;cursor:pointer">Cancel</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
