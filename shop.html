@@ -7,455 +7,144 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background: #0c0c0c;
-  color: #fff;
-  font-family: 'Boldonse', sans-serif;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-a {
-  text-decoration: none;
-  color: #fff;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: #0c0c0c; color: #fff; font-family: 'Boldonse', sans-serif; line-height: 1.6; overflow-x: hidden; }
+a { text-decoration: none; color: #fff; }
 
 /* Navigation */
-.nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  background: rgba(12, 12, 12, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2.5rem;
-  z-index: 1000;
-}
-
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 2.5rem;
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  height: 48px;
-}
-
-.nav-logo img {
-  height: 48px;
-  width: auto;
-}
-
-.nav-logo-icon {
-  display: flex;
-  gap: 0.15rem;
-  font-size: 1.3rem;
-  font-weight: bold;
-  letter-spacing: 0.05em;
-}
-
-.nav-logo-icon .red-dot {
-  color: #e63226;
-  font-size: 0.6rem;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.8rem;
-  align-items: center;
-}
-
-.nav-link {
-  font-size: 0.95rem;
-  font-family: 'Boldonse', sans-serif;
-  color: #fff;
-  transition: color 0.3s;
-}
-
-.nav-link:hover {
-  color: #999;
-}
-
-.nav-link.active {
-  color: #e63226;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.nav-icon {
-  width: 34px;
-  height: 34px;
-  border: 1px solid #444;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  transition: all 0.3s;
-}
-
-.nav-icon:hover {
-  color: #e63226;
-  border-color: #e63226;
-}
-
-.nav-cta {
-  font-size: 0.8rem;
-  padding: 0.5rem 1.3rem;
-  background: #e63226;
-  color: #fff;
-  border-radius: 6px;
-  transition: opacity 0.3s;
-}
-
-.nav-cta:hover {
-  opacity: 0.9;
-}
+.nav { position: fixed; top: 0; left: 0; right: 0; height: 64px; background: rgba(12,12,12,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; padding: 0 2.5rem; z-index: 1000; }
+.nav-left { display: flex; align-items: center; gap: 2.5rem; }
+.nav-logo { display: flex; align-items: center; height: 48px; }
+.nav-logo img { height: 48px; width: auto; }
+.nav-links { display: flex; gap: 1.8rem; align-items: center; }
+.nav-link { font-size: 0.95rem; font-family: 'Boldonse', sans-serif; color: #fff; transition: color 0.3s; }
+.nav-link:hover { color: #999; }
+.nav-link.active { color: #e63226; }
+.nav-right { display: flex; align-items: center; gap: 0.7rem; }
+.nav-icon { width: 34px; height: 34px; border: 1px solid #444; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #999; transition: all 0.3s; }
+.nav-icon:hover { color: #e63226; border-color: #e63226; }
+.nav-cta { font-size: 0.8rem; padding: 0.5rem 1.3rem; background: #e63226; color: #fff; border-radius: 6px; transition: opacity 0.3s; }
+.nav-cta:hover { opacity: 0.9; }
 
 /* Shop Hero */
-.shop-hero {
-  padding: calc(64px + 4rem) 2.5rem 3rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.shop-hero::before {
-  content: 'SHOP';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Boldonse', sans-serif;
-  font-size: 20vw;
-  color: rgba(14, 14, 14, 0.08);
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.shop-hero h1 {
-  font-size: clamp(3rem, 6vw, 5rem);
-  line-height: 1.3;
-  position: relative;
-  margin-bottom: 0.8rem;
-  z-index: 1;
-}
-
-.shop-hero h1 .rdot {
-  color: #e63226;
-}
-
-.shop-hero p {
-  font-size: 0.75rem;
-  color: #999;
-  position: relative;
-  z-index: 1;
-}
+.shop-hero { padding: calc(64px + 4rem) 2.5rem 3rem; text-align: center; position: relative; overflow: hidden; }
+.shop-hero::before { content: 'SHOP'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: 'Boldonse', sans-serif; font-size: 20vw; color: rgba(14,14,14,0.08); white-space: nowrap; pointer-events: none; z-index: 0; }
+.shop-hero h1 { font-size: clamp(3rem,6vw,5rem); line-height: 1.3; position: relative; margin-bottom: 0.8rem; z-index: 1; }
+.shop-hero h1 .rdot { color: #e63226; }
+.shop-hero p { font-size: 0.75rem; color: #999; position: relative; z-index: 1; }
 
 /* Shop Filters */
-.shop-filters {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0 2.5rem 3rem;
-  flex-wrap: wrap;
-}
-
-.filter-btn {
-  padding: 0.5rem 1.2rem;
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  background: #1c1c1c;
-  border: 1px solid #2a2a2a;
-  color: #999;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Boldonse', sans-serif;
-  border-radius: 6px;
-}
-
-.filter-btn:hover {
-  border-color: #e63226;
-  color: #e63226;
-}
-
-.filter-btn.active {
-  background: rgba(230, 50, 38, 0.1);
-  border-color: #e63226;
-  color: #e63226;
-}
+.shop-filters { display: flex; justify-content: center; gap: 0.5rem; padding: 0 2.5rem 3rem; flex-wrap: wrap; }
+.filter-btn { padding: 0.5rem 1.2rem; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; background: #1c1c1c; border: 1px solid #2a2a2a; color: #999; cursor: pointer; transition: all 0.2s; font-family: 'Boldonse', sans-serif; border-radius: 6px; }
+.filter-btn:hover { border-color: #e63226; color: #e63226; }
+.filter-btn.active { background: rgba(230,50,38,0.1); border-color: #e63226; color: #e63226; }
 
 /* Shop Grid */
-.shop-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2.5rem 4rem;
-}
-
-@media (max-width: 768px) {
-  .shop-grid {
-    grid-template-columns: 1fr;
-  }
-}
+.shop-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; max-width: 1400px; margin: 0 auto; padding: 0 2.5rem 4rem; }
+@media (max-width: 768px) { .shop-grid { grid-template-columns: 1fr; } }
 
 /* Product Cards */
-.drop-card {
-  background: #1c1c1c;
-  border: 1px solid #2a2a2a;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: border-color 0.3s;
-}
+.drop-card { background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 10px; overflow: hidden; transition: border-color 0.3s; }
+.drop-card:hover { border-color: #3a3a3a; }
+.drop-card-img { aspect-ratio: 1; background: #0c0c0c; position: relative; display: flex; align-items: center; justify-content: center; }
+.drop-card-name-overlay { position: absolute; top: 0.8rem; left: 0.8rem; font-family: 'Boldonse', sans-serif; font-size: 0.75rem; color: rgba(255,255,255,0.4); max-width: 80%; word-wrap: break-word; }
+.lock-icon { width: 50px; height: 50px; border: 2px solid #e63226; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #e63226; font-size: 1.2rem; }
+.drop-card-info { padding: 1.2rem; }
+.drop-card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+.members-tag { font-family: 'Boldonse', sans-serif; font-size: 0.6rem; letter-spacing: 0.1em; color: #e63226; }
+.exclusive-tag { font-size: 0.55rem; color: #999; display: flex; align-items: center; gap: 0.3rem; }
+.drop-card-title { font-family: 'Boldonse', sans-serif; font-size: 1rem; letter-spacing: 0.03em; margin-bottom: 0.3rem; cursor: pointer; transition: color 0.2s; }
+.drop-card-title:hover { color: #e63226; }
+.drop-card-desc { font-size: 0.65rem; color: #999; line-height: 1.6; margin-bottom: 0.5rem; }
+.drop-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+.price-blurred { font-family: 'Boldonse', sans-serif; font-size: 1rem; color: #e63226; filter: blur(4px); user-select: none; }
+.join-link { font-size: 0.6rem; color: #999; display: flex; align-items: center; gap: 0.3rem; transition: color 0.3s; }
+.join-link:hover { color: #fff; }
 
-.drop-card:hover {
-  border-color: #3a3a3a;
-}
+/* Star Rating */
+.card-stars { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.6rem; }
+.stars-display { display: flex; gap: 1px; }
+.star { font-size: 0.75rem; color: #333; }
+.star.filled { color: #f59e0b; }
+.star.half { position: relative; color: #333; }
+.star.half::after { content: '★'; position: absolute; left: 0; top: 0; color: #f59e0b; width: 50%; overflow: hidden; }
+.star-count { font-size: 0.6rem; color: #777; }
+.no-reviews { font-size: 0.6rem; color: #555; }
 
-.drop-card-img {
-  aspect-ratio: 1;
-  background: #0c0c0c;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Heart / Wishlist Button */
+.heart-btn { position: absolute; top: 0.7rem; right: 0.7rem; width: 32px; height: 32px; background: rgba(12,12,12,0.8); border: 1px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; z-index: 2; }
+.heart-btn:hover { border-color: #e63226; background: rgba(230,50,38,0.1); }
+.heart-btn.active { border-color: #e63226; background: rgba(230,50,38,0.15); }
+.heart-btn svg { width: 14px; height: 14px; transition: all 0.2s; }
+.heart-btn.active svg { fill: #e63226; stroke: #e63226; }
 
-.drop-card-name-overlay {
-  position: absolute;
-  top: 0.8rem;
-  left: 0.8rem;
-  font-family: 'Boldonse', sans-serif;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
-  max-width: 80%;
-  word-wrap: break-word;
-}
+/* Product Modal */
+.product-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 2rem 1rem; }
+.product-modal-overlay.open { display: flex; }
+.product-modal-box { background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 14px; width: 100%; max-width: 680px; margin: auto; position: relative; }
+.pm-close { position: absolute; top: 1rem; right: 1rem; width: 32px; height: 32px; background: #2a2a2a; border: none; border-radius: 50%; color: #999; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.pm-close:hover { background: #e63226; color: #fff; }
+.pm-header { padding: 2rem 2rem 1.5rem; border-bottom: 1px solid #2a2a2a; }
+.pm-title { font-size: 1.4rem; margin-bottom: 0.5rem; }
+.pm-meta { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.pm-price { font-size: 1.2rem; color: #e63226; }
+.pm-desc { font-size: 0.75rem; color: #999; margin-top: 0.8rem; line-height: 1.7; }
+.pm-stars-row { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; }
+.pm-avg { font-size: 1rem; color: #f59e0b; }
+.pm-review-count { font-size: 0.7rem; color: #777; }
 
-.lock-icon {
-  width: 50px;
-  height: 50px;
-  border: 2px solid #e63226;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #e63226;
-  font-size: 1.2rem;
-}
+/* Reviews Section */
+.pm-reviews { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2a2a; }
+.pm-reviews h3 { font-size: 1rem; margin-bottom: 1.2rem; letter-spacing: 0.05em; }
+.review-item { padding: 1rem 0; border-bottom: 1px solid #222; }
+.review-item:last-child { border-bottom: none; }
+.review-top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+.review-stars { display: flex; gap: 1px; }
+.review-star { font-size: 0.8rem; color: #f59e0b; }
+.review-title { font-size: 0.85rem; color: #fff; }
+.verified-badge { font-size: 0.55rem; background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); padding: 0.2rem 0.5rem; border-radius: 20px; }
+.review-body { font-size: 0.72rem; color: #999; line-height: 1.6; margin-bottom: 0.3rem; }
+.review-date { font-size: 0.6rem; color: #555; }
+.no-reviews-msg { text-align: center; padding: 2rem; color: #555; font-size: 0.8rem; }
 
-.drop-card-info {
-  padding: 1.2rem;
-}
+/* Write Review Form */
+.pm-write-review { padding: 1.5rem 2rem; }
+.pm-write-review h3 { font-size: 1rem; margin-bottom: 1.2rem; letter-spacing: 0.05em; }
+.write-review-locked { text-align: center; padding: 1.5rem; color: #555; font-size: 0.75rem; }
+.write-review-locked a { color: #e63226; }
+.star-picker { display: flex; gap: 0.3rem; margin-bottom: 1rem; }
+.star-pick { font-size: 1.5rem; cursor: pointer; color: #333; transition: color 0.1s; }
+.star-pick.selected { color: #f59e0b; }
+.review-input { width: 100%; background: #111; border: 1px solid #333; border-radius: 8px; color: #fff; font-family: 'Boldonse', sans-serif; padding: 0.8rem 1rem; font-size: 0.8rem; margin-bottom: 0.8rem; transition: border-color 0.2s; }
+.review-input:focus { outline: none; border-color: #e63226; }
+textarea.review-input { resize: vertical; min-height: 90px; }
+.review-submit { padding: 0.8rem 2rem; background: #e63226; border: none; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.85rem; cursor: pointer; transition: opacity 0.2s; }
+.review-submit:hover { opacity: 0.9; }
+.review-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.review-msg { font-size: 0.75rem; margin-top: 0.8rem; padding: 0.7rem 1rem; border-radius: 6px; display: none; }
+.review-msg.ok { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); display: block; }
+.review-msg.err { background: rgba(230,50,38,0.15); color: #e63226; border: 1px solid rgba(230,50,38,0.3); display: block; }
 
-.drop-card-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.members-tag {
-  font-family: 'Boldonse', sans-serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  color: #e63226;
-}
-
-.exclusive-tag {
-  font-size: 0.55rem;
-  color: #999;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.drop-card-title {
-  font-family: 'Boldonse', sans-serif;
-  font-size: 1rem;
-  letter-spacing: 0.03em;
-  margin-bottom: 0.3rem;
-}
-
-.drop-card-desc {
-  font-size: 0.65rem;
-  color: #999;
-  line-height: 1.6;
-  margin-bottom: 0.8rem;
-}
-
-.drop-card-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.price-blurred {
-  font-family: 'Boldonse', sans-serif;
-  font-size: 1rem;
-  color: #e63226;
-  filter: blur(4px);
-  user-select: none;
-}
-
-.join-link {
-  font-size: 0.6rem;
-  color: #999;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  transition: color 0.3s;
-}
-
-.join-link:hover {
-  color: #fff;
-}
+/* Wishlist toast */
+.wishlist-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(4rem); background: #1c1c1c; border: 1px solid #333; color: #fff; padding: 0.8rem 1.5rem; border-radius: 8px; font-size: 0.8rem; z-index: 4000; transition: transform 0.3s; pointer-events: none; }
+.wishlist-toast.show { transform: translateX(-50%) translateY(0); }
 
 /* Footer */
-.footer {
-  background: #0c0c0c;
-  border-top: 1px solid #2a2a2a;
-  padding: 3rem 2.5rem;
-  margin-top: 4rem;
-}
-
-.footer-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-@media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-}
-
-.footer-section h3 {
-  font-family: 'Boldonse', sans-serif;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  letter-spacing: 0.05em;
-}
-
-.footer-section ul {
-  list-style: none;
-}
-
-.footer-section a {
-  font-size: 0.8rem;
-  color: #999;
-  display: block;
-  margin-bottom: 0.6rem;
-  transition: color 0.3s;
-}
-
-.footer-section a:hover {
-  color: #e63226;
-}
-
-.footer-social {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.footer-social a {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #2a2a2a;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  transition: all 0.3s;
-  margin-bottom: 0;
-}
-
-.footer-social a:hover {
-  color: #e63226;
-  border-color: #e63226;
-}
-
-.footer-logo {
-  font-family: 'Boldonse', sans-serif;
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  margin-bottom: 1rem;
-}
-
-.footer-logo .red-dot {
-  color: #e63226;
-}
-
-.footer-bottom {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding-top: 2rem;
-  border-top: 1px solid #2a2a2a;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.75rem;
-  color: #999;
-}
-
-.footer-copy {
-  font-family: 'Boldonse', sans-serif;
-}
-
-@media (max-width: 768px) {
-  .footer-bottom {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-
-  .nav {
-    padding: 0 1.5rem;
-  }
-
-  .nav-links {
-    display: none;
-  }
-
-  .nav-left {
-    gap: 1rem;
-  }
-}
+.footer { background: #0c0c0c; border-top: 1px solid #2a2a2a; padding: 3rem 2.5rem; margin-top: 4rem; }
+.footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; margin-bottom: 3rem; }
+@media (max-width: 768px) { .footer-content { grid-template-columns: 1fr; gap: 1.5rem; } .nav { padding: 0 1.5rem; } .nav-links { display: none; } .nav-left { gap: 1rem; } }
+.footer-section h3 { font-family: 'Boldonse', sans-serif; font-size: 0.9rem; margin-bottom: 1rem; letter-spacing: 0.05em; }
+.footer-section ul { list-style: none; }
+.footer-section a { font-size: 0.8rem; color: #999; display: block; margin-bottom: 0.6rem; transition: color 0.3s; }
+.footer-section a:hover { color: #e63226; }
+.footer-social { display: flex; gap: 1rem; margin-top: 1rem; }
+.footer-social a { width: 32px; height: 32px; border: 1px solid #2a2a2a; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #999; transition: all 0.3s; margin-bottom: 0; }
+.footer-social a:hover { color: #e63226; border-color: #e63226; }
+.footer-logo { font-family: 'Boldonse', sans-serif; font-size: 0.9rem; letter-spacing: 0.05em; margin-bottom: 1rem; }
+.footer-logo .red-dot { color: #e63226; }
+.footer-bottom { max-width: 1400px; margin: 0 auto; padding-top: 2rem; border-top: 1px solid #2a2a2a; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #999; }
+.footer-copy { font-family: 'Boldonse', sans-serif; }
 </style>
 </head>
 <body>
@@ -474,27 +163,16 @@ a {
   </div>
   <div class="nav-right">
     <a href="https://instagram.com/dirt.boxclub" class="nav-icon" target="_blank" rel="noopener noreferrer">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="2" width="20" height="20" rx="5"/>
-        <circle cx="12" cy="12" r="5"/>
-        <circle cx="17.5" cy="6.5" r="1.5"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
     </a>
     <a href="https://facebook.com/dirt.boxclub" class="nav-icon" target="_blank" rel="noopener noreferrer">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
     </a>
     <a href="https://tiktok.com/@dirt.boxclub" class="nav-icon" target="_blank" rel="noopener noreferrer">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46v-7.15a8.16 8.16 0 005.58 2.17v-3.45a4.85 4.85 0 01-1.99-4.54z"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46v-7.15a8.16 8.16 0 005.58 2.17v-3.45a4.85 4.85 0 01-1.99-4.54z"/></svg>
     </a>
     <a href="admin-login.html" class="nav-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
-      </svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
     </a>
     <a href="my-account.html" class="nav-icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -523,30 +201,61 @@ a {
 <!-- Shop Grid -->
 <div class="shop-grid" id="shop-grid"></div>
 
+<!-- Wishlist Toast -->
+<div class="wishlist-toast" id="wishlist-toast"></div>
+
+<!-- Product Modal -->
+<div class="product-modal-overlay" id="product-modal">
+  <div class="product-modal-box">
+    <button class="pm-close" onclick="closeProductModal()">×</button>
+
+    <!-- Product Header -->
+    <div class="pm-header">
+      <div class="pm-title" id="pm-title"></div>
+      <div class="pm-stars-row">
+        <div class="stars-display" id="pm-stars-display"></div>
+        <span class="pm-avg" id="pm-avg-score"></span>
+        <span class="pm-review-count" id="pm-review-count"></span>
+      </div>
+      <div class="pm-meta">
+        <span class="pm-price" id="pm-price"></span>
+      </div>
+      <div class="pm-desc" id="pm-desc"></div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="pm-reviews">
+      <h3>Customer Reviews</h3>
+      <div id="pm-reviews-list"><div class="no-reviews-msg">Loading reviews...</div></div>
+    </div>
+
+    <!-- Write a Review -->
+    <div class="pm-write-review" id="pm-write-section">
+      <h3>Write a Review</h3>
+      <div id="pm-write-content">
+        <div class="write-review-locked">
+          <a href="my-account.html">Sign in</a> to write a review
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer class="footer">
   <div class="footer-content">
     <div class="footer-section">
       <img src="assets/logo-vertical-cropped.png" alt="DIRT BOX CLUB" style="width:100px;height:auto">
-      <p style="font-size: 0.8rem; color: #999; margin-bottom: 1rem;">Stuff we made. Buy it or don't. We're not your mum.</p>
+      <p style="font-size:0.8rem;color:#999;margin-bottom:1rem;">Stuff we made. Buy it or don't. We're not your mum.</p>
       <div class="footer-social">
         <a href="https://instagram.com/dirt.boxclub" target="_blank" rel="noopener noreferrer">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor" opacity="0"/>
-            <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
-            <rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
-            <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/>
-          </svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
         </a>
         <a href="https://facebook.com/dirt.boxclub" target="_blank" rel="noopener noreferrer">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-          </svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
         </a>
         <a href="https://tiktok.com/@dirt.boxclub" target="_blank" rel="noopener noreferrer">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46v-7.15a8.16 8.16 0 005.58 2.17v-3.45a4.85 4.85 0 01-1.99-4.54z"/>
-          </svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46v-7.15a8.16 8.16 0 005.58 2.17v-3.45a4.85 4.85 0 01-1.99-4.54z"/></svg>
         </a>
       </div>
     </div>
@@ -580,13 +289,19 @@ a {
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-copy">© 2026 DIRTBOXCLUB<span class="r">.</span> Members only. Access restricted.</div>
+    <div class="footer-copy">© 2026 DIRTBOXCLUB<span style="color:#e63226">.</span> Members only. Access restricted.</div>
   </div>
 </footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getAuth, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc,
+    query, where, addDoc, serverTimestamp, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
@@ -598,44 +313,340 @@ a {
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  let inventoryMap = {};
+  const db  = getFirestore(app);
+  const auth = getAuth(app);
 
-  // Load inventory on page load
+  let inventoryMap = {};
+  let reviewSummaries = {};   // { productId: { avg, count } }
+  let wishlistSet = new Set(); // product IDs in wishlist
+  let currentUser = null;
+  let currentModalProductId = null;
+  let selectedRating = 0;
+
+  // ── Inventory ─────────────────────────────────────────────────────────────
   async function loadInventory() {
     try {
-      const invSnap = await getDocs(collection(db, 'inventory'));
-      invSnap.forEach(doc => {
-        inventoryMap[doc.id] = doc.data().sizes || {};
+      const snap = await getDocs(collection(db, 'inventory'));
+      snap.forEach(d => { inventoryMap[d.id] = d.data().sizes || {}; });
+    } catch(e) { console.warn('inventory:', e); }
+  }
+
+  // ── Review Summaries (approved only) ──────────────────────────────────────
+  async function loadReviewSummaries() {
+    try {
+      const snap = await getDocs(query(collection(db, 'reviews'), where('status', '==', 'approved')));
+      const tmp = {};
+      snap.forEach(d => {
+        const r = d.data();
+        const pid = String(r.productId);
+        if (!tmp[pid]) tmp[pid] = { sum: 0, count: 0 };
+        tmp[pid].sum += (r.rating || 0);
+        tmp[pid].count += 1;
       });
-      renderProducts();
-    } catch (e) {
-      console.warn('Could not load inventory:', e);
-      renderProducts();
+      reviewSummaries = {};
+      Object.keys(tmp).forEach(pid => {
+        reviewSummaries[pid] = {
+          avg: Math.round((tmp[pid].sum / tmp[pid].count) * 10) / 10,
+          count: tmp[pid].count
+        };
+      });
+    } catch(e) { console.warn('review summaries:', e); }
+  }
+
+  // ── Wishlist ───────────────────────────────────────────────────────────────
+  async function loadWishlist(uid) {
+    try {
+      const snap = await getDocs(collection(db, 'customers', uid, 'wishlist'));
+      wishlistSet = new Set(snap.docs.map(d => d.id));
+    } catch(e) { console.warn('wishlist:', e); }
+  }
+
+  // ── Auth State ─────────────────────────────────────────────────────────────
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) await loadWishlist(user.uid);
+    renderProducts();
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  async function init() {
+    await Promise.all([loadInventory(), loadReviewSummaries()]);
+    renderProducts();
+    // handle ?cat= query param
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('cat');
+    if (cat) {
+      const btn = document.querySelector(`.filter-btn[onclick*="'${cat}'"]`);
+      if (btn) filterProducts(cat, btn);
     }
   }
 
-  window.getInventory = (sku) => inventoryMap[sku] || {};
-  loadInventory();
+  init();
+
+  // ── Globals ────────────────────────────────────────────────────────────────
+  window.getInventory   = (sku) => inventoryMap[sku] || {};
+  window.getReviewSummary = (id) => reviewSummaries[String(id)] || null;
+  window.isWishlisted   = (id) => wishlistSet.has(String(id));
+
+  // ── Toggle Wishlist ────────────────────────────────────────────────────────
+  window.toggleWishlist = async function(e, productId) {
+    e.stopPropagation();
+    if (!currentUser) {
+      showToast('Sign in to save to wishlist');
+      setTimeout(() => { window.location.href = 'my-account.html'; }, 1200);
+      return;
+    }
+    const pid = String(productId);
+    const ref = doc(db, 'customers', currentUser.uid, 'wishlist', pid);
+    if (wishlistSet.has(pid)) {
+      await deleteDoc(ref);
+      wishlistSet.delete(pid);
+      showToast('Removed from wishlist');
+    } else {
+      await setDoc(ref, { productId: productId, addedAt: serverTimestamp() });
+      wishlistSet.add(pid);
+      showToast('❤ Added to wishlist');
+    }
+    // update heart btn state on card
+    const btn = document.querySelector(`.heart-btn[data-pid="${pid}"]`);
+    if (btn) btn.classList.toggle('active', wishlistSet.has(pid));
+  };
+
+  // ── Open Product Modal ─────────────────────────────────────────────────────
+  window.openProductModal = async function(productId) {
+    const p = PRODUCTS.find(x => x.id === productId);
+    if (!p) return;
+
+    currentModalProductId = productId;
+    const isMember = sessionStorage.getItem('dbc_member');
+
+    // populate header
+    document.getElementById('pm-title').textContent = p.name;
+    document.getElementById('pm-desc').textContent = p.desc;
+    document.getElementById('pm-price').textContent =
+      (p.exclusive && !isMember) ? '🔒 Members Only' : `£${p.price.toFixed(2)}`;
+
+    // stars summary
+    const summary = reviewSummaries[String(productId)];
+    document.getElementById('pm-stars-display').innerHTML = renderStarsHTML(summary ? summary.avg : 0, 'pm-star');
+    document.getElementById('pm-avg-score').textContent   = summary ? summary.avg.toFixed(1) : '';
+    document.getElementById('pm-review-count').textContent = summary
+      ? `(${summary.count} review${summary.count !== 1 ? 's' : ''})`
+      : 'No reviews yet';
+
+    // show modal
+    document.getElementById('product-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // load full reviews
+    await loadModalReviews(productId);
+
+    // write review section
+    await setupWriteReview(productId);
+  };
+
+  window.closeProductModal = function() {
+    document.getElementById('product-modal').classList.remove('open');
+    document.body.style.overflow = '';
+    currentModalProductId = null;
+    selectedRating = 0;
+  };
+
+  document.getElementById('product-modal').addEventListener('click', function(e) {
+    if (e.target === this) window.closeProductModal();
+  });
+
+  // ── Load Reviews in Modal ─────────────────────────────────────────────────
+  async function loadModalReviews(productId) {
+    const container = document.getElementById('pm-reviews-list');
+    container.innerHTML = '<div class="no-reviews-msg">Loading...</div>';
+    try {
+      const snap = await getDocs(query(
+        collection(db, 'reviews'),
+        where('productId', '==', productId),
+        where('status', '==', 'approved')
+      ));
+      if (snap.empty) {
+        container.innerHTML = '<div class="no-reviews-msg">No reviews yet — be the first!</div>';
+        return;
+      }
+      const reviews = [];
+      snap.forEach(d => reviews.push({ id: d.id, ...d.data() }));
+      reviews.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+      container.innerHTML = reviews.map(r => {
+        const date = r.createdAt ? new Date(r.createdAt.seconds * 1000).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) : '';
+        const stars = '★'.repeat(r.rating || 0) + '☆'.repeat(5 - (r.rating || 0));
+        return `
+          <div class="review-item">
+            <div class="review-top">
+              <span class="review-stars">${[1,2,3,4,5].map(i => `<span style="color:${i <= r.rating ? '#f59e0b' : '#333'}">★</span>`).join('')}</span>
+              <span class="review-title">${escHtml(r.title || '')}</span>
+              ${r.verified ? '<span class="verified-badge">✓ Verified Purchase</span>' : ''}
+            </div>
+            <div class="review-body">${escHtml(r.body || '')}</div>
+            <div class="review-date">${date}</div>
+          </div>`;
+      }).join('');
+    } catch(e) {
+      container.innerHTML = '<div class="no-reviews-msg">Could not load reviews.</div>';
+    }
+  }
+
+  // ── Setup Write Review Section ────────────────────────────────────────────
+  async function setupWriteReview(productId) {
+    const content = document.getElementById('pm-write-content');
+    selectedRating = 0;
+
+    if (!currentUser) {
+      content.innerHTML = `<div class="write-review-locked"><a href="my-account.html">Sign in</a> to leave a review</div>`;
+      return;
+    }
+
+    // Check if user already reviewed
+    const existingSnap = await getDocs(query(
+      collection(db, 'reviews'),
+      where('productId', '==', productId),
+      where('customerId', '==', currentUser.uid)
+    ));
+    if (!existingSnap.empty) {
+      content.innerHTML = `<div class="write-review-locked" style="color:#22c55e">✓ You've already reviewed this product</div>`;
+      return;
+    }
+
+    // Check if user has purchased this product
+    let hasPurchased = false;
+    try {
+      const ordersSnap = await getDocs(query(
+        collection(db, 'orders'),
+        where('customerEmail', '==', currentUser.email)
+      ));
+      ordersSnap.forEach(d => {
+        const order = d.data();
+        if (order.items && order.items.some(i => i.id === productId || i.productId === productId)) {
+          hasPurchased = true;
+        }
+      });
+    } catch(e) { console.warn('purchase check:', e); }
+
+    if (!hasPurchased) {
+      content.innerHTML = `<div class="write-review-locked">You need to purchase this item before leaving a review.<br><a href="shop.html">Continue shopping</a></div>`;
+      return;
+    }
+
+    content.innerHTML = `
+      <div class="star-picker" id="star-picker">
+        ${[1,2,3,4,5].map(i => `<span class="star-pick" data-val="${i}" onclick="pickStar(${i})">★</span>`).join('')}
+      </div>
+      <input  type="text"     class="review-input" id="review-title-input" placeholder="Review title (e.g. Great quality!)">
+      <textarea class="review-input" id="review-body-input"  placeholder="Tell us what you think..."></textarea>
+      <button  class="review-submit" onclick="submitReview(${productId})">Submit Review</button>
+      <div class="review-msg" id="review-msg"></div>
+    `;
+  }
+
+  window.pickStar = function(val) {
+    selectedRating = val;
+    document.querySelectorAll('.star-pick').forEach(s => {
+      s.classList.toggle('selected', parseInt(s.dataset.val) <= val);
+    });
+  };
+
+  window.submitReview = async function(productId) {
+    if (!currentUser) return;
+    if (!selectedRating) { showReviewMsg('Please select a star rating', 'err'); return; }
+    const title = document.getElementById('review-title-input').value.trim();
+    const body  = document.getElementById('review-body-input').value.trim();
+    if (!title) { showReviewMsg('Please add a review title', 'err'); return; }
+    if (!body)  { showReviewMsg('Please write your review', 'err'); return; }
+
+    const btn = document.querySelector('.review-submit');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    // re-check purchase
+    let verified = false;
+    try {
+      const ordersSnap = await getDocs(query(
+        collection(db, 'orders'), where('customerEmail', '==', currentUser.email)
+      ));
+      ordersSnap.forEach(d => {
+        const o = d.data();
+        if (o.items && o.items.some(i => i.id === productId || i.productId === productId)) verified = true;
+      });
+    } catch(e) {}
+
+    try {
+      await addDoc(collection(db, 'reviews'), {
+        productId,
+        customerId:    currentUser.uid,
+        customerEmail: currentUser.email,
+        rating:        selectedRating,
+        title,
+        body,
+        verified,
+        status:    'pending',   // admin must approve
+        createdAt: serverTimestamp()
+      });
+      showReviewMsg('Review submitted! It will appear after approval.', 'ok');
+      btn.style.display = 'none';
+    } catch(e) {
+      showReviewMsg('Could not submit review. Please try again.', 'err');
+      btn.disabled = false;
+      btn.textContent = 'Submit Review';
+    }
+  };
+
+  function showReviewMsg(msg, type) {
+    const el = document.getElementById('review-msg');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'review-msg ' + type;
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function renderStarsHTML(avg, cls = 'star') {
+    return [1,2,3,4,5].map(i => {
+      if (i <= Math.floor(avg)) return `<span class="${cls} filled">★</span>`;
+      if (i - avg < 1 && avg % 1 >= 0.5) return `<span class="${cls} half">★</span>`;
+      return `<span class="${cls}">☆</span>`;
+    }).join('');
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('wishlist-toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  // Expose to non-module scope for renderProducts
+  window._renderStarsHTML = renderStarsHTML;
+
 </script>
+
 <script>
 const PRODUCTS = [
-  {id: 1, name: "Awkward Since Birth Tee", desc: "Because normal was never an option. Stanley/Stella Freestyler relaxed fit.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 2, name: "Born Defiant Tee", desc: "In support of Teenage Cancer Trust. Born defiant, staying that way.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 3, name: "Cancer Can Get Fucked Tee", desc: "In support of Teenage Cancer Trust. Because cancer can get absolutely fucked.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 4, name: "Chaos Coordinator Tee", desc: "Managing the madness since day one. Stanley/Stella Freestyler relaxed fit.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 5, name: "Dirt Box Club Cap", desc: "Black dad cap with embroidered Dirt Box Club logo. Adjustable strap.", cat: "hat", price: 20, exclusive: true},
-  {id: 6, name: "Dirt Box Club Collab Tee", desc: "The official Dirt Box Club collaboration tee. Limited run.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 7, name: "Dirt Box Club Mug", desc: "Start your morning with the right attitude. Dishwasher safe.", cat: "mug", price: 8.99, exclusive: true},
-  {id: 8, name: "Dirt Box Club Tank Top", desc: "For when sleeves are too much commitment.", cat: "tank", price: 22, exclusive: true},
-  {id: 9, name: "Emotionally Unavailable Tee", desc: "Setting expectations early. Stanley/Stella Freestyler relaxed fit.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 10, name: "I'm With This Idiot Tee", desc: "You know who you are. Stanley/Stella Freestyler relaxed fit.", cat: "tshirt", price: 42, exclusive: true},
-  {id: 11, name: "Mentally Misfiring Tee", desc: "In support of Ben - Support for Life. When the brain does its own thing.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 12, name: "Mystery Box", desc: "You don't know what's inside. That's the point. Every box is different.", cat: "mystery", price: 29.99, exclusive: true, stock: 50},
-  {id: 13, name: "Not Your Average Tee", desc: "For those who never were. Stanley/Stella Freestyler relaxed fit.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 14, name: "Pretending Everything's Fine Tee", desc: "In support of Ben - Support for Life. The daily uniform.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 15, name: "Professionally Unprofessional Tee", desc: "The balance we all strive for. Stanley/Stella Freestyler relaxed fit.", cat: "tshirt", price: 34.99, exclusive: true},
-  {id: 16, name: "The Voice In My Head Tee", desc: "In support of Ben - Support for Life. It's louder than you think.", cat: "tshirt", price: 34.99, exclusive: true},
+  {id:1,  name:"Awkward Since Birth Tee",           desc:"Because normal was never an option. Stanley/Stella Freestyler relaxed fit.",                    cat:"tshirt",  price:34.99, exclusive:true},
+  {id:2,  name:"Born Defiant Tee",                  desc:"In support of Teenage Cancer Trust. Born defiant, staying that way.",                           cat:"tshirt",  price:34.99, exclusive:true},
+  {id:3,  name:"Cancer Can Get Fucked Tee",          desc:"In support of Teenage Cancer Trust. Because cancer can get absolutely fucked.",                 cat:"tshirt",  price:34.99, exclusive:true},
+  {id:4,  name:"Chaos Coordinator Tee",              desc:"Managing the madness since day one. Stanley/Stella Freestyler relaxed fit.",                    cat:"tshirt",  price:34.99, exclusive:true},
+  {id:5,  name:"Dirt Box Club Cap",                  desc:"Black dad cap with embroidered Dirt Box Club logo. Adjustable strap.",                          cat:"hat",     price:20,    exclusive:true},
+  {id:6,  name:"Dirt Box Club Collab Tee",           desc:"The official Dirt Box Club collaboration tee. Limited run.",                                    cat:"tshirt",  price:34.99, exclusive:true},
+  {id:7,  name:"Dirt Box Club Mug",                  desc:"Start your morning with the right attitude. Dishwasher safe.",                                  cat:"mug",     price:8.99,  exclusive:true},
+  {id:8,  name:"Dirt Box Club Tank Top",             desc:"For when sleeves are too much commitment.",                                                      cat:"tank",    price:22,    exclusive:true},
+  {id:9,  name:"Emotionally Unavailable Tee",        desc:"Setting expectations early. Stanley/Stella Freestyler relaxed fit.",                            cat:"tshirt",  price:34.99, exclusive:true},
+  {id:10, name:"I'm With This Idiot Tee",            desc:"You know who you are. Stanley/Stella Freestyler relaxed fit.",                                  cat:"tshirt",  price:42,    exclusive:true},
+  {id:11, name:"Mentally Misfiring Tee",             desc:"In support of Ben - Support for Life. When the brain does its own thing.",                      cat:"tshirt",  price:34.99, exclusive:true},
+  {id:12, name:"Mystery Box",                        desc:"You don't know what's inside. That's the point. Every box is different.",                       cat:"mystery", price:29.99, exclusive:true, stock:50},
+  {id:13, name:"Not Your Average Tee",               desc:"For those who never were. Stanley/Stella Freestyler relaxed fit.",                              cat:"tshirt",  price:34.99, exclusive:true},
+  {id:14, name:"Pretending Everything's Fine Tee",   desc:"In support of Ben - Support for Life. The daily uniform.",                                      cat:"tshirt",  price:34.99, exclusive:true},
+  {id:15, name:"Professionally Unprofessional Tee",  desc:"The balance we all strive for. Stanley/Stella Freestyler relaxed fit.",                         cat:"tshirt",  price:34.99, exclusive:true},
+  {id:16, name:"The Voice In My Head Tee",           desc:"In support of Ben - Support for Life. It's louder than you think.",                             cat:"tshirt",  price:34.99, exclusive:true},
 ];
 
 let currentFilter = 'all';
@@ -645,9 +656,24 @@ function renderProducts() {
   const isMember = sessionStorage.getItem('dbc_member');
 
   document.getElementById('shop-grid').innerHTML = filtered.map(p => {
-    const sizes = window.getInventory(p.id);
-    const totalStock = Object.values(sizes).reduce((sum, qty) => sum + qty, 0);
-    const isSoldOut = totalStock === 0 && Object.keys(sizes).length > 0;
+    const inv = (window.getInventory || (() => ({})))(p.id);
+    const totalStock = Object.values(inv).reduce((s,q) => s+q, 0);
+    const isSoldOut = totalStock === 0 && Object.keys(inv).length > 0;
+    const summary = (window.getReviewSummary || (() => null))(p.id);
+    const wishlisted = (window.isWishlisted || (() => false))(p.id);
+
+    // Stars row
+    let starsHtml = '';
+    if (summary) {
+      const stars = (window._renderStarsHTML || (() => ''))(summary.avg);
+      starsHtml = `
+        <div class="card-stars">
+          <div class="stars-display">${stars}</div>
+          <span class="star-count">${summary.avg.toFixed(1)} (${summary.count})</span>
+        </div>`;
+    } else {
+      starsHtml = `<div class="card-stars"><span class="no-reviews">No reviews yet</span></div>`;
+    }
 
     return `
     <div class="drop-card" style="${isSoldOut ? 'opacity:0.6' : ''}">
@@ -655,22 +681,29 @@ function renderProducts() {
         <div class="drop-card-name-overlay">${p.name}</div>
         ${p.exclusive && !isMember ? '<div class="lock-icon">🔒</div>' : ''}
         ${isSoldOut ? '<div style="position:absolute;top:0.8rem;right:0.8rem;background:#e63226;color:#fff;padding:0.4rem 0.8rem;border-radius:4px;font-size:0.6rem;font-weight:700">SOLD OUT</div>' : ''}
+        <!-- Heart / Wishlist -->
+        <button class="heart-btn ${wishlisted ? 'active' : ''}" data-pid="${p.id}" onclick="toggleWishlist(event, ${p.id})" title="${wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}">
+          <svg viewBox="0 0 24 24" fill="${wishlisted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </button>
       </div>
       <div class="drop-card-info">
         <div class="drop-card-meta">
           ${p.exclusive ? '<span class="members-tag">MEMBERS ONLY</span><span class="exclusive-tag">🔒 Exclusive</span>' : ''}
         </div>
-        <div class="drop-card-title">${p.name}</div>
+        <div class="drop-card-title" onclick="openProductModal(${p.id})">${p.name}</div>
         <div class="drop-card-desc">${p.desc}</div>
+        ${starsHtml}
         <div class="drop-card-bottom">
-          ${p.exclusive && !isMember ?
-            `<span class="price-blurred">£XX<span class="r">.</span>XX</span><a href="membership.html" class="join-link">🔒 Join to Access</a>`
-            : `<span style="font-family: 'Boldonse', sans-serif; font-size: 1rem; color: #fff;">£${p.price.toFixed(2)}</span>${isSoldOut ? '<span style="color:#e63226;font-size:0.75rem;margin-left:0.5rem">• Out of Stock</span>' : ''}`
+          ${p.exclusive && !isMember
+            ? `<span class="price-blurred">£XX<span class="r">.</span>XX</span><a href="membership.html" class="join-link">🔒 Join to Access</a>`
+            : `<span style="font-family:'Boldonse',sans-serif;font-size:1rem;color:#fff;">£${p.price.toFixed(2)}</span>${isSoldOut ? '<span style="color:#e63226;font-size:0.75rem;margin-left:0.5rem">• Out of Stock</span>' : ''}`
           }
         </div>
       </div>
-    </div>
-  `}).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterProducts(category, button) {

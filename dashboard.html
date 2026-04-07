@@ -1147,6 +1147,7 @@
     <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
     <button class="tab-btn" onclick="switchTab('crm', this)">💌 CRM</button>
     <button class="tab-btn" onclick="switchTab('discounts', this)">🏷️ Discount Codes</button>
+    <button class="tab-btn" id="reviews-tab-btn" onclick="switchTab('reviews', this)">⭐ Reviews <span id="pending-reviews-badge" class="orders-badge" style="display:none;background:#f59e0b;color:#000">0</span></button>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -1292,6 +1293,7 @@
       <div class="crm-subtab-bar">
         <button class="crm-subtab-btn active" onclick="switchCrmSubtab('customers', this)">👥 Customers</button>
         <button class="crm-subtab-btn" onclick="switchCrmSubtab('campaigns', this)">📧 Campaigns</button>
+        <button class="crm-subtab-btn" onclick="switchCrmSubtab('referrals', this)">🔗 Referrals</button>
       </div>
 
       <!-- CUSTOMERS SUBTAB -->
@@ -1428,6 +1430,45 @@
           </div>
         </div>
       </div>
+
+      <!-- REFERRALS SUBTAB -->
+      <div id="crm-referrals" class="crm-subtab-content">
+        <div class="stats-grid" style="margin-bottom:2rem">
+          <div class="stat-card"><div class="stat-icon">🔗</div><div class="stat-label">Total Referrals</div><div class="stat-value" id="crm-ref-total">0</div></div>
+          <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Converted</div><div class="stat-value" id="crm-ref-converted" style="color:#22c55e">0</div></div>
+          <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label">Pending</div><div class="stat-value" id="crm-ref-pending" style="color:#f59e0b">0</div></div>
+          <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Total Rewards Issued</div><div class="stat-value" id="crm-ref-rewards">£0</div></div>
+        </div>
+
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
+          <div style="padding:1rem 1.5rem;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:0.85rem;font-weight:700">Referral Activity</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Referrer</th>
+                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Code</th>
+                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Referee</th>
+                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Date</th>
+                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Status</th>
+                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="crm-referrals-tbody">
+                <tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">Loading referrals...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Per-customer referral stats section -->
+        <div style="margin-top:2rem">
+          <h3 style="font-size:0.95rem;margin-bottom:1rem;letter-spacing:0.05em">Top Referrers</h3>
+          <div id="crm-top-referrers" style="color:#666;font-size:0.8rem">Loading...</div>
+        </div>
+      </div>
     </div>
 
     <!-- CUSTOMER DETAIL MODAL -->
@@ -1440,6 +1481,36 @@
         <div id="customer-modal-body">
           <!-- Customer details will be filled here -->
         </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div id="tab-reviews" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Product Reviews</h2>
+          <p>Approve, reject, or delete customer reviews before they go live</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <select id="reviews-filter" class="crm-filter-input" onchange="filterReviews()" style="font-family:'Boldonse',sans-serif;font-size:0.7rem;padding:0.5rem 0.8rem;background:#1c1c1c;border:1px solid #333;color:#fff;border-radius:6px;cursor:pointer">
+            <option value="all">All Reviews</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-grid" style="margin-bottom:1.5rem" id="reviews-stats-grid">
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-label">Total Reviews</div><div class="stat-value" id="rv-stat-total">0</div></div>
+        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label">Pending</div><div class="stat-value" id="rv-stat-pending" style="color:#f59e0b">0</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Approved</div><div class="stat-value" id="rv-stat-approved" style="color:#22c55e">0</div></div>
+        <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-label">Rejected</div><div class="stat-value" id="rv-stat-rejected" style="color:#e63226">0</div></div>
+      </div>
+
+      <div id="reviews-list-container">
+        <div style="text-align:center;padding:3rem;color:#666">Loading reviews...</div>
       </div>
     </div>
 
@@ -2366,6 +2437,8 @@
         loadCrmCustomers();
       } else if (subtab === 'campaigns') {
         loadCampaignHistory();
+      } else if (subtab === 'referrals') {
+        loadCrmReferrals();
       }
     };
 
@@ -2782,6 +2855,9 @@
       if (tabName === 'crm') {
         loadCrmCustomers();
       }
+      if (tabName === 'reviews') {
+        loadAllReviews();
+      }
     };
 
     // ─────────────────────────────────────────────────────────────────
@@ -2939,6 +3015,236 @@
       if (!confirm(`Delete code "${code}"? This cannot be undone.`)) return;
       await deleteDoc(doc(db, 'discountCodes', id));
       await refreshDiscountCodes();
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  REVIEWS
+    // ─────────────────────────────────────────────────────────────────
+
+    let allReviews = [];
+    let reviewsFilterState = 'all';
+
+    async function loadAllReviews() {
+      const container = document.getElementById('reviews-list-container');
+      container.innerHTML = '<div style="text-align:center;padding:3rem;color:#666">Loading reviews...</div>';
+      try {
+        const snap = await getDocs(collection(db, 'reviews'));
+        allReviews = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        allReviews.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        // Stats
+        const total    = allReviews.length;
+        const pending  = allReviews.filter(r => r.status === 'pending').length;
+        const approved = allReviews.filter(r => r.status === 'approved').length;
+        const rejected = allReviews.filter(r => r.status === 'rejected').length;
+
+        document.getElementById('rv-stat-total').textContent    = total;
+        document.getElementById('rv-stat-pending').textContent  = pending;
+        document.getElementById('rv-stat-approved').textContent = approved;
+        document.getElementById('rv-stat-rejected').textContent = rejected;
+
+        // Pending badge in tab
+        const badge = document.getElementById('pending-reviews-badge');
+        if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline-block'; }
+        else { badge.style.display = 'none'; }
+
+        renderReviews();
+      } catch(e) {
+        container.innerHTML = `<div style="text-align:center;padding:3rem;color:#e63226">Error loading reviews: ${e.message}</div>`;
+      }
+    }
+
+    window.filterReviews = function() {
+      reviewsFilterState = document.getElementById('reviews-filter').value;
+      renderReviews();
+    };
+
+    const PRODUCT_NAMES = {
+      1:'Awkward Since Birth Tee', 2:'Born Defiant Tee', 3:'Cancer Can Get Fucked Tee',
+      4:'Chaos Coordinator Tee', 5:'Dirt Box Club Cap', 6:'Dirt Box Club Collab Tee',
+      7:'Dirt Box Club Mug', 8:'Dirt Box Club Tank Top', 9:'Emotionally Unavailable Tee',
+      10:"I'm With This Idiot Tee", 11:'Mentally Misfiring Tee', 12:'Mystery Box',
+      13:'Not Your Average Tee', 14:"Pretending Everything's Fine Tee",
+      15:'Professionally Unprofessional Tee', 16:'The Voice In My Head Tee'
+    };
+
+    function renderReviews() {
+      const container = document.getElementById('reviews-list-container');
+      const filtered = reviewsFilterState === 'all'
+        ? allReviews
+        : allReviews.filter(r => r.status === reviewsFilterState);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center;padding:3rem;color:#666">No reviews found</div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
+          ${filtered.map(r => {
+            const stars = [1,2,3,4,5].map(i => `<span style="color:${i <= r.rating ? '#f59e0b' : '#333'}">★</span>`).join('');
+            const date  = r.createdAt ? new Date(r.createdAt.seconds * 1000).toLocaleDateString('en-GB') : '';
+            const statusColor = r.status === 'approved' ? '#22c55e' : r.status === 'rejected' ? '#e63226' : '#f59e0b';
+            const productName = PRODUCT_NAMES[r.productId] || `Product #${r.productId}`;
+            return `
+              <div style="padding:1.5rem;border-bottom:1px solid #2a2a2a" id="review-row-${r.id}">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.8rem;margin-bottom:0.8rem">
+                  <div>
+                    <div style="font-size:0.7rem;color:#777;margin-bottom:0.4rem">${productName} · ${date}</div>
+                    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap">
+                      <span style="font-size:0.9rem">${stars}</span>
+                      <span style="font-size:0.85rem;font-weight:700">${(r.title || '').replace(/</g,'&lt;')}</span>
+                      ${r.verified ? '<span style="font-size:0.55rem;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);padding:0.2rem 0.5rem;border-radius:20px">✓ Verified Purchase</span>' : ''}
+                    </div>
+                    <div style="font-size:0.75rem;color:#999;margin-top:0.5rem;max-width:500px">${(r.body || '').replace(/</g,'&lt;')}</div>
+                    <div style="font-size:0.65rem;color:#666;margin-top:0.4rem">${r.customerEmail || ''}</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem">
+                    <span style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${statusColor}">${r.status || 'pending'}</span>
+                    <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
+                      ${r.status !== 'approved'  ? `<button class="btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;background:#22c55e" onclick="setReviewStatus('${r.id}','approved')">✓ Approve</button>` : ''}
+                      ${r.status !== 'rejected'  ? `<button class="btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;background:#f59e0b;color:#000" onclick="setReviewStatus('${r.id}','rejected')">✗ Reject</button>` : ''}
+                      <button class="btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;background:#333;border:1px solid #555" onclick="deleteReview('${r.id}')">🗑 Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>`;
+    }
+
+    window.setReviewStatus = async function(reviewId, status) {
+      try {
+        await updateDoc(doc(db, 'reviews', reviewId), { status });
+        const r = allReviews.find(x => x.id === reviewId);
+        if (r) r.status = status;
+        // Update stats
+        const pending  = allReviews.filter(r => r.status === 'pending').length;
+        const approved = allReviews.filter(r => r.status === 'approved').length;
+        const rejected = allReviews.filter(r => r.status === 'rejected').length;
+        document.getElementById('rv-stat-pending').textContent  = pending;
+        document.getElementById('rv-stat-approved').textContent = approved;
+        document.getElementById('rv-stat-rejected').textContent = rejected;
+        const badge = document.getElementById('pending-reviews-badge');
+        if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline-block'; }
+        else { badge.style.display = 'none'; }
+        renderReviews();
+      } catch(e) { alert('Error updating review: ' + e.message); }
+    };
+
+    window.deleteReview = async function(reviewId) {
+      if (!confirm('Delete this review permanently?')) return;
+      try {
+        await deleteDoc(doc(db, 'reviews', reviewId));
+        allReviews = allReviews.filter(r => r.id !== reviewId);
+        document.getElementById('rv-stat-total').textContent = allReviews.length;
+        renderReviews();
+      } catch(e) { alert('Error deleting review: ' + e.message); }
+    };
+
+    // Load pending count on dashboard init
+    async function initReviewsBadge() {
+      try {
+        const snap = await getDocs(query(collection(db, 'reviews'), where('status', '==', 'pending')));
+        const count = snap.size;
+        const badge = document.getElementById('pending-reviews-badge');
+        if (count > 0) { badge.textContent = count; badge.style.display = 'inline-block'; }
+      } catch(e) {}
+    }
+
+    // Call on load
+    initReviewsBadge();
+
+    // ─────────────────────────────────────────────────────────────────
+    //  CRM REFERRALS
+    // ─────────────────────────────────────────────────────────────────
+
+    async function loadCrmReferrals() {
+      const tbody = document.getElementById('crm-referrals-tbody');
+      const topDiv = document.getElementById('crm-top-referrers');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">Loading...</td></tr>';
+
+      try {
+        const [refSnap, custSnap] = await Promise.all([
+          getDocs(collection(db, 'referrals')),
+          getDocs(collection(db, 'customers'))
+        ]);
+
+        const refs    = refSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const custMap = {};
+        custSnap.forEach(d => { custMap[d.id] = d.data(); });
+
+        // Stats
+        const converted = refs.filter(r => r.status === 'converted').length;
+        const pending   = refs.filter(r => r.status !== 'converted').length;
+        document.getElementById('crm-ref-total').textContent     = refs.length;
+        document.getElementById('crm-ref-converted').textContent  = converted;
+        document.getElementById('crm-ref-pending').textContent    = pending;
+        document.getElementById('crm-ref-rewards').textContent    = `£${converted * 5}`;
+
+        if (refs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">No referrals yet</td></tr>';
+          topDiv.textContent = 'No referrers yet.';
+          return;
+        }
+
+        // Sort by date desc
+        refs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        tbody.innerHTML = refs.map(r => {
+          const referrer  = custMap[r.referrerId];
+          const referrName = referrer ? (referrer.name || referrer.email || r.referrerId) : r.referrerId;
+          const date = r.createdAt ? new Date(r.createdAt.seconds * 1000).toLocaleDateString('en-GB') : '—';
+          const statusColor = r.status === 'converted' ? '#22c55e' : '#f59e0b';
+          return `<tr style="border-bottom:1px solid #1a1a1a" onmouseover="this.style.background='#202020'" onmouseout="this.style.background=''">
+            <td style="padding:0.9rem 1rem;font-size:0.8rem">${referrName}</td>
+            <td style="padding:0.9rem 1rem;color:#e63226;font-size:0.75rem;letter-spacing:0.1em">${r.code || '—'}</td>
+            <td style="padding:0.9rem 1rem;color:#999;font-size:0.75rem">${r.refereeEmail || '—'}</td>
+            <td style="padding:0.9rem 1rem;color:#777;font-size:0.72rem">${date}</td>
+            <td style="padding:0.9rem 1rem"><span style="font-size:0.65rem;font-weight:700;color:${statusColor};text-transform:uppercase">${r.status || 'registered'}</span></td>
+            <td style="padding:0.9rem 1rem">
+              ${r.status !== 'converted' ? `<button class="btn" style="font-size:0.6rem;padding:0.35rem 0.7rem" onclick="markReferralConverted('${r.id}','${r.referrerId}')">Mark Converted</button>` : '<span style="color:#22c55e;font-size:0.7rem">✓ Done</span>'}
+            </td>
+          </tr>`;
+        }).join('');
+
+        // Top referrers
+        const leaderboard = {};
+        refs.forEach(r => {
+          if (!leaderboard[r.referrerId]) leaderboard[r.referrerId] = { total: 0, converted: 0, name: '' };
+          leaderboard[r.referrerId].total++;
+          if (r.status === 'converted') leaderboard[r.referrerId].converted++;
+          const c = custMap[r.referrerId];
+          leaderboard[r.referrerId].name = c ? (c.name || c.email || r.referrerId) : r.referrerId;
+        });
+
+        const sorted = Object.entries(leaderboard).sort((a, b) => b[1].converted - a[1].converted).slice(0, 5);
+        if (sorted.length === 0) { topDiv.textContent = 'No referrers yet.'; return; }
+
+        topDiv.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem">
+          ${sorted.map(([uid, stats], i) => `
+            <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;padding:1.2rem;text-align:center">
+              <div style="font-size:0.6rem;color:#e63226;margin-bottom:0.4rem">#${i+1}</div>
+              <div style="font-size:0.85rem;margin-bottom:0.5rem">${stats.name}</div>
+              <div style="font-size:1.5rem;color:#e63226;margin-bottom:0.2rem">${stats.converted}</div>
+              <div style="font-size:0.6rem;color:#777">conversions · ${stats.total} referrals</div>
+              <div style="font-size:0.7rem;color:#22c55e;margin-top:0.5rem">£${stats.converted * 5} earned</div>
+            </div>`).join('')}
+        </div>`;
+
+      } catch(e) {
+        tbody.innerHTML = `<tr><td colspan="6" style="color:#e63226;padding:2rem;text-align:center">Error: ${e.message}</td></tr>`;
+      }
+    }
+
+    window.markReferralConverted = async function(refId, referrerId) {
+      if (!confirm('Mark this referral as converted and award referrer 500 loyalty points (£5)?')) return;
+      try {
+        await updateDoc(doc(db, 'referrals', refId), { status: 'converted', convertedAt: serverTimestamp() });
+        // Add 500 loyalty points to referrer
+        await updateDoc(doc(db, 'customers', referrerId), { loyaltyPoints: increment(500) });
+        await loadCrmReferrals();
+      } catch(e) { alert('Error: ' + e.message); }
     };
 
   </script>

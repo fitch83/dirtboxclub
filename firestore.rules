@@ -33,11 +33,16 @@ service cloud.firestore {
     }
 
     // ─── CUSTOMERS Collection ────────────────────────────────────────
-    // Admin only: read, write
-    // Stores customer data for CRM: name, email, phone, totalSpend, orderCount,
-    // lastOrderDate, firstOrderDate, memberStatus, tags, orders[], notes
-    match /customers/{document=**} {
-      allow read, write: if isAdmin();
+    // Admin: full access
+    // Authenticated customer: read/write own document and subcollections
+    match /customers/{uid} {
+      allow read, write: if isAdmin() || request.auth.uid == uid;
+    }
+    // Wishlist subcollection: owner can read/write; admin can read
+    match /customers/{uid}/wishlist/{item} {
+      allow read, write: if isAdmin() || request.auth.uid == uid;
+      // Public read for shareable wishlists
+      allow read: if true;
     }
 
     // ─── CAMPAIGNS Collection ────────────────────────────────────────
@@ -71,6 +76,47 @@ service cloud.firestore {
     // Admin only: read, write
     match /drops/{document=**} {
       allow read, write: if isAdmin();
+    }
+
+    // ─── REVIEWS Collection ──────────────────────────────────────────
+    // Public: read approved reviews only
+    // Authenticated: create new reviews (one per product per user enforced in app)
+    // Admin: full access (approve/reject/delete)
+    match /reviews/{reviewId} {
+      allow read: if resource.data.status == 'approved' || isAdmin() || request.auth.uid == resource.data.customerId;
+      allow create: if request.auth != null &&
+                       request.resource.data.customerId == request.auth.uid &&
+                       request.resource.data.rating is int &&
+                       request.resource.data.rating >= 1 &&
+                       request.resource.data.rating <= 5 &&
+                       request.resource.data.title is string &&
+                       request.resource.data.body is string;
+      allow update, delete: if isAdmin();
+    }
+
+    // ─── REFERRALS Collection ─────────────────────────────────────────
+    // Authenticated: create when signing up via referral link
+    // Admin: full access; referrer can read own referrals
+    match /referrals/{refId} {
+      allow read:   if isAdmin() || request.auth.uid == resource.data.referrerId || request.auth.uid == resource.data.refereeId;
+      allow create: if request.auth != null && request.resource.data.refereeId == request.auth.uid;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ─── DISCOUNT CODES Collection ────────────────────────────────────
+    // Admin: full access; authenticated users can read active codes (for validation at checkout)
+    match /discountCodes/{codeId} {
+      allow read:          if isAdmin() || request.auth != null;
+      allow write:         if isAdmin();
+      allow create:        if request.auth != null && request.resource.data.referral == true && request.resource.data.forUser == request.auth.uid;
+    }
+
+    // ─── INVENTORY Collection ─────────────────────────────────────────
+    // Public read; Admin write
+    match /inventory/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
     // ─── Default Deny ───────────────────────────────────────────────
