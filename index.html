@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIRTBOXCLUB. — Not For Everyone</title>
+<link rel="manifest" href="/dirtboxclub/manifest.json">
+<meta name="theme-color" content="#e63226">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dirtbox Club">
+<link rel="apple-touch-icon" href="/dirtboxclub/icons/icon-192.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -257,6 +263,131 @@ a{color:inherit;text-decoration:none}
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  // Load drops countdown banner
+  async function loadDropsBanner() {
+    try {
+      const dropsSnap = await getDocs(query(
+        collection(db, 'drops'),
+        where('active', '==', true)
+      ));
+
+      for (const doc of dropsSnap.docs) {
+        const drop = doc.data();
+        const dropAt = drop.dropAt?.toDate ? drop.dropAt.toDate() : new Date(drop.dropAt);
+
+        if (dropAt > new Date()) {
+          // Drop is in the future, show countdown
+          displayDropCountdown(drop, dropAt);
+          break;
+        } else if (dropAt <= new Date() && new Date(dropAt.getTime() + 60 * 60 * 1000) > new Date()) {
+          // Drop is live (within 1 hour of start), show live banner
+          displayDropLive(drop);
+          break;
+        }
+      }
+    } catch (err) {
+      console.log('Error loading drops:', err);
+    }
+  }
+
+  function displayDropCountdown(drop, dropAt) {
+    const banner = document.createElement('div');
+    banner.id = 'drops-countdown-banner';
+    banner.style.cssText = `
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #1c1c1c 0%, #0a0a0a 100%);
+      border-bottom: 2px solid #e63226;
+      padding: 1.5rem 2rem;
+      z-index: 900;
+      text-align: center;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+    `;
+
+    const imageHtml = drop.bannerImageUrl ? `<img src="${drop.bannerImageUrl}" alt="${drop.name}" style="max-height: 150px; max-width: 100%; margin-bottom: 1rem; border-radius: 6px;">` : '';
+
+    banner.innerHTML = `
+      ${imageHtml}
+      <div style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #e63226; text-transform: uppercase; letter-spacing: 0.1em;">UPCOMING DROP</div>
+      <h3 style="margin: 0.5rem 0; font-size: 1.5rem; color: #fff;">${drop.name}</h3>
+      ${drop.description ? `<p style="margin: 0.5rem 0 1rem; font-size: 0.85rem; color: #999; max-width: 600px; margin-left: auto; margin-right: auto;">${drop.description}</p>` : ''}
+      <div id="drops-countdown-timer" style="font-size: 1.8rem; color: #e63226; font-weight: bold; letter-spacing: 0.05em; margin-top: 0.8rem;">
+        Loading countdown...
+      </div>
+    `;
+    document.body.insertBefore(banner, document.body.firstChild.nextSibling);
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = dropAt.getTime() - now;
+
+      if (distance <= 0) {
+        document.getElementById('drops-countdown-timer').textContent = 'DROP IS LIVE NOW 🔥';
+        document.getElementById('drops-countdown-timer').style.color = '#ff0000';
+        // Hide after 1 hour
+        setTimeout(() => {
+          banner.remove();
+        }, 60 * 60 * 1000);
+      } else {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById('drops-countdown-timer').textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+
+  function displayDropLive(drop) {
+    const banner = document.createElement('div');
+    banner.id = 'drops-live-banner';
+    banner.style.cssText = `
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #e63226 0%, #a02419 100%);
+      border-bottom: 2px solid #ff0000;
+      padding: 1.5rem 2rem;
+      z-index: 900;
+      text-align: center;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      animation: pulse 2s infinite;
+    `;
+
+    const imageHtml = drop.bannerImageUrl ? `<img src="${drop.bannerImageUrl}" alt="${drop.name}" style="max-height: 150px; max-width: 100%; margin-bottom: 1rem; border-radius: 6px;">` : '';
+
+    banner.innerHTML = `
+      <style>
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.9; }
+        }
+      </style>
+      ${imageHtml}
+      <div style="font-size: 2rem; color: #fff; font-weight: bold; letter-spacing: 0.1em;">DROP IS LIVE NOW 🔥</div>
+      <h3 style="margin: 0.5rem 0; font-size: 1.2rem; color: #fff;">${drop.name}</h3>
+      ${drop.description ? `<p style="margin: 0.5rem 0; font-size: 0.85rem; color: rgba(255,255,255,0.9);">${drop.description}</p>` : ''}
+    `;
+    document.body.insertBefore(banner, document.body.firstChild.nextSibling);
+
+    // Auto-remove after 1 hour
+    setTimeout(() => {
+      banner.remove();
+    }, 60 * 60 * 1000);
+  }
+
+  // Load drops on page load
+  loadDropsBanner();
+
   window.submitNewsletterSignup = async function(event) {
     if (event) {
       event.preventDefault();
@@ -321,6 +452,107 @@ a{color:inherit;text-decoration:none}
       setTimeout(() => messageDiv.style.display = 'none', 3000);
     }
   };
+</script>
+
+<script>
+  // Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/dirtboxclub/sw.js').catch(err => {
+        console.log('Service Worker registration failed:', err);
+      });
+    });
+  }
+
+  // PWA Install Prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallPrompt();
+  });
+
+  function showInstallPrompt() {
+    const installed = localStorage.getItem('pwa-installed') || localStorage.getItem('pwa-dismissed');
+    if (installed) return;
+
+    setTimeout(() => {
+      const banner = document.createElement('div');
+      banner.id = 'pwa-install-banner';
+      banner.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        max-width: 500px;
+        background: #1c1c1c;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        padding: 1.2rem;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        font-family: 'Boldonse', sans-serif;
+      `;
+
+      const text = document.createElement('div');
+      text.style.cssText = 'color: #fff; font-size: 0.85rem; flex: 1;';
+      text.innerHTML = '📱 Add Dirtbox Club to your home screen for the best experience';
+
+      const buttonContainer = document.createElement('div');
+      buttonContainer.style.cssText = 'display: flex; gap: 0.5rem;';
+
+      const installBtn = document.createElement('button');
+      installBtn.textContent = 'Install';
+      installBtn.style.cssText = `
+        padding: 0.5rem 1rem;
+        background: #e63226;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: 'Boldonse', sans-serif;
+        font-size: 0.75rem;
+        white-space: nowrap;
+      `;
+      installBtn.onclick = async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            localStorage.setItem('pwa-installed', 'true');
+          }
+          deferredPrompt = null;
+        }
+        banner.remove();
+      };
+
+      const dismissBtn = document.createElement('button');
+      dismissBtn.textContent = '✕';
+      dismissBtn.style.cssText = `
+        padding: 0.5rem 0.8rem;
+        background: #2a2a2a;
+        color: #999;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: 'Boldonse', sans-serif;
+        font-size: 0.9rem;
+      `;
+      dismissBtn.onclick = () => {
+        localStorage.setItem('pwa-dismissed', 'true');
+        banner.remove();
+      };
+
+      buttonContainer.appendChild(installBtn);
+      buttonContainer.appendChild(dismissBtn);
+      banner.appendChild(text);
+      banner.appendChild(buttonContainer);
+      document.body.appendChild(banner);
+    }, 30000); // Show after 30 seconds
+  }
 </script>
 
 </body></html>

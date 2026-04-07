@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DIRTBOXCLUB. — Admin Dashboard</title>
+  <link rel="manifest" href="/dirtboxclub/manifest.json">
+  <meta name="theme-color" content="#e63226">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dirtbox Club">
+  <link rel="apple-touch-icon" href="/dirtboxclub/icons/icon-192.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 
@@ -1143,10 +1149,13 @@
     <button class="tab-btn" onclick="switchTab('applications', this)">📋 Applications</button>
     <button class="tab-btn" onclick="switchTab('members', this)">👥 Members</button>
     <button class="tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
+    <button class="tab-btn" onclick="switchTab('vat-tax', this)">🧾 VAT/Tax</button>
     <button class="tab-btn" onclick="switchTab('announcements', this)">📢 Announcements</button>
     <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
+    <button class="tab-btn" onclick="switchTab('returns', this)">↩️ Returns</button>
     <button class="tab-btn" onclick="switchTab('crm', this)">💌 CRM</button>
     <button class="tab-btn" onclick="switchTab('discounts', this)">🏷️ Discount Codes</button>
+    <button class="tab-btn" id="abandoned-tab-btn" onclick="switchTab('abandoned', this)">🛒 Abandoned Carts <span id="abandoned-carts-badge" class="orders-badge" style="display:none">0</span></button>
     <button class="tab-btn" id="reviews-tab-btn" onclick="switchTab('reviews', this)">⭐ Reviews <span id="pending-reviews-badge" class="orders-badge" style="display:none;background:#f59e0b;color:#000">0</span></button>
   </div>
 
@@ -1255,6 +1264,76 @@
       </div>
     </div>
 
+    <!-- VAT/TAX REPORTING TAB -->
+    <div id="tab-vat-tax" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>VAT/Tax Reporting</h2>
+          <p>UK VAT (20% standard rate) — all prices VAT-inclusive</p>
+        </div>
+        <button class="btn" onclick="exportVATtoCSV()">⬇ Export to CSV</button>
+      </div>
+
+      <!-- TAB SWITCHER FOR VAT VIEW -->
+      <div style="display:flex;gap:0.5rem;margin-bottom:2rem;border-bottom:1px solid #2a2a2a;padding-bottom:1rem">
+        <button class="tab-btn active" onclick="switchVatView('monthly', this)">📅 Monthly Summary</button>
+        <button class="tab-btn" onclick="switchVatView('quarterly', this)">📊 Quarterly Summary</button>
+      </div>
+
+      <!-- MONTHLY VAT VIEW -->
+      <div id="vat-monthly-view">
+        <div class="card">
+          <div class="card-title">Monthly VAT Summary</div>
+          <div style="overflow-x:auto;margin-top:1rem">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Month</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Gross Sales</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Net Sales (÷1.2)</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">VAT @ 20%</th>
+                </tr>
+              </thead>
+              <tbody id="vat-monthly-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUARTERLY VAT VIEW -->
+      <div id="vat-quarterly-view" style="display:none">
+        <div class="card">
+          <div class="card-title">Quarterly VAT Summary</div>
+          <div style="overflow-x:auto;margin-top:1rem">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Quarter</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Gross Sales</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Net Sales (÷1.2)</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">VAT Owed</th>
+                </tr>
+              </thead>
+              <tbody id="vat-quarterly-rows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-top:2rem">
+          <div class="stat-card">
+            <div class="stat-icon">💷</div>
+            <div class="stat-label">Current Quarter VAT Owed</div>
+            <div class="stat-value" id="current-quarter-vat">£0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-label">Year to Date VAT</div>
+            <div class="stat-value" id="ytd-vat">£0.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ANNOUNCEMENTS TAB -->
     <div id="tab-announcements" class="tab-content">
       <div class="section-header">
@@ -1278,6 +1357,28 @@
       </div>
 
       <div id="drops-container"></div>
+    </div>
+
+    <!-- RETURNS TAB -->
+    <div id="tab-returns" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Returns Management</h2>
+          <p>Review and process customer return requests</p>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <select id="returns-filter" onchange="filterReturns(this.value)" style="padding: 0.5rem 0.8rem; background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.75rem;">
+          <option value="all">All Returns</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="refunded">Refunded</option>
+        </select>
+      </div>
+
+      <div id="returns-container"></div>
     </div>
 
     <!-- CRM TAB -->
@@ -1432,41 +1533,55 @@
       </div>
 
       <!-- REFERRALS SUBTAB -->
-      <div id="crm-referrals" class="crm-subtab-content">
-        <div class="stats-grid" style="margin-bottom:2rem">
-          <div class="stat-card"><div class="stat-icon">🔗</div><div class="stat-label">Total Referrals</div><div class="stat-value" id="crm-ref-total">0</div></div>
-          <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Converted</div><div class="stat-value" id="crm-ref-converted" style="color:#22c55e">0</div></div>
-          <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label">Pending</div><div class="stat-value" id="crm-ref-pending" style="color:#f59e0b">0</div></div>
-          <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Total Rewards Issued</div><div class="stat-value" id="crm-ref-rewards">£0</div></div>
+      <div id="crm-referrals" class="crm-subtab-content" style="display:none">
+        <!-- Global Stats -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px">
+          <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:18px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#e63226" id="ref-stat-total-all">0</div>
+            <div style="font-size:12px;color:#888;margin-top:4px">Total Referrals</div>
+          </div>
+          <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:18px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#22c55e" id="ref-stat-converted-all">0</div>
+            <div style="font-size:12px;color:#888;margin-top:4px">Converted</div>
+          </div>
+          <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:18px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#f59e0b" id="ref-stat-pending-all">0</div>
+            <div style="font-size:12px;color:#888;margin-top:4px">Pending</div>
+          </div>
+          <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:18px;text-align:center">
+            <div style="font-size:26px;font-weight:700;color:#a78bfa" id="ref-stat-points-all">0</div>
+            <div style="font-size:12px;color:#888;margin-top:4px">Points Awarded</div>
+          </div>
         </div>
 
-        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
-          <div style="padding:1rem 1.5rem;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:0.85rem;font-weight:700">Referral Activity</span>
-          </div>
-          <div style="overflow-x:auto">
-            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+        <!-- Referrals Table -->
+        <div style="margin-bottom:32px">
+          <h3 style="margin-bottom:14px;font-size:16px;color:#ccc">All Referrals</h3>
+          <div class="crm-table-container">
+            <table class="crm-table">
               <thead>
-                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
-                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Referrer</th>
-                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Code</th>
-                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Referee</th>
-                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Date</th>
-                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Status</th>
-                  <th style="text-align:left;padding:1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Actions</th>
+                <tr>
+                  <th>Date</th>
+                  <th>Referee Email</th>
+                  <th>Referrer</th>
+                  <th>Code Used</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="crm-referrals-tbody">
-                <tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">Loading referrals...</td></tr>
+                <tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">Loading…</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Per-customer referral stats section -->
-        <div style="margin-top:2rem">
-          <h3 style="font-size:0.95rem;margin-bottom:1rem;letter-spacing:0.05em">Top Referrers</h3>
-          <div id="crm-top-referrers" style="color:#666;font-size:0.8rem">Loading...</div>
+        <!-- Top Referrers Leaderboard -->
+        <div>
+          <h3 style="margin-bottom:14px;font-size:16px;color:#ccc">🏆 Top Referrers</h3>
+          <div id="referrers-leaderboard" style="display:flex;flex-direction:column;gap:10px">
+            <p style="color:#666;text-align:center;padding:20px">Loading…</p>
+          </div>
         </div>
       </div>
     </div>
@@ -1487,30 +1602,22 @@
     <!-- REVIEWS TAB -->
     <div id="tab-reviews" class="tab-content">
       <div class="section-header">
-        <div class="section-title">
-          <h2>Product Reviews</h2>
-          <p>Approve, reject, or delete customer reviews before they go live</p>
-        </div>
-        <div style="display:flex;gap:0.5rem;align-items:center">
-          <select id="reviews-filter" class="crm-filter-input" onchange="filterReviews()" style="font-family:'Boldonse',sans-serif;font-size:0.7rem;padding:0.5rem 0.8rem;background:#1c1c1c;border:1px solid #333;color:#fff;border-radius:6px;cursor:pointer">
+        <div class="section-title">⭐ Product Reviews</div>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="color:#aaa;font-size:13px">Filter:</label>
+          <select id="review-filter-status" onchange="filterReviews()" style="background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:6px;padding:6px 10px;font-size:13px">
             <option value="all">All Reviews</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
           </select>
         </div>
+        <div id="reviews-stats" style="color:#aaa;font-size:13px;margin-left:auto"></div>
       </div>
-
-      <!-- Stats row -->
-      <div class="stats-grid" style="margin-bottom:1.5rem" id="reviews-stats-grid">
-        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-label">Total Reviews</div><div class="stat-value" id="rv-stat-total">0</div></div>
-        <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label">Pending</div><div class="stat-value" id="rv-stat-pending" style="color:#f59e0b">0</div></div>
-        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Approved</div><div class="stat-value" id="rv-stat-approved" style="color:#22c55e">0</div></div>
-        <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-label">Rejected</div><div class="stat-value" id="rv-stat-rejected" style="color:#e63226">0</div></div>
-      </div>
-
-      <div id="reviews-list-container">
-        <div style="text-align:center;padding:3rem;color:#666">Loading reviews...</div>
+      <div id="reviews-list" style="display:flex;flex-direction:column;gap:12px">
+        <p style="color:#666;text-align:center;padding:40px 0">Loading reviews…</p>
       </div>
     </div>
 
@@ -1524,6 +1631,34 @@
         <button class="btn" onclick="openDiscountModal()">+ New Code</button>
       </div>
       <div id="discounts-container"></div>
+    </div>
+
+    <!-- ABANDONED CARTS TAB -->
+    <div id="tab-abandoned" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Abandoned Carts</h2>
+          <p>Customers who added items but didn't check out within 1 hour</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <label style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;font-size:0.75rem;color:#999">
+            <div id="auto-recover-toggle" onclick="toggleAutoRecover()"
+              style="width:44px;height:24px;background:#2a2a2a;border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;border:1px solid #333">
+              <div id="auto-recover-knob"
+                style="width:18px;height:18px;background:#777;border-radius:9px;position:absolute;top:2px;left:2px;transition:left 0.2s,background 0.2s"></div>
+            </div>
+            <span id="auto-recover-label">Auto-Recover: OFF</span>
+          </label>
+        </div>
+      </div>
+      <!-- Stats row -->
+      <div class="stats-grid" style="margin-bottom:2rem">
+        <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-label">Last 7 Days</div><div class="stat-value" id="abandoned-stat-total">—</div></div>
+        <div class="stat-card"><div class="stat-icon">📧</div><div class="stat-label">Emails Sent</div><div class="stat-value" id="abandoned-stat-sent">—</div></div>
+        <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Value at Risk</div><div class="stat-value" id="abandoned-stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Recovered</div><div class="stat-value" id="abandoned-stat-recovered">—</div></div>
+      </div>
+      <div id="abandoned-carts-container"></div>
     </div>
   </div>
 
@@ -1616,22 +1751,32 @@
       <h2 style="margin: 0 0 1.5rem 0; font-size: 1.2rem; font-weight: 700;">Schedule Drop</h2>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product</span>
-        <input id="drop-product" type="text" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Name</span>
+        <input id="drop-name" type="text" placeholder="e.g. Spring Collection 2026" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Date</span>
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product IDs (comma-separated)</span>
+        <input id="drop-product-ids" type="text" placeholder="prod1, prod2, prod3" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Date & Time</span>
         <input id="drop-date" type="datetime-local" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Quantity</span>
-        <input id="drop-quantity" type="number" value="100" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Description</span>
+        <textarea id="drop-description" placeholder="Add drop details..." style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; resize: vertical; min-height: 80px;"></textarea>
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Banner Image URL</span>
+        <input id="drop-banner-url" type="text" placeholder="https://..." style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <div style="display: flex; gap: 0.8rem;">
-        <button class="btn" onclick="scheduleDrop()" style="flex: 1;">Schedule</button>
+        <button class="btn" onclick="scheduleDrop()" style="flex: 1;">Create Drop</button>
         <button class="btn btn-outlined" onclick="closeModal('drop-modal')" style="flex: 1;">Cancel</button>
       </div>
     </div>
@@ -1747,20 +1892,34 @@
     // ─── INVENTORY MANAGEMENT ──────────────────────────────────────────
     window.loadInventory = async function() {
       try {
-        const invSnap = await getDocs(collection(db, 'inventory'));
-        let html = '<table style="width:100%;border-collapse:collapse;font-size:0.85rem">';
+        const [invSnap, notifSnap] = await Promise.all([
+          getDocs(collection(db, 'inventory')),
+          getDocs(query(collection(db, 'stock_notifications'), where('notified', '==', false)))
+        ]);
+
+        // Build notification count map: { "sku|size": count }
+        const notifMap = {};
+        notifSnap.forEach(d => {
+          const { productId, size } = d.data();
+          const key = `${productId}|${size}`;
+          notifMap[key] = (notifMap[key] || 0) + 1;
+        });
+
+        const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+        let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.85rem">';
         html += '<thead style="border-bottom:2px solid #333"><tr>';
-        html += '<th style="text-align:left;padding:0.8rem 0;font-weight:700;color:#999">SKU</th>';
-        html += '<th style="text-align:left;padding:0.8rem 0;font-weight:700;color:#999">Product Name</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">S</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">M</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">L</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">XL</th>';
-        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">Status</th>';
+        html += '<th style="text-align:left;padding:0.8rem 0.5rem;font-weight:700;color:#999">SKU</th>';
+        html += '<th style="text-align:left;padding:0.8rem 0.5rem;font-weight:700;color:#999">Product Name</th>';
+        allSizes.forEach(s => {
+          html += `<th style="text-align:center;padding:0.8rem 0.3rem;font-weight:700;color:#999">${s}</th>`;
+        });
+        html += '<th style="text-align:center;padding:0.8rem 0.5rem;font-weight:700;color:#999">Status</th>';
+        html += '<th style="text-align:center;padding:0.8rem 0.5rem;font-weight:700;color:#999">🔔 Waiting</th>';
         html += '</tr></thead><tbody>';
 
-        invSnap.forEach(doc => {
-          const inv = doc.data();
+        invSnap.forEach(docSnap => {
+          const inv = docSnap.data();
+          const sku  = docSnap.id;
           const sizes = inv.sizes || {};
           const reorder = inv.reorderThreshold || 3;
 
@@ -1769,24 +1928,59 @@
             if (qty <= reorder) lowStock = true;
           });
 
+          // Count total pending notifications for this SKU
+          let totalNotifs = 0;
+          allSizes.forEach(s => {
+            totalNotifs += notifMap[`${sku}|${s}`] || 0;
+          });
+          // Also check "One Size"
+          totalNotifs += notifMap[`${sku}|One Size`] || 0;
+
           const rowBg = lowStock ? 'background:#2a1a1a' : '';
           html += `<tr style="border-bottom:1px solid #2a2a2a;${rowBg}">`;
-          html += `<td style="padding:0.8rem 0;color:#e63226;font-weight:600">${doc.id}</td>`;
-          html += `<td style="padding:0.8rem 0">${inv.name || 'N/A'}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.S || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.S || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.M || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.M || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.L || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.L || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.XL || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.XL || 0}</td>`;
-          html += `<td style="padding:0.8rem 0;text-align:center">`;
+          html += `<td style="padding:0.8rem 0.5rem;color:#e63226;font-weight:600">${sku}</td>`;
+          html += `<td style="padding:0.8rem 0.5rem">${inv.name || 'N/A'}</td>`;
+
+          // All size columns
+          allSizes.forEach(s => {
+            const qty = sizes[s];
+            const notifCount = notifMap[`${sku}|${s}`] || 0;
+            if (qty === undefined) {
+              // Size not in inventory — show '-'
+              html += `<td style="padding:0.8rem 0.3rem;text-align:center;color:#333">—</td>`;
+            } else if (qty === 0) {
+              // Out of stock — show notify button if subscribers waiting
+              html += `<td style="padding:0.8rem 0.3rem;text-align:center">`;
+              html += `<span style="color:#e63226;font-size:0.75rem">0</span>`;
+              if (notifCount > 0) {
+                html += `<br><button class="btn-small" style="margin-top:0.3rem;font-size:0.55rem;padding:0.2rem 0.4rem;border-color:rgba(245,158,11,0.4);color:#f59e0b"
+                  onclick="notifyStockSubscribers('${sku}','${s}','${inv.name||sku}')">🔔 ${notifCount}</button>`;
+              }
+              html += `</td>`;
+            } else {
+              html += `<td style="padding:0.8rem 0.3rem;text-align:center;color:${qty <= reorder ? '#f59e0b' : '#22c55e'}">${qty}</td>`;
+            }
+          });
+
+          html += `<td style="padding:0.8rem 0.5rem;text-align:center">`;
           if (lowStock) {
-            html += `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">⚠ LOW STOCK</span>`;
+            html += `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">⚠ LOW</span>`;
           } else {
             html += `<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">✓ OK</span>`;
+          }
+          html += `</td>`;
+
+          // Waiting column
+          html += `<td style="padding:0.8rem 0.5rem;text-align:center">`;
+          if (totalNotifs > 0) {
+            html += `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">🔔 ${totalNotifs}</span>`;
+          } else {
+            html += `<span style="color:#444;font-size:0.7rem">—</span>`;
           }
           html += `</td></tr>`;
         });
 
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         if (invSnap.empty) {
           html = '<div style="color:#999;text-align:center;padding:2rem">No inventory data. Create products to manage stock.</div>';
         }
@@ -1825,6 +2019,12 @@
         }
 
         alert('✓ Stock updated');
+
+        // Check for back-in-stock notification subscribers
+        if (qty > 0) {
+          await checkStockNotifications(sku, size);
+        }
+
         document.getElementById('update-sku').value = '';
         document.getElementById('update-size').value = '';
         document.getElementById('update-qty').value = '';
@@ -1834,16 +2034,252 @@
       }
     };
 
+    // ── BACK-IN-STOCK NOTIFICATIONS ──────────────────────────────────────
+    async function checkStockNotifications(sku, size) {
+      try {
+        const q = query(
+          collection(db, 'stock_notifications'),
+          where('productId', '==', String(sku)),
+          where('size', '==', size),
+          where('notified', '==', false)
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) return;
+
+        const count = snap.size;
+        const productName = snap.docs[0].data().productName || sku;
+        const confirmed = confirm(`🔔 ${count} customer${count > 1 ? 's' : ''} want to be notified that ${productName} (${size}) is back in stock.\n\nSend notification emails now?`);
+        if (confirmed) {
+          await sendStockNotificationEmails(snap.docs, productName, size);
+        }
+      } catch (e) {
+        console.error('Error checking stock notifications:', e);
+      }
+    }
+
+    window.sendStockNotificationEmails = async function(docs, productName, size) {
+      let sent = 0, failed = 0;
+      for (const d of docs) {
+        const data = d.data();
+        try {
+          await emailjs.send(EMAILJS_SERVICE_ID, 'dbc_back_in_stock', {
+            to_email:     data.email,
+            product_name: productName,
+            size:         size,
+            shop_url:     'https://fitch83.github.io/dirtboxclub/shop.html'
+          });
+          await updateDoc(doc(db, 'stock_notifications', d.id), { notified: true, notifiedAt: new Date().toISOString() });
+          sent++;
+        } catch (e) {
+          console.warn('Failed to notify', data.email, e);
+          failed++;
+        }
+      }
+      alert(`✓ Sent ${sent} back-in-stock notification${sent !== 1 ? 's' : ''}${failed ? ` (${failed} failed)` : ''}.`);
+    };
+
+    // Manual "Notify subscribers" button in inventory
+    window.notifyStockSubscribers = async function(sku, size, productName) {
+      try {
+        const q = query(
+          collection(db, 'stock_notifications'),
+          where('productId', '==', String(sku)),
+          where('size', '==', size),
+          where('notified', '==', false)
+        );
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          alert('No pending subscribers for this product/size.');
+          return;
+        }
+        await sendStockNotificationEmails(snap.docs, productName, size);
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    };
+
+    // ── ABANDONED CARTS ──────────────────────────────────────────────────
+    let autoRecoverEnabled = false;
+
+    window.loadAbandonedCarts = async function() {
+      const container = document.getElementById('abandoned-carts-container');
+      if (!container) return;
+      container.innerHTML = '<div style="color:#777;text-align:center;padding:2rem">Loading…</div>';
+
+      try {
+        // Load auto-recover setting
+        try {
+          const settingSnap = await getDoc(doc(db, 'settings', 'autoRecover'));
+          autoRecoverEnabled = settingSnap.exists() && settingSnap.data().enabled;
+          updateAutoRecoverUI(autoRecoverEnabled);
+        } catch (e) { /* not available */ }
+
+        // Load carts from last 7 days
+        const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const q = query(collection(db, 'abandoned_carts'), orderBy('timestamp', 'desc'));
+        const snap = await getDocs(q);
+        const carts = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(c => c.timestamp && c.timestamp.toDate && c.timestamp.toDate() > cutoff);
+
+        // Update stats
+        const totalValue  = carts.reduce((s, c) => s + (c.total || 0), 0);
+        const sentCount   = carts.filter(c => c.emailSent).length;
+        const recoverCount = carts.filter(c => c.recovered).length;
+        document.getElementById('abandoned-stat-total').textContent     = carts.length;
+        document.getElementById('abandoned-stat-sent').textContent      = sentCount;
+        document.getElementById('abandoned-stat-value').textContent     = '£' + totalValue.toFixed(2);
+        document.getElementById('abandoned-stat-recovered').textContent = recoverCount;
+
+        // Update badge
+        const unsentCount = carts.filter(c => !c.emailSent && !c.recovered).length;
+        const badge = document.getElementById('abandoned-carts-badge');
+        badge.textContent     = unsentCount;
+        badge.style.display   = unsentCount > 0 ? 'inline-flex' : 'none';
+
+        if (carts.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">🛒</div>
+              <div class="empty-title">No Abandoned Carts</div>
+              <div class="empty-desc">No carts have been abandoned in the last 7 days.</div>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = carts.map(cart => {
+          const date    = cart.timestamp ? cart.timestamp.toDate().toLocaleString('en-GB') : '—';
+          const items   = (cart.items || []).map(i =>
+            `<span style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:0.2rem 0.5rem;font-size:0.65rem;color:#ccc;margin:0.2rem">${i.name}${i.size && i.size !== 'One Size' ? ' ('+i.size+')' : ''} ×${i.qty}</span>`
+          ).join('');
+          const statusBadge = cart.recovered
+            ? `<span style="background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);padding:0.25rem 0.6rem;border-radius:12px;font-size:0.6rem">✓ RECOVERED</span>`
+            : cart.emailSent
+            ? `<span style="background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);padding:0.25rem 0.6rem;border-radius:12px;font-size:0.6rem">📧 EMAIL SENT</span>`
+            : `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:0.25rem 0.6rem;border-radius:12px;font-size:0.6rem">⏳ PENDING</span>`;
+
+          return `
+            <div class="order-card${!cart.emailSent && !cart.recovered ? ' unreviewed' : ''}" style="margin-bottom:1rem">
+              <div class="order-card-header">
+                <div>
+                  <div class="order-ref">🛒 ${cart.email || '—'}</div>
+                  <div class="order-meta">${date} · ${(cart.items||[]).length} item${(cart.items||[]).length !== 1 ? 's' : ''}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem">
+                  ${statusBadge}
+                  <span style="color:#e63226;font-size:1rem;font-family:'Boldonse',sans-serif">£${(cart.total||0).toFixed(2)}</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem">${items}</div>
+              <div class="order-actions">
+                ${!cart.recovered ? `
+                  <button class="btn" onclick="sendRecoveryEmail('${cart.id}','${(cart.email||'').replace(/'/g,"\\'")}',${JSON.stringify(cart.items||[]).replace(/"/g,'&quot;')},${cart.total||0})"
+                    ${cart.emailSent ? 'style="background:#444"' : ''}>
+                    ${cart.emailSent ? '📧 Re-send Recovery Email' : '📧 Send Recovery Email'}
+                  </button>
+                  <button class="btn btn-outlined" onclick="markCartRecovered('${cart.id}')">✓ Mark Recovered</button>
+                ` : ''}
+              </div>
+            </div>`;
+        }).join('');
+
+      } catch (e) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error loading carts</div><div class="empty-desc">${e.message}</div></div>`;
+        console.error(e);
+      }
+    };
+
+    window.sendRecoveryEmail = async function(cartId, email, items, total) {
+      if (!confirm(`Send a 10% recovery discount email to ${email}?`)) return;
+
+      // Generate unique discount code
+      const code = 'COMEBACK' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      const expiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      try {
+        // Save discount code
+        await addDoc(collection(db, 'discountCodes'), {
+          code,
+          type:       'percent',
+          value:      10,
+          minOrder:   0,
+          maxUses:    1,
+          usedCount:  0,
+          active:     true,
+          expiryDate: expiry,
+          createdAt:  new Date().toISOString(),
+          note:       `Abandoned cart recovery — ${email}`
+        });
+
+        const itemsList = Array.isArray(items) ? items : [];
+        const itemsText = itemsList.map(i => `${i.name} (${i.size||'One Size'}) ×${i.qty} — £${(i.price*i.qty).toFixed(2)}`).join('\n');
+
+        await emailjs.send(EMAILJS_SERVICE_ID, 'dbc_abandoned_cart', {
+          to_email:      email,
+          cart_items:    itemsText,
+          cart_total:    '£' + parseFloat(total).toFixed(2),
+          discount_code: code,
+          shop_url:      'https://fitch83.github.io/dirtboxclub/shop.html'
+        });
+
+        await updateDoc(doc(db, 'abandoned_carts', cartId), {
+          emailSent:    true,
+          emailSentAt:  new Date().toISOString(),
+          discountCode: code
+        });
+
+        alert(`✓ Recovery email sent to ${email} with code ${code}`);
+        await loadAbandonedCarts();
+      } catch (e) {
+        alert('Error sending email: ' + e.message);
+        console.error(e);
+      }
+    };
+
+    window.markCartRecovered = async function(cartId) {
+      await updateDoc(doc(db, 'abandoned_carts', cartId), {
+        recovered:   true,
+        recoveredAt: new Date().toISOString()
+      });
+      await loadAbandonedCarts();
+    };
+
+    function updateAutoRecoverUI(enabled) {
+      const toggle = document.getElementById('auto-recover-toggle');
+      const knob   = document.getElementById('auto-recover-knob');
+      const label  = document.getElementById('auto-recover-label');
+      if (!toggle) return;
+      toggle.style.background = enabled ? '#e63226' : '#2a2a2a';
+      knob.style.left         = enabled ? '22px' : '2px';
+      knob.style.background   = enabled ? '#fff' : '#777';
+      label.textContent       = 'Auto-Recover: ' + (enabled ? 'ON' : 'OFF');
+    }
+
+    window.toggleAutoRecover = async function() {
+      autoRecoverEnabled = !autoRecoverEnabled;
+      try {
+        await setDoc(doc(db, 'settings', 'autoRecover'), {
+          enabled:   autoRecoverEnabled,
+          updatedAt: new Date().toISOString()
+        });
+        updateAutoRecoverUI(autoRecoverEnabled);
+      } catch (e) {
+        autoRecoverEnabled = !autoRecoverEnabled; // revert
+        alert('Could not save setting: ' + e.message);
+      }
+    };
+
     window.switchTab = function(tabName, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + tabName).classList.add('active');
       if (btn) btn.classList.add('active');
       document.getElementById('add-product-btn').style.display = tabName === 'products' ? 'block' : 'none';
-      // When switching to orders tab, refresh and clear badge
       if (tabName === 'orders') refreshOrders();
       else if (tabName === 'inventory') loadInventory();
       else if (tabName === 'discounts') refreshDiscountCodes();
+      else if (tabName === 'abandoned') loadAbandonedCarts();
+      else if (tabName === 'returns') refreshReturns();
       else refreshAllData();
     };
 
@@ -1892,18 +2328,34 @@
     };
 
     window.scheduleDrop = async function() {
-      const product = document.getElementById('drop-product').value.trim();
-      const date = document.getElementById('drop-date').value;
-      const quantity = parseInt(document.getElementById('drop-quantity').value);
-      if (!product || !date || !quantity) { alert('All fields are required.'); return; }
+      const name = document.getElementById('drop-name').value.trim();
+      const productIdsStr = document.getElementById('drop-product-ids').value.trim();
+      const dateStr = document.getElementById('drop-date').value;
+      const description = document.getElementById('drop-description').value.trim();
+      const bannerImageUrl = document.getElementById('drop-banner-url').value.trim();
+
+      if (!name || !productIdsStr || !dateStr) { alert('Drop name, product IDs, and date are required.'); return; }
+
+      const productIds = productIdsStr.split(',').map(id => id.trim()).filter(id => id.length > 0);
+      if (productIds.length === 0) { alert('Please provide at least one product ID.'); return; }
+
+      const dropAt = new Date(dateStr);
+
       await addDoc(collection(db, 'drops'), {
-        product, date, quantity,
-        created: new Date().toISOString()
+        name,
+        productIds,
+        dropAt: dropAt,
+        description,
+        bannerImageUrl,
+        active: true,
+        createdAt: new Date()
       });
       window.closeModal('drop-modal');
-      document.getElementById('drop-product').value = '';
+      document.getElementById('drop-name').value = '';
+      document.getElementById('drop-product-ids').value = '';
       document.getElementById('drop-date').value = '';
-      document.getElementById('drop-quantity').value = '100';
+      document.getElementById('drop-description').value = '';
+      document.getElementById('drop-banner-url').value = '';
       await refreshAllData();
     };
 
@@ -1915,9 +2367,11 @@
         refreshMembers(),
         refreshAnnouncements(),
         refreshDrops(),
+        refreshReturns(),
         refreshDiscountCodes()
       ]);
       refreshAnalytics();
+      refreshVATReport();
     }
 
     async function refreshProducts() {
@@ -2025,18 +2479,333 @@
     }
 
     function refreshAnalytics() {
+      // Calculate revenue metrics based on allOrders
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const thisWeekStart = new Date(today);
+      thisWeekStart.setDate(today.getDate() - today.getDay());
+      const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      const getTotalInPeriod = (startDate) => {
+        return allOrders
+          .filter(o => {
+            const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+            return oDate >= startDate;
+          })
+          .reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+      };
+
+      const todayRevenue = getTotalInPeriod(today);
+      const weekRevenue = getTotalInPeriod(thisWeekStart);
+      const monthRevenue = getTotalInPeriod(thisMonthStart);
+      const allTimeRevenue = allOrders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+
+      // Previous period for trend calculation
+      const prevPeriodStart = new Date(today);
+      prevPeriodStart.setDate(today.getDate() - 1);
+      const prevPeriodEnd = today;
+      const prevDayRevenue = getTotalInPeriod(prevPeriodStart) - getTotalInPeriod(today);
+
+      const prevWeekStart = new Date(thisWeekStart);
+      prevWeekStart.setDate(thisWeekStart.getDate() - 7);
+      const prevWeekRevenue = allOrders
+        .filter(o => {
+          const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+          return oDate >= prevWeekStart && oDate < thisWeekStart;
+        })
+        .reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+
+      const prevMonthStart = new Date(thisMonthStart);
+      prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+      const prevMonthRevenue = allOrders
+        .filter(o => {
+          const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+          return oDate >= prevMonthStart && oDate < thisMonthStart;
+        })
+        .reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+
+      const calcTrend = (current, previous) => {
+        if (previous === 0) return current > 0 ? '+100%' : '—';
+        const pct = ((current - previous) / previous * 100).toFixed(0);
+        return (pct > 0 ? '+' : '') + pct + '%';
+      };
+
+      const todayTrend = calcTrend(todayRevenue, prevDayRevenue);
+      const weekTrend = calcTrend(weekRevenue, prevWeekRevenue);
+      const monthTrend = calcTrend(monthRevenue, prevMonthRevenue);
+
+      // Customer metrics
+      const uniqueCustomers = new Set(allOrders.map(o => o.customerEmail).filter(Boolean)).size;
+      const newCustomersThisMonth = new Set(
+        allOrders
+          .filter(o => {
+            const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+            return oDate >= thisMonthStart;
+          })
+          .map(o => o.customerEmail)
+          .filter(Boolean)
+      ).size;
+      const returningCustomers = uniqueCustomers - newCustomersThisMonth;
+
+      const avgOrderValue = allOrders.length > 0 ? (allTimeRevenue / allOrders.length).toFixed(2) : 0;
+      const topProducts = {};
+      allOrders.forEach(o => {
+        (o.items || []).forEach(item => {
+          topProducts[item.name] = (topProducts[item.name] || 0) + (item.qty || 1);
+        });
+      });
+      const topProductsList = Object.entries(topProducts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      // Build stats grid
       document.getElementById('analytics-stats').innerHTML = `
-        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">Page Views</div><div class="stat-value">—</div></div>
-        <div class="stat-card"><div class="stat-icon">👁</div><div class="stat-label">Unique Sessions</div><div class="stat-value">—</div></div>
-        <div class="stat-card"><div class="stat-icon">⏱</div><div class="stat-label">Avg Time on Page</div><div class="stat-value">—</div></div>
-        <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-label">Abandoned Carts</div><div class="stat-value">—</div></div>
+        <div class="stat-card">
+          <div class="stat-icon">💷</div>
+          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-value">${fmt(todayRevenue)}</div>
+          <div style="font-size:0.65rem;color:${todayTrend.includes('-') ? '#f59e0b' : '#22c55e'};margin-top:0.3rem">${todayTrend} vs yesterday</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-label">This Week</div>
+          <div class="stat-value">${fmt(weekRevenue)}</div>
+          <div style="font-size:0.65rem;color:${weekTrend.includes('-') ? '#f59e0b' : '#22c55e'};margin-top:0.3rem">${weekTrend} vs last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-label">This Month</div>
+          <div class="stat-value">${fmt(monthRevenue)}</div>
+          <div style="font-size:0.65rem;color:${monthTrend.includes('-') ? '#f59e0b' : '#22c55e'};margin-top:0.3rem">${monthTrend} vs last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-label">All Time</div>
+          <div class="stat-value">${fmt(allTimeRevenue)}</div>
+          <div style="font-size:0.65rem;color:#999;margin-top:0.3rem">${allOrders.length} orders</div>
+        </div>
       `;
-      const placeholder = '<div class="empty-state" style="padding:1.5rem;"><div class="empty-desc" style="font-size:0.75rem;color:#777;">Analytics integration coming soon</div></div>';
-      document.getElementById('top-pages-list').innerHTML = placeholder;
-      document.getElementById('top-products-list').innerHTML = placeholder;
-      document.getElementById('abandoned-carts-list').innerHTML = placeholder;
-      document.getElementById('recent-activity-list').innerHTML = placeholder;
+
+      // Orders & customers
+      document.getElementById('top-pages-list').innerHTML = `
+        <div style="display:grid;gap:0.5rem">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">Total Orders</span>
+            <span style="color:#fff;font-weight:700">${allOrders.length}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">Avg Order Value</span>
+            <span style="color:#fff;font-weight:700">${fmt(avgOrderValue)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0">
+            <span style="color:#999">Conversion Rate (est.)</span>
+            <span style="color:#fff;font-weight:700">—</span>
+          </div>
+        </div>
+      `;
+
+      // Top products
+      document.getElementById('top-products-list').innerHTML = topProductsList.length === 0
+        ? '<div style="color:#999;font-size:0.75rem;padding:1rem">No product data yet</div>'
+        : `
+          <div style="display:grid;gap:0.5rem">
+            ${topProductsList.map(([name, qty]) => `
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+                <span style="color:#999">${name}</span>
+                <span style="color:#e63226;font-weight:700">${qty} sold</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+      // Customer stats
+      document.getElementById('abandoned-carts-list').innerHTML = `
+        <div style="display:grid;gap:0.5rem">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">Total Customers</span>
+            <span style="color:#fff;font-weight:700">${uniqueCustomers}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">New (this month)</span>
+            <span style="color:#22c55e;font-weight:700">+${newCustomersThisMonth}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0">
+            <span style="color:#999">Returning</span>
+            <span style="color:#818cf8;font-weight:700">${returningCustomers}</span>
+          </div>
+        </div>
+      `;
+
+      // Recent activity
+      const recentOrders = allOrders.slice(0, 5);
+      document.getElementById('recent-activity-list').innerHTML = recentOrders.length === 0
+        ? '<div style="color:#999;font-size:0.75rem;padding:1rem">No recent activity</div>'
+        : `
+          <div style="display:grid;gap:0.5rem">
+            ${recentOrders.map(o => {
+              const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+              const timeStr = oDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+              const dateStr = oDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+              return `
+                <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+                  <span style="color:#999">${o.customerName || o.customerEmail} ordered</span>
+                  <span style="color:#fff;font-weight:700">${fmt(o.total)}</span>
+                </div>
+                <div style="font-size:0.65rem;color:#666;margin-bottom:0.3rem">${dateStr} ${timeStr}</div>
+              `;
+            }).join('')}
+          </div>
+        `;
     }
+
+    // ─── VAT/TAX REPORTING ────────────────────────────────────────
+    window.switchVatView = function(view, btn) {
+      document.querySelectorAll('#vat-monthly-view, #vat-quarterly-view').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('[onclick*="switchVatView"]').forEach(el => el.classList.remove('active'));
+
+      if (view === 'monthly') {
+        document.getElementById('vat-monthly-view').style.display = 'block';
+      } else if (view === 'quarterly') {
+        document.getElementById('vat-quarterly-view').style.display = 'block';
+      }
+      btn.classList.add('active');
+    };
+
+    window.refreshVATReport = function() {
+      // Group orders by month
+      const monthlyData = {};
+      const now = new Date();
+      const currentYear = now.getFullYear();
+
+      allOrders.forEach(o => {
+        const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+        const monthKey = oDate.getFullYear() + '-' + String(oDate.getMonth() + 1).padStart(2, '0');
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { gross: 0, count: 0, date: oDate };
+        }
+        monthlyData[monthKey].gross += parseFloat(o.total || 0);
+        monthlyData[monthKey].count += 1;
+      });
+
+      // Sort by month
+      const sortedMonths = Object.entries(monthlyData)
+        .sort((a, b) => b[0].localeCompare(a[0]))
+        .slice(0, 12); // Last 12 months
+
+      // Build monthly table
+      const monthlyHtml = sortedMonths.map(([key, data]) => {
+        const [year, month] = key.split('-');
+        const monthName = new Date(year, parseInt(month) - 1).toLocaleString('en-GB', { month: 'long', year: 'numeric' });
+        const gross = data.gross;
+        const net = gross / 1.2;
+        const vat = gross - net;
+        return `
+          <tr style="border-bottom:1px solid #1a1a1a;transition:background 0.15s" onmouseover="this.style.background='#202020'" onmouseout="this.style.background=''">
+            <td style="padding:0.8rem 1rem;color:#fff;font-size:0.75rem">${monthName}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#e63226;font-weight:700">${fmt(gross)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#999;font-size:0.75rem">${fmt(net)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#22c55e;font-weight:700">${fmt(vat)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('vat-monthly-rows').innerHTML = monthlyHtml || `
+        <tr><td colspan="4" style="padding:1rem;text-align:center;color:#777;font-size:0.75rem">No sales data yet</td></tr>
+      `;
+
+      // Build quarterly summary
+      const quarterlyData = {};
+      sortedMonths.forEach(([key, data]) => {
+        const [year, month] = key.split('-');
+        const q = Math.ceil(parseInt(month) / 3);
+        const qKey = year + '-Q' + q;
+        if (!quarterlyData[qKey]) {
+          quarterlyData[qKey] = { gross: 0, date: new Date(year, 0) };
+        }
+        quarterlyData[qKey].gross += data.gross;
+      });
+
+      const sortedQuarters = Object.entries(quarterlyData)
+        .sort((a, b) => b[0].localeCompare(a[0]));
+
+      const quarterlyHtml = sortedQuarters.map(([key, data]) => {
+        const gross = data.gross;
+        const net = gross / 1.2;
+        const vat = gross - net;
+        return `
+          <tr style="border-bottom:1px solid #1a1a1a;transition:background 0.15s" onmouseover="this.style.background='#202020'" onmouseout="this.style.background=''">
+            <td style="padding:0.8rem 1rem;color:#fff;font-size:0.75rem">${key}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#e63226;font-weight:700">${fmt(gross)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#999;font-size:0.75rem">${fmt(net)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#22c55e;font-weight:700">${fmt(vat)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('vat-quarterly-rows').innerHTML = quarterlyHtml || `
+        <tr><td colspan="4" style="padding:1rem;text-align:center;color:#777;font-size:0.75rem">No sales data yet</td></tr>
+      `;
+
+      // Calculate current quarter VAT owed
+      const currentQ = Math.ceil((now.getMonth() + 1) / 3);
+      const currentQKey = currentYear + '-Q' + currentQ;
+      const currentQData = quarterlyData[currentQKey] || { gross: 0 };
+      let currentQVat = (currentQData.gross / 1.2);
+      currentQVat = currentQData.gross - currentQVat;
+
+      // Calculate YTD VAT
+      let ytdVat = 0;
+      sortedQuarters.forEach(([key, data]) => {
+        if (key.startsWith(currentYear.toString())) {
+          const gross = data.gross;
+          const net = gross / 1.2;
+          ytdVat += gross - net;
+        }
+      });
+
+      document.getElementById('current-quarter-vat').textContent = fmt(currentQVat);
+      document.getElementById('ytd-vat').textContent = fmt(ytdVat);
+    };
+
+    window.exportVATtoCSV = function() {
+      if (allOrders.length === 0) {
+        alert('No orders to export');
+        return;
+      }
+
+      const monthlyData = {};
+      allOrders.forEach(o => {
+        const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+        const monthKey = oDate.getFullYear() + '-' + String(oDate.getMonth() + 1).padStart(2, '0');
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { gross: 0, date: oDate };
+        }
+        monthlyData[monthKey].gross += parseFloat(o.total || 0);
+      });
+
+      const sortedMonths = Object.entries(monthlyData)
+        .sort((a, b) => a[0].localeCompare(b[0]));
+
+      let csv = 'Month,Gross Sales (£),Net Sales (£),VAT @ 20% (£)\n';
+      sortedMonths.forEach(([key, data]) => {
+        const [year, month] = key.split('-');
+        const monthName = new Date(year, parseInt(month) - 1).toLocaleString('en-GB', { month: 'long', year: 'numeric' });
+        const gross = data.gross;
+        const net = (gross / 1.2).toFixed(2);
+        const vat = (gross - net).toFixed(2);
+        csv += `"${monthName}",${gross.toFixed(2)},${net},${vat}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dirtboxclub-vat-report-' + new Date().toISOString().split('T')[0] + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
 
     async function refreshAnnouncements() {
       const container = document.getElementById('announcements-container');
@@ -2092,22 +2861,197 @@
         `;
         return;
       }
-      container.innerHTML = drops.map(d => `
-        <div class="card">
-          <div class="card-title">${d.product}</div>
-          <div style="font-size: 0.75rem; color: #777; margin-bottom: 1rem;">
-            <div>Date: ${new Date(d.date).toLocaleString()}</div>
-            <div>Quantity: ${d.quantity}</div>
+      container.innerHTML = drops.map(d => {
+        const dropTime = d.dropAt?.toDate ? d.dropAt.toDate() : new Date(d.dropAt);
+        const isActive = d.active !== false;
+        return `
+          <div class="card">
+            <div class="card-title">${d.name || d.product || 'Untitled Drop'}</div>
+            <div style="font-size: 0.75rem; color: #777; margin-bottom: 1rem;">
+              <div>Products: ${d.productIds?.join(', ') || d.product || 'N/A'}</div>
+              <div>Drop Date: ${dropTime.toLocaleString()}</div>
+              ${d.description ? `<div>Description: ${d.description.substring(0, 50)}...</div>` : ''}
+              <div>Status: ${isActive ? '✅ Active' : '❌ Inactive'}</div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn" onclick="toggleDropActive('${d.id}', ${!isActive})" style="flex: 1; font-size: 0.65rem;">${isActive ? 'Deactivate' : 'Activate'}</button>
+              <button class="btn-icon delete" onclick="deleteDrop('${d.id}')">🗑</button>
+            </div>
           </div>
-          <button class="btn-icon delete" onclick="deleteDrop('${d.id}')">🗑</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     window.deleteDrop = async function(id) {
       if (!confirm('Delete this drop?')) return;
       await deleteDoc(doc(db, 'drops', id));
       await refreshAllData();
+    };
+
+    window.toggleDropActive = async function(id, newActiveState) {
+      await updateDoc(doc(db, 'drops', id), { active: newActiveState });
+      await refreshAllData();
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  RETURNS MANAGEMENT
+    // ─────────────────────────────────────────────────────────────────
+
+    let returnsFilterStatus = 'all';
+
+    async function refreshReturns() {
+      const container = document.getElementById('returns-container');
+      const snap = await getDocs(collection(db, 'returns'));
+      let allReturns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      if (allReturns.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">↩️</div>
+            <div class="empty-title">No Return Requests Yet</div>
+            <div class="empty-desc">Customer return requests will appear here</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Apply filter
+      if (returnsFilterStatus !== 'all') {
+        allReturns = allReturns.filter(r => r.status === returnsFilterStatus);
+      }
+
+      container.innerHTML = `
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:1rem 1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Order ID</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Email</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Item</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Reason</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Date</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Status</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allReturns.map(r => {
+                  const createdAt = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                  const statusColor = r.status === 'pending' ? '#FFA500' : r.status === 'approved' ? '#00AA00' : r.status === 'rejected' ? '#CC0000' : '#0066CC';
+                  return `
+                    <tr style="border-bottom:1px solid #2a2a2a">
+                      <td style="padding:1rem 1rem;color:#fff">${r.orderId}</td>
+                      <td style="padding:1rem 0.8rem;color:#999;word-break:break-word">${r.email}</td>
+                      <td style="padding:1rem 0.8rem;color:#999">${r.item}</td>
+                      <td style="padding:1rem 0.8rem;color:#999">${r.reason}</td>
+                      <td style="padding:1rem 0.8rem;color:#777;font-size:0.7rem">${createdAt.toLocaleDateString()}</td>
+                      <td style="padding:1rem 0.8rem"><span style="display:inline-block;padding:0.3rem 0.6rem;background:${statusColor}33;color:${statusColor};border-radius:4px;font-size:0.65rem;text-transform:uppercase">${r.status || 'pending'}</span></td>
+                      <td style="padding:1rem 0.8rem">
+                        <button onclick="openReturnDetail('${r.id}')" style="background:none;border:none;color:#e63226;cursor:pointer;font-size:0.7rem;text-decoration:underline">View</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    window.filterReturns = async function(status) {
+      returnsFilterStatus = status;
+      await refreshReturns();
+    };
+
+    window.openReturnDetail = async function(returnId) {
+      const docSnap = await getDoc(doc(db, 'returns', returnId));
+      if (!docSnap.exists()) return;
+      const r = docSnap.data();
+
+      const modal = document.createElement('div');
+      modal.id = 'return-detail-modal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:300;display:flex;align-items:center;justify-content:center';
+      modal.innerHTML = `
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;padding:2rem;width:90%;max-width:600px;max-height:90vh;overflow-y:auto">
+          <h2 style="margin:0 0 1.5rem 0;font-size:1.2rem;font-weight:700">Return Details</h2>
+          <div style="margin-bottom:1.5rem;font-size:0.8rem">
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Order ID</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.orderId}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Email</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.email}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Item</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.item}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Reason</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.reason}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Details</span>
+              <div style="color:#999;margin-top:0.3rem">${r.details || 'No additional details'}</div>
+            </div>
+            ${r.photoURL ? `<div style="margin-bottom:1rem"><a href="${r.photoURL}" target="_blank" style="color:#e63226;text-decoration:underline">View Photo</a></div>` : ''}
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Status</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.status || 'pending'}</div>
+            </div>
+          </div>
+          <textarea id="return-notes" placeholder="Internal notes..." style="width:100%;padding:0.5rem;background:#111;border:1px solid #2a2a2a;border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;resize:vertical;min-height:80px;margin-bottom:1rem">${r.notes || ''}</textarea>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <button onclick="approveReturn('${returnId}', '${r.email}', '${r.item}')" style="flex:1;padding:0.6rem;background:#00AA00;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">✓ Approve</button>
+            <button onclick="rejectReturn('${returnId}', '${r.email}', '${r.item}')" style="flex:1;padding:0.6rem;background:#CC0000;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">✗ Reject</button>
+            <button onclick="markRefunded('${returnId}')" style="flex:1;padding:0.6rem;background:#0066CC;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">💰 Refunded</button>
+          </div>
+          <button onclick="closeReturnDetail()" style="width:100%;padding:0.6rem;background:#2a2a2a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.75rem">Close</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    };
+
+    window.closeReturnDetail = function() {
+      const modal = document.getElementById('return-detail-modal');
+      if (modal) modal.remove();
+    };
+
+    window.approveReturn = async function(returnId, email, itemName) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'approved', notes });
+      // Send approval email via EmailJS
+      emailjs.send('service_hpy2gvj', 'dbc_return_approved', {
+        to_email: email,
+        order_id: (await getDoc(doc(db, 'returns', returnId))).data().orderId,
+        item_name: itemName,
+        return_instructions: 'Please reply to this email for return shipping instructions.'
+      }, 'Se-YqzqLV7Zr-AYVt').catch(err => console.log('Email send failed:', err));
+      await closeReturnDetail();
+      await refreshReturns();
+    };
+
+    window.rejectReturn = async function(returnId, email, itemName) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'rejected', notes });
+      // Send rejection email via EmailJS
+      emailjs.send('service_hpy2gvj', 'dbc_return_rejected', {
+        to_email: email,
+        order_id: (await getDoc(doc(db, 'returns', returnId))).data().orderId,
+        item_name: itemName
+      }, 'Se-YqzqLV7Zr-AYVt').catch(err => console.log('Email send failed:', err));
+      await closeReturnDetail();
+      await refreshReturns();
+    };
+
+    window.markRefunded = async function(returnId) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'refunded', notes });
+      await closeReturnDetail();
+      await refreshReturns();
     };
 
     // ─────────────────────────────────────────────────────────────────
@@ -2848,14 +3792,13 @@
       }
     }
 
-    // Load customers when CRM tab is first switched to
+    // Load customers when CRM tab is first switched to; also handle reviews
     const originalSwitchTab = window.switchTab;
     window.switchTab = function(tabName, btn) {
       originalSwitchTab(tabName, btn);
       if (tabName === 'crm') {
         loadCrmCustomers();
-      }
-      if (tabName === 'reviews') {
+      } else if (tabName === 'reviews') {
         loadAllReviews();
       }
     };
@@ -3017,119 +3960,100 @@
       await refreshDiscountCodes();
     };
 
+
     // ─────────────────────────────────────────────────────────────────
-    //  REVIEWS
+    //  PRODUCT REVIEWS
     // ─────────────────────────────────────────────────────────────────
 
     let allReviews = [];
-    let reviewsFilterState = 'all';
+    let filteredReviewsCache = [];
 
     async function loadAllReviews() {
-      const container = document.getElementById('reviews-list-container');
-      container.innerHTML = '<div style="text-align:center;padding:3rem;color:#666">Loading reviews...</div>';
       try {
-        const snap = await getDocs(collection(db, 'reviews'));
+        const snap = await getDocs(query(collection(db, 'reviews'), orderBy('createdAt', 'desc')));
         allReviews = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        allReviews.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        updateReviewStats();
+        filterReviews();
+      } catch (err) {
+        console.error('loadAllReviews error:', err);
+        document.getElementById('reviews-list').innerHTML = '<p style="color:#e63226;text-align:center;padding:20px">Error loading reviews.</p>';
+      }
+    }
 
-        // Stats
-        const total    = allReviews.length;
-        const pending  = allReviews.filter(r => r.status === 'pending').length;
-        const approved = allReviews.filter(r => r.status === 'approved').length;
-        const rejected = allReviews.filter(r => r.status === 'rejected').length;
-
-        document.getElementById('rv-stat-total').textContent    = total;
-        document.getElementById('rv-stat-pending').textContent  = pending;
-        document.getElementById('rv-stat-approved').textContent = approved;
-        document.getElementById('rv-stat-rejected').textContent = rejected;
-
-        // Pending badge in tab
-        const badge = document.getElementById('pending-reviews-badge');
-        if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline-block'; }
-        else { badge.style.display = 'none'; }
-
-        renderReviews();
-      } catch(e) {
-        container.innerHTML = `<div style="text-align:center;padding:3rem;color:#e63226">Error loading reviews: ${e.message}</div>`;
+    function updateReviewStats() {
+      const pending  = allReviews.filter(r => r.status === 'pending').length;
+      const approved = allReviews.filter(r => r.status === 'approved').length;
+      const rejected = allReviews.filter(r => r.status === 'rejected').length;
+      const el = document.getElementById('reviews-stats');
+      if (el) el.textContent = `${allReviews.length} total · ${pending} pending · ${approved} approved · ${rejected} rejected`;
+      // update badge
+      const badge = document.getElementById('pending-reviews-badge');
+      if (badge) {
+        badge.textContent = pending;
+        badge.style.display = pending > 0 ? 'inline-block' : 'none';
       }
     }
 
     window.filterReviews = function() {
-      reviewsFilterState = document.getElementById('reviews-filter').value;
-      renderReviews();
+      const status = document.getElementById('review-filter-status')?.value || 'all';
+      filteredReviewsCache = status === 'all' ? allReviews : allReviews.filter(r => r.status === status);
+      renderReviews(filteredReviewsCache);
     };
 
-    const PRODUCT_NAMES = {
-      1:'Awkward Since Birth Tee', 2:'Born Defiant Tee', 3:'Cancer Can Get Fucked Tee',
-      4:'Chaos Coordinator Tee', 5:'Dirt Box Club Cap', 6:'Dirt Box Club Collab Tee',
-      7:'Dirt Box Club Mug', 8:'Dirt Box Club Tank Top', 9:'Emotionally Unavailable Tee',
-      10:"I'm With This Idiot Tee", 11:'Mentally Misfiring Tee', 12:'Mystery Box',
-      13:'Not Your Average Tee', 14:"Pretending Everything's Fine Tee",
-      15:'Professionally Unprofessional Tee', 16:'The Voice In My Head Tee'
-    };
-
-    function renderReviews() {
-      const container = document.getElementById('reviews-list-container');
-      const filtered = reviewsFilterState === 'all'
-        ? allReviews
-        : allReviews.filter(r => r.status === reviewsFilterState);
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align:center;padding:3rem;color:#666">No reviews found</div>`;
+    function renderReviews(reviews) {
+      const container = document.getElementById('reviews-list');
+      if (!container) return;
+      if (!reviews.length) {
+        container.innerHTML = '<p style="color:#666;text-align:center;padding:40px 0">No reviews found.</p>';
         return;
       }
 
-      container.innerHTML = `
-        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
-          ${filtered.map(r => {
-            const stars = [1,2,3,4,5].map(i => `<span style="color:${i <= r.rating ? '#f59e0b' : '#333'}">★</span>`).join('');
-            const date  = r.createdAt ? new Date(r.createdAt.seconds * 1000).toLocaleDateString('en-GB') : '';
-            const statusColor = r.status === 'approved' ? '#22c55e' : r.status === 'rejected' ? '#e63226' : '#f59e0b';
-            const productName = PRODUCT_NAMES[r.productId] || `Product #${r.productId}`;
-            return `
-              <div style="padding:1.5rem;border-bottom:1px solid #2a2a2a" id="review-row-${r.id}">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.8rem;margin-bottom:0.8rem">
-                  <div>
-                    <div style="font-size:0.7rem;color:#777;margin-bottom:0.4rem">${productName} · ${date}</div>
-                    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap">
-                      <span style="font-size:0.9rem">${stars}</span>
-                      <span style="font-size:0.85rem;font-weight:700">${(r.title || '').replace(/</g,'&lt;')}</span>
-                      ${r.verified ? '<span style="font-size:0.55rem;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);padding:0.2rem 0.5rem;border-radius:20px">✓ Verified Purchase</span>' : ''}
-                    </div>
-                    <div style="font-size:0.75rem;color:#999;margin-top:0.5rem;max-width:500px">${(r.body || '').replace(/</g,'&lt;')}</div>
-                    <div style="font-size:0.65rem;color:#666;margin-top:0.4rem">${r.customerEmail || ''}</div>
-                  </div>
-                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem">
-                    <span style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:${statusColor}">${r.status || 'pending'}</span>
-                    <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
-                      ${r.status !== 'approved'  ? `<button class="btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;background:#22c55e" onclick="setReviewStatus('${r.id}','approved')">✓ Approve</button>` : ''}
-                      ${r.status !== 'rejected'  ? `<button class="btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;background:#f59e0b;color:#000" onclick="setReviewStatus('${r.id}','rejected')">✗ Reject</button>` : ''}
-                      <button class="btn" style="font-size:0.65rem;padding:0.4rem 0.8rem;background:#333;border:1px solid #555" onclick="deleteReview('${r.id}')">🗑 Delete</button>
-                    </div>
-                  </div>
-                </div>
-              </div>`;
-          }).join('')}
-        </div>`;
+      const starHtml = (rating) => {
+        let s = '';
+        for (let i = 1; i <= 5; i++) {
+          s += `<span style="color:${i <= rating ? '#f59e0b' : '#444'};font-size:15px">★</span>`;
+        }
+        return s;
+      };
+
+      const statusColor = { pending: '#f59e0b', approved: '#22c55e', rejected: '#e63226' };
+
+      container.innerHTML = reviews.map(r => {
+        const date = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('en-GB') : 'Unknown';
+        const color = statusColor[r.status] || '#aaa';
+        return `
+          <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div>${starHtml(r.rating || 0)}</div>
+              <span style="font-weight:700;font-size:15px;color:#fff">${r.title || '(No title)'}</span>
+              <span style="margin-left:auto;font-size:12px;padding:3px 9px;border-radius:12px;background:${color}22;color:${color};border:1px solid ${color}55">${r.status || 'unknown'}</span>
+            </div>
+            <div style="font-size:13px;color:#ccc;line-height:1.5">${r.body || ''}</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:#666;margin-top:4px">
+              <span>Product: <strong style="color:#aaa">${r.productId || '—'}</strong></span>
+              <span>Customer: <strong style="color:#aaa">${r.customerId || '—'}</strong></span>
+              <span>Date: <strong style="color:#aaa">${date}</strong></span>
+              ${r.verified ? '<span style="color:#22c55e">✔ Verified Purchase</span>' : ''}
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+              ${r.status !== 'approved'  ? `<button class="btn btn-sm" style="background:#22c55e;color:#000;padding:5px 14px;font-size:12px" onclick="setReviewStatus('${r.id}','approved')">✓ Approve</button>` : ''}
+              ${r.status !== 'rejected'  ? `<button class="btn btn-sm" style="background:#555;color:#fff;padding:5px 14px;font-size:12px" onclick="setReviewStatus('${r.id}','rejected')">✗ Reject</button>` : ''}
+              <button class="btn btn-sm" style="background:#e63226;color:#fff;padding:5px 14px;font-size:12px" onclick="deleteReview('${r.id}')">🗑 Delete</button>
+            </div>
+          </div>`;
+      }).join('');
     }
 
     window.setReviewStatus = async function(reviewId, status) {
       try {
         await updateDoc(doc(db, 'reviews', reviewId), { status });
-        const r = allReviews.find(x => x.id === reviewId);
-        if (r) r.status = status;
-        // Update stats
-        const pending  = allReviews.filter(r => r.status === 'pending').length;
-        const approved = allReviews.filter(r => r.status === 'approved').length;
-        const rejected = allReviews.filter(r => r.status === 'rejected').length;
-        document.getElementById('rv-stat-pending').textContent  = pending;
-        document.getElementById('rv-stat-approved').textContent = approved;
-        document.getElementById('rv-stat-rejected').textContent = rejected;
-        const badge = document.getElementById('pending-reviews-badge');
-        if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline-block'; }
-        else { badge.style.display = 'none'; }
-        renderReviews();
-      } catch(e) { alert('Error updating review: ' + e.message); }
+        const idx = allReviews.findIndex(r => r.id === reviewId);
+        if (idx > -1) allReviews[idx].status = status;
+        updateReviewStats();
+        filterReviews();
+      } catch (err) {
+        alert('Failed to update review: ' + err.message);
+      }
     };
 
     window.deleteReview = async function(reviewId) {
@@ -3137,114 +4061,132 @@
       try {
         await deleteDoc(doc(db, 'reviews', reviewId));
         allReviews = allReviews.filter(r => r.id !== reviewId);
-        document.getElementById('rv-stat-total').textContent = allReviews.length;
-        renderReviews();
-      } catch(e) { alert('Error deleting review: ' + e.message); }
+        updateReviewStats();
+        filterReviews();
+      } catch (err) {
+        alert('Failed to delete review: ' + err.message);
+      }
     };
 
-    // Load pending count on dashboard init
     async function initReviewsBadge() {
       try {
         const snap = await getDocs(query(collection(db, 'reviews'), where('status', '==', 'pending')));
         const count = snap.size;
         const badge = document.getElementById('pending-reviews-badge');
-        if (count > 0) { badge.textContent = count; badge.style.display = 'inline-block'; }
-      } catch(e) {}
+        if (badge) {
+          badge.textContent = count;
+          badge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+      } catch (err) {
+        console.warn('initReviewsBadge error:', err);
+      }
     }
 
-    // Call on load
+    // Call on load so badge shows without opening the tab
     initReviewsBadge();
 
     // ─────────────────────────────────────────────────────────────────
-    //  CRM REFERRALS
+    //  CRM — REFERRALS
     // ─────────────────────────────────────────────────────────────────
 
     async function loadCrmReferrals() {
-      const tbody = document.getElementById('crm-referrals-tbody');
-      const topDiv = document.getElementById('crm-top-referrers');
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">Loading...</td></tr>';
-
       try {
-        const [refSnap, custSnap] = await Promise.all([
-          getDocs(collection(db, 'referrals')),
-          getDocs(collection(db, 'customers'))
-        ]);
+        const snap = await getDocs(query(collection(db, 'referrals'), orderBy('createdAt', 'desc')));
+        const referrals = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        const refs    = refSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const custMap = {};
-        custSnap.forEach(d => { custMap[d.id] = d.data(); });
+        // Update global stats
+        const converted = referrals.filter(r => r.status === 'converted').length;
+        const pending   = referrals.filter(r => r.status !== 'converted').length;
+        const points    = converted * 500;
+        document.getElementById('ref-stat-total-all').textContent    = referrals.length;
+        document.getElementById('ref-stat-converted-all').textContent = converted;
+        document.getElementById('ref-stat-pending-all').textContent   = pending;
+        document.getElementById('ref-stat-points-all').textContent    = points.toLocaleString();
 
-        // Stats
-        const converted = refs.filter(r => r.status === 'converted').length;
-        const pending   = refs.filter(r => r.status !== 'converted').length;
-        document.getElementById('crm-ref-total').textContent     = refs.length;
-        document.getElementById('crm-ref-converted').textContent  = converted;
-        document.getElementById('crm-ref-pending').textContent    = pending;
-        document.getElementById('crm-ref-rewards').textContent    = `£${converted * 5}`;
-
-        if (refs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">No referrals yet</td></tr>';
-          topDiv.textContent = 'No referrers yet.';
-          return;
+        // Populate table
+        const tbody = document.getElementById('crm-referrals-tbody');
+        if (tbody) {
+          if (!referrals.length) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#666;padding:2rem">No referrals yet</td></tr>';
+          } else {
+            tbody.innerHTML = referrals.map(r => {
+              const date = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('en-GB') : '—';
+              const statusColor = r.status === 'converted' ? '#22c55e' : '#f59e0b';
+              const convertBtn = r.status !== 'converted'
+                ? `<button class="btn btn-sm" style="background:#22c55e;color:#000;padding:4px 10px;font-size:11px" onclick="markReferralConverted('${r.id}','${r.referrerId || ''}')">Mark Converted</button>`
+                : '<span style="color:#22c55e;font-size:12px">✔ Done</span>';
+              return `<tr>
+                <td>${date}</td>
+                <td>${r.refereeEmail || r.refereeId || '—'}</td>
+                <td style="font-size:12px;color:#aaa">${r.referrerId || '—'}</td>
+                <td><code style="font-size:11px;color:#a78bfa">${r.code || '—'}</code></td>
+                <td><span style="color:${statusColor}">${r.status || '—'}</span></td>
+                <td>${convertBtn}</td>
+              </tr>`;
+            }).join('');
+          }
         }
 
-        // Sort by date desc
-        refs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-        tbody.innerHTML = refs.map(r => {
-          const referrer  = custMap[r.referrerId];
-          const referrName = referrer ? (referrer.name || referrer.email || r.referrerId) : r.referrerId;
-          const date = r.createdAt ? new Date(r.createdAt.seconds * 1000).toLocaleDateString('en-GB') : '—';
-          const statusColor = r.status === 'converted' ? '#22c55e' : '#f59e0b';
-          return `<tr style="border-bottom:1px solid #1a1a1a" onmouseover="this.style.background='#202020'" onmouseout="this.style.background=''">
-            <td style="padding:0.9rem 1rem;font-size:0.8rem">${referrName}</td>
-            <td style="padding:0.9rem 1rem;color:#e63226;font-size:0.75rem;letter-spacing:0.1em">${r.code || '—'}</td>
-            <td style="padding:0.9rem 1rem;color:#999;font-size:0.75rem">${r.refereeEmail || '—'}</td>
-            <td style="padding:0.9rem 1rem;color:#777;font-size:0.72rem">${date}</td>
-            <td style="padding:0.9rem 1rem"><span style="font-size:0.65rem;font-weight:700;color:${statusColor};text-transform:uppercase">${r.status || 'registered'}</span></td>
-            <td style="padding:0.9rem 1rem">
-              ${r.status !== 'converted' ? `<button class="btn" style="font-size:0.6rem;padding:0.35rem 0.7rem" onclick="markReferralConverted('${r.id}','${r.referrerId}')">Mark Converted</button>` : '<span style="color:#22c55e;font-size:0.7rem">✓ Done</span>'}
-            </td>
-          </tr>`;
-        }).join('');
-
-        // Top referrers
-        const leaderboard = {};
-        refs.forEach(r => {
-          if (!leaderboard[r.referrerId]) leaderboard[r.referrerId] = { total: 0, converted: 0, name: '' };
-          leaderboard[r.referrerId].total++;
-          if (r.status === 'converted') leaderboard[r.referrerId].converted++;
-          const c = custMap[r.referrerId];
-          leaderboard[r.referrerId].name = c ? (c.name || c.email || r.referrerId) : r.referrerId;
+        // Leaderboard — aggregate by referrerId
+        const leaderMap = {};
+        referrals.forEach(r => {
+          if (!r.referrerId) return;
+          if (!leaderMap[r.referrerId]) leaderMap[r.referrerId] = { total: 0, converted: 0, points: 0 };
+          leaderMap[r.referrerId].total++;
+          if (r.status === 'converted') {
+            leaderMap[r.referrerId].converted++;
+            leaderMap[r.referrerId].points += 500;
+          }
         });
+        const leaderboard = Object.entries(leaderMap)
+          .map(([uid, stats]) => ({ uid, ...stats }))
+          .sort((a, b) => b.converted - a.converted)
+          .slice(0, 10);
 
-        const sorted = Object.entries(leaderboard).sort((a, b) => b[1].converted - a[1].converted).slice(0, 5);
-        if (sorted.length === 0) { topDiv.textContent = 'No referrers yet.'; return; }
-
-        topDiv.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem">
-          ${sorted.map(([uid, stats], i) => `
-            <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;padding:1.2rem;text-align:center">
-              <div style="font-size:0.6rem;color:#e63226;margin-bottom:0.4rem">#${i+1}</div>
-              <div style="font-size:0.85rem;margin-bottom:0.5rem">${stats.name}</div>
-              <div style="font-size:1.5rem;color:#e63226;margin-bottom:0.2rem">${stats.converted}</div>
-              <div style="font-size:0.6rem;color:#777">conversions · ${stats.total} referrals</div>
-              <div style="font-size:0.7rem;color:#22c55e;margin-top:0.5rem">£${stats.converted * 5} earned</div>
-            </div>`).join('')}
-        </div>`;
-
-      } catch(e) {
-        tbody.innerHTML = `<tr><td colspan="6" style="color:#e63226;padding:2rem;text-align:center">Error: ${e.message}</td></tr>`;
+        const lbEl = document.getElementById('referrers-leaderboard');
+        if (lbEl) {
+          if (!leaderboard.length) {
+            lbEl.innerHTML = '<p style="color:#666;text-align:center;padding:20px">No referrers yet.</p>';
+          } else {
+            const medals = ['🥇', '🥈', '🥉'];
+            lbEl.innerHTML = leaderboard.map((item, i) => `
+              <div style="display:flex;align-items:center;gap:14px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:12px 16px">
+                <span style="font-size:20px;min-width:28px">${medals[i] || `#${i+1}`}</span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:12px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.uid}</div>
+                  <div style="font-size:13px;color:#fff;margin-top:2px">${item.total} referral${item.total !== 1 ? 's' : ''} · <span style="color:#22c55e">${item.converted} converted</span></div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:16px;font-weight:700;color:#a78bfa">${item.points.toLocaleString()}</div>
+                  <div style="font-size:11px;color:#666">pts earned</div>
+                </div>
+              </div>`).join('');
+          }
+        }
+      } catch (err) {
+        console.error('loadCrmReferrals error:', err);
+        const tbody = document.getElementById('crm-referrals-tbody');
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#e63226;padding:2rem">Error: ${err.message}</td></tr>`;
       }
     }
 
     window.markReferralConverted = async function(refId, referrerId) {
-      if (!confirm('Mark this referral as converted and award referrer 500 loyalty points (£5)?')) return;
+      if (!confirm('Mark this referral as converted and award 500 points to the referrer?')) return;
       try {
         await updateDoc(doc(db, 'referrals', refId), { status: 'converted', convertedAt: serverTimestamp() });
-        // Add 500 loyalty points to referrer
-        await updateDoc(doc(db, 'customers', referrerId), { loyaltyPoints: increment(500) });
-        await loadCrmReferrals();
-      } catch(e) { alert('Error: ' + e.message); }
+        // Award loyalty points to referrer
+        if (referrerId) {
+          const custRef = doc(db, 'customers', referrerId);
+          const custSnap = await getDoc(custRef);
+          if (custSnap.exists()) {
+            const current = custSnap.data().loyaltyPoints || 0;
+            await updateDoc(custRef, { loyaltyPoints: current + 500 });
+          }
+        }
+        loadCrmReferrals();
+      } catch (err) {
+        alert('Failed to update referral: ' + err.message);
+      }
     };
 
   </script>
