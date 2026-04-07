@@ -1,0 +1,22 @@
+{
+  "name": "Dirtbox Club",
+  "short_name": "DirtboxClub",
+  "description": "Premium streetwear drops",
+  "theme_color": "#e63226",
+  "background_color": "#0c0c0c",
+  "display": "standalone",
+  "start_url": "/dirtboxclub/",
+  "scope": "/dirtboxclub/",
+  "icons": [
+    {
+      "src": "/dirtboxclub/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/dirtboxclub/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

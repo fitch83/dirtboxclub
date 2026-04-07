@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DIRTBOXCLUB. — Admin Dashboard</title>
+  <link rel="manifest" href="/dirtboxclub/manifest.json">
+  <meta name="theme-color" content="#e63226">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dirtbox Club">
+  <link rel="apple-touch-icon" href="/dirtboxclub/icons/icon-192.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 
@@ -1143,8 +1149,10 @@
     <button class="tab-btn" onclick="switchTab('applications', this)">📋 Applications</button>
     <button class="tab-btn" onclick="switchTab('members', this)">👥 Members</button>
     <button class="tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
+    <button class="tab-btn" onclick="switchTab('vat-tax', this)">🧾 VAT/Tax</button>
     <button class="tab-btn" onclick="switchTab('announcements', this)">📢 Announcements</button>
     <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
+    <button class="tab-btn" onclick="switchTab('returns', this)">↩️ Returns</button>
     <button class="tab-btn" onclick="switchTab('crm', this)">💌 CRM</button>
     <button class="tab-btn" onclick="switchTab('discounts', this)">🏷️ Discount Codes</button>
     <button class="tab-btn" id="abandoned-tab-btn" onclick="switchTab('abandoned', this)">🛒 Abandoned Carts <span id="abandoned-carts-badge" class="orders-badge" style="display:none">0</span></button>
@@ -1255,6 +1263,76 @@
       </div>
     </div>
 
+    <!-- VAT/TAX REPORTING TAB -->
+    <div id="tab-vat-tax" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>VAT/Tax Reporting</h2>
+          <p>UK VAT (20% standard rate) — all prices VAT-inclusive</p>
+        </div>
+        <button class="btn" onclick="exportVATtoCSV()">⬇ Export to CSV</button>
+      </div>
+
+      <!-- TAB SWITCHER FOR VAT VIEW -->
+      <div style="display:flex;gap:0.5rem;margin-bottom:2rem;border-bottom:1px solid #2a2a2a;padding-bottom:1rem">
+        <button class="tab-btn active" onclick="switchVatView('monthly', this)">📅 Monthly Summary</button>
+        <button class="tab-btn" onclick="switchVatView('quarterly', this)">📊 Quarterly Summary</button>
+      </div>
+
+      <!-- MONTHLY VAT VIEW -->
+      <div id="vat-monthly-view">
+        <div class="card">
+          <div class="card-title">Monthly VAT Summary</div>
+          <div style="overflow-x:auto;margin-top:1rem">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Month</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Gross Sales</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Net Sales (÷1.2)</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">VAT @ 20%</th>
+                </tr>
+              </thead>
+              <tbody id="vat-monthly-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUARTERLY VAT VIEW -->
+      <div id="vat-quarterly-view" style="display:none">
+        <div class="card">
+          <div class="card-title">Quarterly VAT Summary</div>
+          <div style="overflow-x:auto;margin-top:1rem">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Quarter</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Gross Sales</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">Net Sales (÷1.2)</th>
+                  <th style="text-align:right;padding:0.8rem 1rem;color:#999;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em">VAT Owed</th>
+                </tr>
+              </thead>
+              <tbody id="vat-quarterly-rows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-top:2rem">
+          <div class="stat-card">
+            <div class="stat-icon">💷</div>
+            <div class="stat-label">Current Quarter VAT Owed</div>
+            <div class="stat-value" id="current-quarter-vat">£0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-label">Year to Date VAT</div>
+            <div class="stat-value" id="ytd-vat">£0.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ANNOUNCEMENTS TAB -->
     <div id="tab-announcements" class="tab-content">
       <div class="section-header">
@@ -1278,6 +1356,28 @@
       </div>
 
       <div id="drops-container"></div>
+    </div>
+
+    <!-- RETURNS TAB -->
+    <div id="tab-returns" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Returns Management</h2>
+          <p>Review and process customer return requests</p>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <select id="returns-filter" onchange="filterReturns(this.value)" style="padding: 0.5rem 0.8rem; background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.75rem;">
+          <option value="all">All Returns</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="refunded">Refunded</option>
+        </select>
+      </div>
+
+      <div id="returns-container"></div>
     </div>
 
     <!-- CRM TAB -->
@@ -1574,22 +1674,32 @@
       <h2 style="margin: 0 0 1.5rem 0; font-size: 1.2rem; font-weight: 700;">Schedule Drop</h2>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product</span>
-        <input id="drop-product" type="text" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Name</span>
+        <input id="drop-name" type="text" placeholder="e.g. Spring Collection 2026" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Date</span>
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product IDs (comma-separated)</span>
+        <input id="drop-product-ids" type="text" placeholder="prod1, prod2, prod3" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Date & Time</span>
         <input id="drop-date" type="datetime-local" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Quantity</span>
-        <input id="drop-quantity" type="number" value="100" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Description</span>
+        <textarea id="drop-description" placeholder="Add drop details..." style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; resize: vertical; min-height: 80px;"></textarea>
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Banner Image URL</span>
+        <input id="drop-banner-url" type="text" placeholder="https://..." style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <div style="display: flex; gap: 0.8rem;">
-        <button class="btn" onclick="scheduleDrop()" style="flex: 1;">Schedule</button>
+        <button class="btn" onclick="scheduleDrop()" style="flex: 1;">Create Drop</button>
         <button class="btn btn-outlined" onclick="closeModal('drop-modal')" style="flex: 1;">Cancel</button>
       </div>
     </div>
@@ -2092,6 +2202,7 @@
       else if (tabName === 'inventory') loadInventory();
       else if (tabName === 'discounts') refreshDiscountCodes();
       else if (tabName === 'abandoned') loadAbandonedCarts();
+      else if (tabName === 'returns') refreshReturns();
       else refreshAllData();
     };
 
@@ -2140,18 +2251,34 @@
     };
 
     window.scheduleDrop = async function() {
-      const product = document.getElementById('drop-product').value.trim();
-      const date = document.getElementById('drop-date').value;
-      const quantity = parseInt(document.getElementById('drop-quantity').value);
-      if (!product || !date || !quantity) { alert('All fields are required.'); return; }
+      const name = document.getElementById('drop-name').value.trim();
+      const productIdsStr = document.getElementById('drop-product-ids').value.trim();
+      const dateStr = document.getElementById('drop-date').value;
+      const description = document.getElementById('drop-description').value.trim();
+      const bannerImageUrl = document.getElementById('drop-banner-url').value.trim();
+
+      if (!name || !productIdsStr || !dateStr) { alert('Drop name, product IDs, and date are required.'); return; }
+
+      const productIds = productIdsStr.split(',').map(id => id.trim()).filter(id => id.length > 0);
+      if (productIds.length === 0) { alert('Please provide at least one product ID.'); return; }
+
+      const dropAt = new Date(dateStr);
+
       await addDoc(collection(db, 'drops'), {
-        product, date, quantity,
-        created: new Date().toISOString()
+        name,
+        productIds,
+        dropAt: dropAt,
+        description,
+        bannerImageUrl,
+        active: true,
+        createdAt: new Date()
       });
       window.closeModal('drop-modal');
-      document.getElementById('drop-product').value = '';
+      document.getElementById('drop-name').value = '';
+      document.getElementById('drop-product-ids').value = '';
       document.getElementById('drop-date').value = '';
-      document.getElementById('drop-quantity').value = '100';
+      document.getElementById('drop-description').value = '';
+      document.getElementById('drop-banner-url').value = '';
       await refreshAllData();
     };
 
@@ -2163,9 +2290,11 @@
         refreshMembers(),
         refreshAnnouncements(),
         refreshDrops(),
+        refreshReturns(),
         refreshDiscountCodes()
       ]);
       refreshAnalytics();
+      refreshVATReport();
     }
 
     async function refreshProducts() {
@@ -2273,18 +2402,333 @@
     }
 
     function refreshAnalytics() {
+      // Calculate revenue metrics based on allOrders
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const thisWeekStart = new Date(today);
+      thisWeekStart.setDate(today.getDate() - today.getDay());
+      const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      const getTotalInPeriod = (startDate) => {
+        return allOrders
+          .filter(o => {
+            const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+            return oDate >= startDate;
+          })
+          .reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+      };
+
+      const todayRevenue = getTotalInPeriod(today);
+      const weekRevenue = getTotalInPeriod(thisWeekStart);
+      const monthRevenue = getTotalInPeriod(thisMonthStart);
+      const allTimeRevenue = allOrders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+
+      // Previous period for trend calculation
+      const prevPeriodStart = new Date(today);
+      prevPeriodStart.setDate(today.getDate() - 1);
+      const prevPeriodEnd = today;
+      const prevDayRevenue = getTotalInPeriod(prevPeriodStart) - getTotalInPeriod(today);
+
+      const prevWeekStart = new Date(thisWeekStart);
+      prevWeekStart.setDate(thisWeekStart.getDate() - 7);
+      const prevWeekRevenue = allOrders
+        .filter(o => {
+          const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+          return oDate >= prevWeekStart && oDate < thisWeekStart;
+        })
+        .reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+
+      const prevMonthStart = new Date(thisMonthStart);
+      prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
+      const prevMonthRevenue = allOrders
+        .filter(o => {
+          const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+          return oDate >= prevMonthStart && oDate < thisMonthStart;
+        })
+        .reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+
+      const calcTrend = (current, previous) => {
+        if (previous === 0) return current > 0 ? '+100%' : '—';
+        const pct = ((current - previous) / previous * 100).toFixed(0);
+        return (pct > 0 ? '+' : '') + pct + '%';
+      };
+
+      const todayTrend = calcTrend(todayRevenue, prevDayRevenue);
+      const weekTrend = calcTrend(weekRevenue, prevWeekRevenue);
+      const monthTrend = calcTrend(monthRevenue, prevMonthRevenue);
+
+      // Customer metrics
+      const uniqueCustomers = new Set(allOrders.map(o => o.customerEmail).filter(Boolean)).size;
+      const newCustomersThisMonth = new Set(
+        allOrders
+          .filter(o => {
+            const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+            return oDate >= thisMonthStart;
+          })
+          .map(o => o.customerEmail)
+          .filter(Boolean)
+      ).size;
+      const returningCustomers = uniqueCustomers - newCustomersThisMonth;
+
+      const avgOrderValue = allOrders.length > 0 ? (allTimeRevenue / allOrders.length).toFixed(2) : 0;
+      const topProducts = {};
+      allOrders.forEach(o => {
+        (o.items || []).forEach(item => {
+          topProducts[item.name] = (topProducts[item.name] || 0) + (item.qty || 1);
+        });
+      });
+      const topProductsList = Object.entries(topProducts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      // Build stats grid
       document.getElementById('analytics-stats').innerHTML = `
-        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">Page Views</div><div class="stat-value">—</div></div>
-        <div class="stat-card"><div class="stat-icon">👁</div><div class="stat-label">Unique Sessions</div><div class="stat-value">—</div></div>
-        <div class="stat-card"><div class="stat-icon">⏱</div><div class="stat-label">Avg Time on Page</div><div class="stat-value">—</div></div>
-        <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-label">Abandoned Carts</div><div class="stat-value">—</div></div>
+        <div class="stat-card">
+          <div class="stat-icon">💷</div>
+          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-value">${fmt(todayRevenue)}</div>
+          <div style="font-size:0.65rem;color:${todayTrend.includes('-') ? '#f59e0b' : '#22c55e'};margin-top:0.3rem">${todayTrend} vs yesterday</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📅</div>
+          <div class="stat-label">This Week</div>
+          <div class="stat-value">${fmt(weekRevenue)}</div>
+          <div style="font-size:0.65rem;color:${weekTrend.includes('-') ? '#f59e0b' : '#22c55e'};margin-top:0.3rem">${weekTrend} vs last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-label">This Month</div>
+          <div class="stat-value">${fmt(monthRevenue)}</div>
+          <div style="font-size:0.65rem;color:${monthTrend.includes('-') ? '#f59e0b' : '#22c55e'};margin-top:0.3rem">${monthTrend} vs last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-label">All Time</div>
+          <div class="stat-value">${fmt(allTimeRevenue)}</div>
+          <div style="font-size:0.65rem;color:#999;margin-top:0.3rem">${allOrders.length} orders</div>
+        </div>
       `;
-      const placeholder = '<div class="empty-state" style="padding:1.5rem;"><div class="empty-desc" style="font-size:0.75rem;color:#777;">Analytics integration coming soon</div></div>';
-      document.getElementById('top-pages-list').innerHTML = placeholder;
-      document.getElementById('top-products-list').innerHTML = placeholder;
-      document.getElementById('abandoned-carts-list').innerHTML = placeholder;
-      document.getElementById('recent-activity-list').innerHTML = placeholder;
+
+      // Orders & customers
+      document.getElementById('top-pages-list').innerHTML = `
+        <div style="display:grid;gap:0.5rem">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">Total Orders</span>
+            <span style="color:#fff;font-weight:700">${allOrders.length}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">Avg Order Value</span>
+            <span style="color:#fff;font-weight:700">${fmt(avgOrderValue)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0">
+            <span style="color:#999">Conversion Rate (est.)</span>
+            <span style="color:#fff;font-weight:700">—</span>
+          </div>
+        </div>
+      `;
+
+      // Top products
+      document.getElementById('top-products-list').innerHTML = topProductsList.length === 0
+        ? '<div style="color:#999;font-size:0.75rem;padding:1rem">No product data yet</div>'
+        : `
+          <div style="display:grid;gap:0.5rem">
+            ${topProductsList.map(([name, qty]) => `
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+                <span style="color:#999">${name}</span>
+                <span style="color:#e63226;font-weight:700">${qty} sold</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+      // Customer stats
+      document.getElementById('abandoned-carts-list').innerHTML = `
+        <div style="display:grid;gap:0.5rem">
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">Total Customers</span>
+            <span style="color:#fff;font-weight:700">${uniqueCustomers}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+            <span style="color:#999">New (this month)</span>
+            <span style="color:#22c55e;font-weight:700">+${newCustomersThisMonth}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0">
+            <span style="color:#999">Returning</span>
+            <span style="color:#818cf8;font-weight:700">${returningCustomers}</span>
+          </div>
+        </div>
+      `;
+
+      // Recent activity
+      const recentOrders = allOrders.slice(0, 5);
+      document.getElementById('recent-activity-list').innerHTML = recentOrders.length === 0
+        ? '<div style="color:#999;font-size:0.75rem;padding:1rem">No recent activity</div>'
+        : `
+          <div style="display:grid;gap:0.5rem">
+            ${recentOrders.map(o => {
+              const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+              const timeStr = oDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+              const dateStr = oDate.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+              return `
+                <div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:0.5rem 0;border-bottom:1px solid #2a2a2a">
+                  <span style="color:#999">${o.customerName || o.customerEmail} ordered</span>
+                  <span style="color:#fff;font-weight:700">${fmt(o.total)}</span>
+                </div>
+                <div style="font-size:0.65rem;color:#666;margin-bottom:0.3rem">${dateStr} ${timeStr}</div>
+              `;
+            }).join('')}
+          </div>
+        `;
     }
+
+    // ─── VAT/TAX REPORTING ────────────────────────────────────────
+    window.switchVatView = function(view, btn) {
+      document.querySelectorAll('#vat-monthly-view, #vat-quarterly-view').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('[onclick*="switchVatView"]').forEach(el => el.classList.remove('active'));
+
+      if (view === 'monthly') {
+        document.getElementById('vat-monthly-view').style.display = 'block';
+      } else if (view === 'quarterly') {
+        document.getElementById('vat-quarterly-view').style.display = 'block';
+      }
+      btn.classList.add('active');
+    };
+
+    window.refreshVATReport = function() {
+      // Group orders by month
+      const monthlyData = {};
+      const now = new Date();
+      const currentYear = now.getFullYear();
+
+      allOrders.forEach(o => {
+        const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+        const monthKey = oDate.getFullYear() + '-' + String(oDate.getMonth() + 1).padStart(2, '0');
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { gross: 0, count: 0, date: oDate };
+        }
+        monthlyData[monthKey].gross += parseFloat(o.total || 0);
+        monthlyData[monthKey].count += 1;
+      });
+
+      // Sort by month
+      const sortedMonths = Object.entries(monthlyData)
+        .sort((a, b) => b[0].localeCompare(a[0]))
+        .slice(0, 12); // Last 12 months
+
+      // Build monthly table
+      const monthlyHtml = sortedMonths.map(([key, data]) => {
+        const [year, month] = key.split('-');
+        const monthName = new Date(year, parseInt(month) - 1).toLocaleString('en-GB', { month: 'long', year: 'numeric' });
+        const gross = data.gross;
+        const net = gross / 1.2;
+        const vat = gross - net;
+        return `
+          <tr style="border-bottom:1px solid #1a1a1a;transition:background 0.15s" onmouseover="this.style.background='#202020'" onmouseout="this.style.background=''">
+            <td style="padding:0.8rem 1rem;color:#fff;font-size:0.75rem">${monthName}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#e63226;font-weight:700">${fmt(gross)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#999;font-size:0.75rem">${fmt(net)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#22c55e;font-weight:700">${fmt(vat)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('vat-monthly-rows').innerHTML = monthlyHtml || `
+        <tr><td colspan="4" style="padding:1rem;text-align:center;color:#777;font-size:0.75rem">No sales data yet</td></tr>
+      `;
+
+      // Build quarterly summary
+      const quarterlyData = {};
+      sortedMonths.forEach(([key, data]) => {
+        const [year, month] = key.split('-');
+        const q = Math.ceil(parseInt(month) / 3);
+        const qKey = year + '-Q' + q;
+        if (!quarterlyData[qKey]) {
+          quarterlyData[qKey] = { gross: 0, date: new Date(year, 0) };
+        }
+        quarterlyData[qKey].gross += data.gross;
+      });
+
+      const sortedQuarters = Object.entries(quarterlyData)
+        .sort((a, b) => b[0].localeCompare(a[0]));
+
+      const quarterlyHtml = sortedQuarters.map(([key, data]) => {
+        const gross = data.gross;
+        const net = gross / 1.2;
+        const vat = gross - net;
+        return `
+          <tr style="border-bottom:1px solid #1a1a1a;transition:background 0.15s" onmouseover="this.style.background='#202020'" onmouseout="this.style.background=''">
+            <td style="padding:0.8rem 1rem;color:#fff;font-size:0.75rem">${key}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#e63226;font-weight:700">${fmt(gross)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#999;font-size:0.75rem">${fmt(net)}</td>
+            <td style="padding:0.8rem 1rem;text-align:right;color:#22c55e;font-weight:700">${fmt(vat)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('vat-quarterly-rows').innerHTML = quarterlyHtml || `
+        <tr><td colspan="4" style="padding:1rem;text-align:center;color:#777;font-size:0.75rem">No sales data yet</td></tr>
+      `;
+
+      // Calculate current quarter VAT owed
+      const currentQ = Math.ceil((now.getMonth() + 1) / 3);
+      const currentQKey = currentYear + '-Q' + currentQ;
+      const currentQData = quarterlyData[currentQKey] || { gross: 0 };
+      let currentQVat = (currentQData.gross / 1.2);
+      currentQVat = currentQData.gross - currentQVat;
+
+      // Calculate YTD VAT
+      let ytdVat = 0;
+      sortedQuarters.forEach(([key, data]) => {
+        if (key.startsWith(currentYear.toString())) {
+          const gross = data.gross;
+          const net = gross / 1.2;
+          ytdVat += gross - net;
+        }
+      });
+
+      document.getElementById('current-quarter-vat').textContent = fmt(currentQVat);
+      document.getElementById('ytd-vat').textContent = fmt(ytdVat);
+    };
+
+    window.exportVATtoCSV = function() {
+      if (allOrders.length === 0) {
+        alert('No orders to export');
+        return;
+      }
+
+      const monthlyData = {};
+      allOrders.forEach(o => {
+        const oDate = o.createdAt?.seconds ? new Date(o.createdAt.seconds * 1000) : new Date(o.createdAt);
+        const monthKey = oDate.getFullYear() + '-' + String(oDate.getMonth() + 1).padStart(2, '0');
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { gross: 0, date: oDate };
+        }
+        monthlyData[monthKey].gross += parseFloat(o.total || 0);
+      });
+
+      const sortedMonths = Object.entries(monthlyData)
+        .sort((a, b) => a[0].localeCompare(b[0]));
+
+      let csv = 'Month,Gross Sales (£),Net Sales (£),VAT @ 20% (£)\n';
+      sortedMonths.forEach(([key, data]) => {
+        const [year, month] = key.split('-');
+        const monthName = new Date(year, parseInt(month) - 1).toLocaleString('en-GB', { month: 'long', year: 'numeric' });
+        const gross = data.gross;
+        const net = (gross / 1.2).toFixed(2);
+        const vat = (gross - net).toFixed(2);
+        csv += `"${monthName}",${gross.toFixed(2)},${net},${vat}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dirtboxclub-vat-report-' + new Date().toISOString().split('T')[0] + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
 
     async function refreshAnnouncements() {
       const container = document.getElementById('announcements-container');
@@ -2340,22 +2784,197 @@
         `;
         return;
       }
-      container.innerHTML = drops.map(d => `
-        <div class="card">
-          <div class="card-title">${d.product}</div>
-          <div style="font-size: 0.75rem; color: #777; margin-bottom: 1rem;">
-            <div>Date: ${new Date(d.date).toLocaleString()}</div>
-            <div>Quantity: ${d.quantity}</div>
+      container.innerHTML = drops.map(d => {
+        const dropTime = d.dropAt?.toDate ? d.dropAt.toDate() : new Date(d.dropAt);
+        const isActive = d.active !== false;
+        return `
+          <div class="card">
+            <div class="card-title">${d.name || d.product || 'Untitled Drop'}</div>
+            <div style="font-size: 0.75rem; color: #777; margin-bottom: 1rem;">
+              <div>Products: ${d.productIds?.join(', ') || d.product || 'N/A'}</div>
+              <div>Drop Date: ${dropTime.toLocaleString()}</div>
+              ${d.description ? `<div>Description: ${d.description.substring(0, 50)}...</div>` : ''}
+              <div>Status: ${isActive ? '✅ Active' : '❌ Inactive'}</div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn" onclick="toggleDropActive('${d.id}', ${!isActive})" style="flex: 1; font-size: 0.65rem;">${isActive ? 'Deactivate' : 'Activate'}</button>
+              <button class="btn-icon delete" onclick="deleteDrop('${d.id}')">🗑</button>
+            </div>
           </div>
-          <button class="btn-icon delete" onclick="deleteDrop('${d.id}')">🗑</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     window.deleteDrop = async function(id) {
       if (!confirm('Delete this drop?')) return;
       await deleteDoc(doc(db, 'drops', id));
       await refreshAllData();
+    };
+
+    window.toggleDropActive = async function(id, newActiveState) {
+      await updateDoc(doc(db, 'drops', id), { active: newActiveState });
+      await refreshAllData();
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  RETURNS MANAGEMENT
+    // ─────────────────────────────────────────────────────────────────
+
+    let returnsFilterStatus = 'all';
+
+    async function refreshReturns() {
+      const container = document.getElementById('returns-container');
+      const snap = await getDocs(collection(db, 'returns'));
+      let allReturns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      if (allReturns.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">↩️</div>
+            <div class="empty-title">No Return Requests Yet</div>
+            <div class="empty-desc">Customer return requests will appear here</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Apply filter
+      if (returnsFilterStatus !== 'all') {
+        allReturns = allReturns.filter(r => r.status === returnsFilterStatus);
+      }
+
+      container.innerHTML = `
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:1rem 1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Order ID</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Email</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Item</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Reason</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Date</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Status</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allReturns.map(r => {
+                  const createdAt = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                  const statusColor = r.status === 'pending' ? '#FFA500' : r.status === 'approved' ? '#00AA00' : r.status === 'rejected' ? '#CC0000' : '#0066CC';
+                  return `
+                    <tr style="border-bottom:1px solid #2a2a2a">
+                      <td style="padding:1rem 1rem;color:#fff">${r.orderId}</td>
+                      <td style="padding:1rem 0.8rem;color:#999;word-break:break-word">${r.email}</td>
+                      <td style="padding:1rem 0.8rem;color:#999">${r.item}</td>
+                      <td style="padding:1rem 0.8rem;color:#999">${r.reason}</td>
+                      <td style="padding:1rem 0.8rem;color:#777;font-size:0.7rem">${createdAt.toLocaleDateString()}</td>
+                      <td style="padding:1rem 0.8rem"><span style="display:inline-block;padding:0.3rem 0.6rem;background:${statusColor}33;color:${statusColor};border-radius:4px;font-size:0.65rem;text-transform:uppercase">${r.status || 'pending'}</span></td>
+                      <td style="padding:1rem 0.8rem">
+                        <button onclick="openReturnDetail('${r.id}')" style="background:none;border:none;color:#e63226;cursor:pointer;font-size:0.7rem;text-decoration:underline">View</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    window.filterReturns = async function(status) {
+      returnsFilterStatus = status;
+      await refreshReturns();
+    };
+
+    window.openReturnDetail = async function(returnId) {
+      const docSnap = await getDoc(doc(db, 'returns', returnId));
+      if (!docSnap.exists()) return;
+      const r = docSnap.data();
+
+      const modal = document.createElement('div');
+      modal.id = 'return-detail-modal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:300;display:flex;align-items:center;justify-content:center';
+      modal.innerHTML = `
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;padding:2rem;width:90%;max-width:600px;max-height:90vh;overflow-y:auto">
+          <h2 style="margin:0 0 1.5rem 0;font-size:1.2rem;font-weight:700">Return Details</h2>
+          <div style="margin-bottom:1.5rem;font-size:0.8rem">
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Order ID</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.orderId}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Email</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.email}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Item</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.item}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Reason</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.reason}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Details</span>
+              <div style="color:#999;margin-top:0.3rem">${r.details || 'No additional details'}</div>
+            </div>
+            ${r.photoURL ? `<div style="margin-bottom:1rem"><a href="${r.photoURL}" target="_blank" style="color:#e63226;text-decoration:underline">View Photo</a></div>` : ''}
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Status</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.status || 'pending'}</div>
+            </div>
+          </div>
+          <textarea id="return-notes" placeholder="Internal notes..." style="width:100%;padding:0.5rem;background:#111;border:1px solid #2a2a2a;border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;resize:vertical;min-height:80px;margin-bottom:1rem">${r.notes || ''}</textarea>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <button onclick="approveReturn('${returnId}', '${r.email}', '${r.item}')" style="flex:1;padding:0.6rem;background:#00AA00;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">✓ Approve</button>
+            <button onclick="rejectReturn('${returnId}', '${r.email}', '${r.item}')" style="flex:1;padding:0.6rem;background:#CC0000;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">✗ Reject</button>
+            <button onclick="markRefunded('${returnId}')" style="flex:1;padding:0.6rem;background:#0066CC;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">💰 Refunded</button>
+          </div>
+          <button onclick="closeReturnDetail()" style="width:100%;padding:0.6rem;background:#2a2a2a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.75rem">Close</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    };
+
+    window.closeReturnDetail = function() {
+      const modal = document.getElementById('return-detail-modal');
+      if (modal) modal.remove();
+    };
+
+    window.approveReturn = async function(returnId, email, itemName) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'approved', notes });
+      // Send approval email via EmailJS
+      emailjs.send('service_hpy2gvj', 'dbc_return_approved', {
+        to_email: email,
+        order_id: (await getDoc(doc(db, 'returns', returnId))).data().orderId,
+        item_name: itemName,
+        return_instructions: 'Please reply to this email for return shipping instructions.'
+      }, 'Se-YqzqLV7Zr-AYVt').catch(err => console.log('Email send failed:', err));
+      await closeReturnDetail();
+      await refreshReturns();
+    };
+
+    window.rejectReturn = async function(returnId, email, itemName) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'rejected', notes });
+      // Send rejection email via EmailJS
+      emailjs.send('service_hpy2gvj', 'dbc_return_rejected', {
+        to_email: email,
+        order_id: (await getDoc(doc(db, 'returns', returnId))).data().orderId,
+        item_name: itemName
+      }, 'Se-YqzqLV7Zr-AYVt').catch(err => console.log('Email send failed:', err));
+      await closeReturnDetail();
+      await refreshReturns();
+    };
+
+    window.markRefunded = async function(returnId) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'refunded', notes });
+      await closeReturnDetail();
+      await refreshReturns();
     };
 
     // ─────────────────────────────────────────────────────────────────
