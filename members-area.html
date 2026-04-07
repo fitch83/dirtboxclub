@@ -26,14 +26,15 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: #0c0c0c;
-    border-bottom: 1px solid #2a2a2a;
-    padding: 1rem 2rem;
+    background: rgba(12, 12, 12, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    height: 70px;
+    height: 64px;
   }
 
   .nav-logo {
@@ -89,7 +90,7 @@
 
   /* Main Content */
   .members-wrap {
-    padding: calc(70px + 3rem) 2rem 4rem;
+    padding: calc(64px + 3rem) 2rem 4rem;
     max-width: 1200px;
     margin: 0 auto;
   }
@@ -393,7 +394,7 @@
     }
 
     .members-wrap {
-      padding: calc(70px + 2rem) 1rem 4rem;
+      padding: calc(64px + 2rem) 1rem 4rem;
     }
 
     .members-grid {
@@ -507,7 +508,7 @@
 
 <footer class="footer">
   <div class="footer-bottom">
-    <div class="footer-copy">© 2026 DIRTBOXCLUB. Members area. Don't screenshot this and pretend you're special.</div>
+    <div class="footer-copy">© 2026 DIRTBOXCLUB<span style="color:#e63226;">.</span> Members area. Don't screenshot this and pretend you're special.</div>
   </div>
 </footer>
 
