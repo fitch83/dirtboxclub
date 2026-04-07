@@ -227,10 +227,99 @@ a{color:inherit;text-decoration:none}
 <div class="ftsub">
 <div class="ftsub-logo"><img src="assets/logo-horizontal-final.png" alt="Dirtbox Club" style="width:90px;height:auto"></div>
 <div class="ftsub-center"><h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg> Get Notified About New Drops</h3><p class="ftsp">Be the first to know when new exclusive items drop<span class="r">.</span></p>
-<div class="sf"><input type="text" placeholder="Name (optional)"><input type="email" placeholder="Enter your email"><button>Subscribe</button></div></div>
+<div class="sf" id="newsletter-form-wrapper">
+  <input type="text" id="newsletter-name" placeholder="Name (optional)">
+  <input type="email" id="newsletter-email" placeholder="Enter your email" required>
+  <button id="newsletter-submit-btn" onclick="submitNewsletterSignup(event)">Subscribe</button>
+  <div id="newsletter-message" style="display:none;margin-left:1rem;font-size:0.7rem;color:#4ade80"></div>
+</div>
+</div>
 <div class="ftsub-logo"><img src="assets/logo-vertical-final.png" alt="Dirt Box Club" style="width:100px;height:auto"></div>
 </div>
 <div class="ftb">© 2024 Dirt Box Club<span class="r">.</span> All rights reserved<span class="r">.</span> <span class="red">Members only<span class="r">.</span> Access restricted<span class="r">.</span></span></div>
 </div>
+
+<!-- Firebase & Newsletter Signup Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+    authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+    projectId: "dirtboxclub-3d7a7",
+    storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+    messagingSenderId: "883493757389",
+    appId: "1:883493757389:web:749f668e2655fd168fe484"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.submitNewsletterSignup = async function(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const email = document.getElementById('newsletter-email').value.trim().toLowerCase();
+    const name = document.getElementById('newsletter-name').value.trim();
+    const messageDiv = document.getElementById('newsletter-message');
+
+    if (!email) {
+      messageDiv.textContent = '✗ Please enter an email address';
+      messageDiv.style.color = '#ef4444';
+      messageDiv.style.display = 'inline';
+      setTimeout(() => messageDiv.style.display = 'none', 3000);
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      messageDiv.textContent = '✗ Please enter a valid email address';
+      messageDiv.style.color = '#ef4444';
+      messageDiv.style.display = 'inline';
+      setTimeout(() => messageDiv.style.display = 'none', 3000);
+      return;
+    }
+
+    try {
+      // Check if already subscribed
+      const existing = await getDocs(
+        query(collection(db, 'subscribers'), where('email', '==', email))
+      );
+
+      if (!existing.empty) {
+        messageDiv.textContent = '✓ Already subscribed!';
+        messageDiv.style.color = '#4ade80';
+        messageDiv.style.display = 'inline';
+        document.getElementById('newsletter-email').value = '';
+        document.getElementById('newsletter-name').value = '';
+        setTimeout(() => messageDiv.style.display = 'none', 3000);
+        return;
+      }
+
+      // Add new subscriber
+      await addDoc(collection(db, 'subscribers'), {
+        email: email,
+        name: name || null,
+        subscribedAt: new Date().toISOString(),
+        source: window.location.pathname
+      });
+
+      messageDiv.textContent = '✓ Welcome to the club!';
+      messageDiv.style.color = '#4ade80';
+      messageDiv.style.display = 'inline';
+      document.getElementById('newsletter-email').value = '';
+      document.getElementById('newsletter-name').value = '';
+      setTimeout(() => messageDiv.style.display = 'none', 3000);
+    } catch(e) {
+      console.error('Error subscribing:', e);
+      messageDiv.textContent = '✗ Something went wrong. Try again.';
+      messageDiv.style.color = '#ef4444';
+      messageDiv.style.display = 'inline';
+      setTimeout(() => messageDiv.style.display = 'none', 3000);
+    }
+  };
+</script>
 
 </body></html>

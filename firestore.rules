@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helper Functions ───────────────────────────────────────────
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.uid == 'YOUR_ADMIN_UID_HERE';
+    }
+
+    // ─── PRODUCTS Collection ────────────────────────────────────────
+    // Admin only: read, write
+    match /products/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── ORDERS Collection ────────────────────────────────────────
+    // Admin only: read, write
+    match /orders/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── APPLICATIONS Collection ────────────────────────────────────
+    // Admin only: read, write
+    match /applications/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── MEMBERS Collection ─────────────────────────────────────────
+    // Admin only: read, write
+    match /members/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── CUSTOMERS Collection ────────────────────────────────────────
+    // Admin only: read, write
+    // Stores customer data for CRM: name, email, phone, totalSpend, orderCount,
+    // lastOrderDate, firstOrderDate, memberStatus, tags, orders[], notes
+    match /customers/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── CAMPAIGNS Collection ────────────────────────────────────────
+    // Admin only: read, write
+    // Stores email campaign records: date, subject, segment, recipients,
+    // successCount, failureCount, status, body
+    match /campaigns/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── SUBSCRIBERS Collection ──────────────────────────────────────
+    // Public: write (for newsletter signups)
+    // Admin: read (to view subscriber list)
+    // Stores: email, name, subscribedAt, source
+    match /subscribers/{document=**} {
+      allow create: if request.resource.data.email is string &&
+                       request.resource.data.email.size() > 0 &&
+                       request.resource.data.subscribedAt is string &&
+                       request.resource.data.source is string;
+      allow read: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // ─── ANNOUNCEMENTS Collection ────────────────────────────────────
+    // Admin only: read, write
+    match /announcements/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── DROPS Collection ────────────────────────────────────────────
+    // Admin only: read, write
+    match /drops/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ─── Default Deny ───────────────────────────────────────────────
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -725,6 +725,363 @@
     }
     .modal-info strong { color: #fff; }
 
+    /* ─── CRM STYLES ─────────────────────────────────────────────── */
+    .crm-subtab-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 1rem;
+    }
+
+    .crm-subtab-btn {
+      padding: 0.6rem 1rem;
+      background: transparent;
+      border: none;
+      color: #777;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .crm-subtab-btn:hover {
+      color: #fff;
+    }
+
+    .crm-subtab-btn.active {
+      color: #e63226;
+      border-bottom: 2px solid #e63226;
+      padding-bottom: 0.6rem;
+    }
+
+    .crm-subtab-content {
+      display: none;
+    }
+
+    .crm-subtab-content.active {
+      display: block;
+    }
+
+    .crm-segments-section {
+      margin-bottom: 3rem;
+    }
+
+    .crm-segments-section h3 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .segments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .segment-card {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .segment-card:hover {
+      background: #252525;
+      border-color: #e63226;
+    }
+
+    .segment-count {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #e63226;
+      margin-bottom: 0.5rem;
+    }
+
+    .segment-label {
+      font-size: 0.75rem;
+      color: #999;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .crm-search-filter {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .crm-search-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .crm-search-input:focus {
+      outline: none;
+      border-color: #e63226;
+    }
+
+    .crm-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .crm-filter-input {
+      padding: 0.8rem 0.8rem;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.75rem;
+    }
+
+    .crm-filter-input:focus {
+      outline: none;
+      border-color: #e63226;
+    }
+
+    .crm-table-container {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+
+    .crm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .crm-table thead {
+      background: #111;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .crm-table th {
+      padding: 1rem;
+      text-align: left;
+      color: #999;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+
+    .crm-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #2a2a2a;
+      color: #ddd;
+    }
+
+    .crm-table tbody tr {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .crm-table tbody tr:hover {
+      background: #252525;
+    }
+
+    .crm-campaign-form {
+      background: #1c1c1c;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .crm-campaign-form h3 {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .campaign-form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .campaign-form-group label {
+      display: block;
+      font-size: 0.75rem;
+      color: #999;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .crm-form-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.8rem;
+    }
+
+    .crm-form-input:focus {
+      outline: none;
+      border-color: #e63226;
+    }
+
+    .crm-form-textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.8rem;
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .crm-form-textarea:focus {
+      outline: none;
+      border-color: #e63226;
+    }
+
+    .campaign-preview-section {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: #111;
+      border-radius: 6px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .campaign-preview-section h4 {
+      font-size: 0.75rem;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .campaign-preview-box {
+      background: #0c0c0c;
+      padding: 1rem;
+      border-radius: 4px;
+      border-left: 3px solid #e63226;
+    }
+
+    .preview-subject {
+      font-size: 0.9rem;
+      color: #e63226;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .preview-body {
+      font-size: 0.75rem;
+      color: #999;
+      line-height: 1.6;
+    }
+
+    .campaign-info {
+      font-size: 0.8rem;
+      color: #999;
+      margin: 1rem 0;
+    }
+
+    .campaign-info strong {
+      color: #e63226;
+    }
+
+    /* Customer Detail Modal */
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 1rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    .customer-detail-section {
+      margin-bottom: 2rem;
+    }
+
+    .customer-detail-section h4 {
+      font-size: 0.75rem;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .customer-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .customer-detail-item {
+      background: #111;
+      padding: 1rem;
+      border-radius: 6px;
+      border: 1px solid #2a2a2a;
+    }
+
+    .customer-detail-label {
+      font-size: 0.65rem;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+    }
+
+    .customer-detail-value {
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    .customer-notes-editor {
+      width: 100%;
+      padding: 1rem;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Boldonse', sans-serif;
+      font-size: 0.8rem;
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .customer-notes-editor:focus {
+      outline: none;
+      border-color: #e63226;
+    }
+
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .product-grid {
@@ -787,6 +1144,7 @@
     <button class="tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
     <button class="tab-btn" onclick="switchTab('announcements', this)">📢 Announcements</button>
     <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
+    <button class="tab-btn" onclick="switchTab('crm', this)">💌 CRM</button>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -880,6 +1238,170 @@
       </div>
 
       <div id="drops-container"></div>
+    </div>
+
+    <!-- CRM TAB -->
+    <div id="tab-crm" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Marketing CRM</h2>
+          <p>Manage customers, segments, and email campaigns</p>
+        </div>
+      </div>
+
+      <!-- CRM Sub-tabs -->
+      <div class="crm-subtab-bar">
+        <button class="crm-subtab-btn active" onclick="switchCrmSubtab('customers', this)">👥 Customers</button>
+        <button class="crm-subtab-btn" onclick="switchCrmSubtab('campaigns', this)">📧 Campaigns</button>
+      </div>
+
+      <!-- CUSTOMERS SUBTAB -->
+      <div id="crm-customers" class="crm-subtab-content active">
+        <!-- Segments Section -->
+        <div class="crm-segments-section">
+          <h3>Customer Segments</h3>
+          <div class="segments-grid">
+            <div class="segment-card" onclick="filterBySegment('all')">
+              <div class="segment-count" id="seg-all-count">0</div>
+              <div class="segment-label">All Customers</div>
+            </div>
+            <div class="segment-card" onclick="filterBySegment('vip')">
+              <div class="segment-count" id="seg-vip-count">0</div>
+              <div class="segment-label">VIP (>£100)</div>
+            </div>
+            <div class="segment-card" onclick="filterBySegment('recent')">
+              <div class="segment-count" id="seg-recent-count">0</div>
+              <div class="segment-label">Recent Buyers (30d)</div>
+            </div>
+            <div class="segment-card" onclick="filterBySegment('atrisk')">
+              <div class="segment-count" id="seg-atrisk-count">0</div>
+              <div class="segment-label">At Risk (90d+)</div>
+            </div>
+            <div class="segment-card" onclick="filterBySegment('members')">
+              <div class="segment-count" id="seg-members-count">0</div>
+              <div class="segment-label">Members</div>
+            </div>
+            <div class="segment-card" onclick="filterBySegment('subscribers')">
+              <div class="segment-count" id="seg-subscribers-count">0</div>
+              <div class="segment-label">Newsletter Subscribers</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="crm-search-filter">
+          <input type="text" id="crm-search" placeholder="Search by name or email..." class="crm-search-input" onkeyup="filterCustomers()">
+
+          <div class="crm-filters">
+            <input type="number" id="filter-min-spend" placeholder="Min Spend (£)" class="crm-filter-input" onchange="filterCustomers()">
+            <input type="number" id="filter-max-spend" placeholder="Max Spend (£)" class="crm-filter-input" onchange="filterCustomers()">
+            <input type="number" id="filter-min-orders" placeholder="Min Orders" class="crm-filter-input" onchange="filterCustomers()">
+            <select id="filter-member-status" class="crm-filter-input" onchange="filterCustomers()">
+              <option value="">All Status</option>
+              <option value="member">Member</option>
+              <option value="non-member">Non-member</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="crm-table-container">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Total Spend</th>
+                <th>Orders</th>
+                <th>Last Order</th>
+                <th>Status</th>
+                <th>Tags</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="crm-customers-tbody">
+              <tr><td colspan="8" style="text-align:center;color:#666;padding:2rem">Loading customers...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CAMPAIGNS SUBTAB -->
+      <div id="crm-campaigns" class="crm-subtab-content">
+        <!-- New Campaign Form -->
+        <div class="crm-campaign-form">
+          <h3>Create Email Campaign</h3>
+          <div class="campaign-form-group">
+            <label>Target Segment</label>
+            <select id="campaign-segment" class="crm-form-input" onchange="updateCampaignRecipientCount()">
+              <option value="all">All Customers</option>
+              <option value="vip">VIP Customers (>£100)</option>
+              <option value="recent">Recent Buyers (Last 30 days)</option>
+              <option value="atrisk">At Risk (No order in 90+ days)</option>
+              <option value="members">Members Only</option>
+              <option value="subscribers">Newsletter Subscribers</option>
+            </select>
+          </div>
+
+          <div class="campaign-form-group">
+            <label>Subject Line</label>
+            <input type="text" id="campaign-subject" class="crm-form-input" placeholder="e.g., New Drop Alert - Exclusive for VIPs">
+          </div>
+
+          <div class="campaign-form-group">
+            <label>Message Body (Use {{name}} for personalization)</label>
+            <textarea id="campaign-body" class="crm-form-textarea" placeholder="Hi {{name}}, check out our latest drops! Merge tags: {{name}}, {{email}}, {{totalSpend}}, {{orderCount}}"></textarea>
+          </div>
+
+          <div class="campaign-preview-section">
+            <h4>Preview</h4>
+            <div class="campaign-preview-box">
+              <div class="preview-subject" id="preview-subject">Your subject will appear here</div>
+              <div class="preview-body" id="preview-body">Your message preview will appear here</div>
+            </div>
+          </div>
+
+          <div class="campaign-info">
+            <span>Recipients: <strong id="campaign-recipient-count">0</strong></span>
+          </div>
+
+          <button class="btn" onclick="sendEmailCampaign()" style="margin-top:1rem">Send Campaign</button>
+        </div>
+
+        <!-- Campaign History -->
+        <div style="margin-top:3rem">
+          <h3>Campaign History</h3>
+          <div class="crm-table-container">
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                  <th>Segment</th>
+                  <th>Recipients</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="crm-campaigns-tbody">
+                <tr><td colspan="5" style="text-align:center;color:#666;padding:2rem">No campaigns yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMER DETAIL MODAL -->
+    <div id="customer-detail-modal" class="modal" style="display:none">
+      <div class="modal-content" style="width:90%;max-width:800px;max-height:90vh;overflow-y:auto">
+        <div class="modal-header">
+          <h2 id="customer-modal-name">Customer Details</h2>
+          <button onclick="closeCustomerModal()" class="btn-icon">&times;</button>
+        </div>
+        <div id="customer-modal-body">
+          <!-- Customer details will be filled here -->
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1654,6 +2176,440 @@
       await signOut(auth);
       window.location = 'admin-login.html';
     };
+
+    // ─── CRM FUNCTIONS ───────────────────────────────────────────────────
+    let allCustomers = [];
+    let filteredCustomers = [];
+    let currentSegmentFilter = 'all';
+
+    window.switchCrmSubtab = function(subtab, btn) {
+      document.querySelectorAll('.crm-subtab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.crm-subtab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('crm-' + subtab).classList.add('active');
+      if (btn) btn.classList.add('active');
+
+      if (subtab === 'customers') {
+        loadCrmCustomers();
+      } else if (subtab === 'campaigns') {
+        loadCampaignHistory();
+      }
+    };
+
+    async function loadCrmCustomers() {
+      try {
+        const snapshot = await getDocs(collection(db, 'customers'));
+        allCustomers = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          allCustomers.push({
+            id: doc.id,
+            name: data.name || '',
+            email: data.email || '',
+            phone: data.phone || '',
+            totalSpend: data.totalSpend || 0,
+            orderCount: data.orderCount || 0,
+            lastOrderDate: data.lastOrderDate ? new Date(data.lastOrderDate) : null,
+            firstOrderDate: data.firstOrderDate ? new Date(data.firstOrderDate) : null,
+            memberStatus: data.memberStatus || 'non-member',
+            tags: data.tags || [],
+            orders: data.orders || [],
+            notes: data.notes || ''
+          });
+        });
+
+        updateSegmentCounts();
+        filteredCustomers = [...allCustomers];
+        renderCrmCustomers();
+      } catch(e) {
+        console.error('Error loading customers:', e);
+      }
+    }
+
+    function updateSegmentCounts() {
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+      const vipCount = allCustomers.filter(c => c.totalSpend > 100).length;
+      const recentCount = allCustomers.filter(c => c.lastOrderDate && c.lastOrderDate > thirtyDaysAgo).length;
+      const atRiskCount = allCustomers.filter(c => c.orderCount > 0 && c.lastOrderDate && c.lastOrderDate < ninetyDaysAgo).length;
+      const membersCount = allCustomers.filter(c => c.memberStatus === 'member').length;
+
+      document.getElementById('seg-all-count').textContent = allCustomers.length;
+      document.getElementById('seg-vip-count').textContent = vipCount;
+      document.getElementById('seg-recent-count').textContent = recentCount;
+      document.getElementById('seg-atrisk-count').textContent = atRiskCount;
+      document.getElementById('seg-members-count').textContent = membersCount;
+    }
+
+    window.filterBySegment = function(segment) {
+      currentSegmentFilter = segment;
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+      let filtered = [...allCustomers];
+
+      if (segment === 'vip') {
+        filtered = filtered.filter(c => c.totalSpend > 100);
+      } else if (segment === 'recent') {
+        filtered = filtered.filter(c => c.lastOrderDate && c.lastOrderDate > thirtyDaysAgo);
+      } else if (segment === 'atrisk') {
+        filtered = filtered.filter(c => c.orderCount > 0 && c.lastOrderDate && c.lastOrderDate < ninetyDaysAgo);
+      } else if (segment === 'members') {
+        filtered = filtered.filter(c => c.memberStatus === 'member');
+      } else if (segment === 'subscribers') {
+        // This will be populated when we load subscribers
+        filtered = filtered.filter(c => c.isSubscriber === true);
+      }
+
+      filteredCustomers = filtered;
+      renderCrmCustomers();
+      document.getElementById('crm-search').value = '';
+      document.getElementById('filter-min-spend').value = '';
+      document.getElementById('filter-max-spend').value = '';
+      document.getElementById('filter-min-orders').value = '';
+      document.getElementById('filter-member-status').value = '';
+    };
+
+    window.filterCustomers = function() {
+      const searchVal = document.getElementById('crm-search').value.toLowerCase();
+      const minSpend = parseFloat(document.getElementById('filter-min-spend').value) || 0;
+      const maxSpend = parseFloat(document.getElementById('filter-max-spend').value) || Infinity;
+      const minOrders = parseInt(document.getElementById('filter-min-orders').value) || 0;
+      const memberStatus = document.getElementById('filter-member-status').value;
+
+      let filtered = [...allCustomers];
+
+      if (searchVal) {
+        filtered = filtered.filter(c =>
+          c.name.toLowerCase().includes(searchVal) ||
+          c.email.toLowerCase().includes(searchVal)
+        );
+      }
+
+      filtered = filtered.filter(c =>
+        c.totalSpend >= minSpend &&
+        c.totalSpend <= maxSpend &&
+        c.orderCount >= minOrders
+      );
+
+      if (memberStatus) {
+        filtered = filtered.filter(c => c.memberStatus === memberStatus);
+      }
+
+      filteredCustomers = filtered;
+      renderCrmCustomers();
+    };
+
+    function renderCrmCustomers() {
+      const tbody = document.getElementById('crm-customers-tbody');
+      if (filteredCustomers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#666;padding:2rem">No customers found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filteredCustomers.map(c => {
+        const lastOrder = c.lastOrderDate ? c.lastOrderDate.toLocaleDateString() : 'N/A';
+        const tags = c.tags && c.tags.length > 0 ? c.tags.join(', ') : '-';
+        return `
+          <tr onclick="openCustomerDetail('${c.id}')">
+            <td>${c.name || 'N/A'}</td>
+            <td>${c.email || 'N/A'}</td>
+            <td>${fmt(c.totalSpend)}</td>
+            <td>${c.orderCount}</td>
+            <td>${lastOrder}</td>
+            <td><span style="font-size:0.7rem;color:#${c.memberStatus === 'member' ? 'e63226' : '777'}">${c.memberStatus === 'member' ? 'MEMBER' : 'Non-member'}</span></td>
+            <td>${tags}</td>
+            <td><button class="btn-icon" onclick="openCustomerDetail('${c.id}', event)">→</button></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    window.openCustomerDetail = function(customerId, event) {
+      if (event) event.stopPropagation();
+      const customer = allCustomers.find(c => c.id === customerId);
+      if (!customer) return;
+
+      document.getElementById('customer-modal-name').textContent = customer.name || 'Customer Details';
+
+      const orderHistoryRows = (customer.orders || []).map(order => {
+        const orderDate = order.date ? new Date(order.date).toLocaleDateString() : 'N/A';
+        const items = order.items ? Object.values(order.items).map(item => `${item.name || 'Item'} (x${item.qty || 1})`).join(', ') : 'N/A';
+        const total = order.total ? fmt(order.total) : 'N/A';
+        return `<tr><td>${order.id || 'N/A'}</td><td>${orderDate}</td><td>${items}</td><td>${total}</td></tr>`;
+      }).join('');
+
+      const bodyHtml = `
+        <div class="customer-detail-section">
+          <h4>Personal Information</h4>
+          <div class="customer-detail-grid">
+            <div class="customer-detail-item">
+              <div class="customer-detail-label">Full Name</div>
+              <div class="customer-detail-value">${customer.name || 'N/A'}</div>
+            </div>
+            <div class="customer-detail-item">
+              <div class="customer-detail-label">Email</div>
+              <div class="customer-detail-value">${customer.email || 'N/A'}</div>
+            </div>
+            <div class="customer-detail-item">
+              <div class="customer-detail-label">Phone</div>
+              <div class="customer-detail-value">${customer.phone || 'N/A'}</div>
+            </div>
+            <div class="customer-detail-item">
+              <div class="customer-detail-label">Member Status</div>
+              <div class="customer-detail-value" style="color:${customer.memberStatus === 'member' ? '#e63226' : '#999'}">${customer.memberStatus === 'member' ? 'MEMBER' : 'Non-member'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="customer-detail-section">
+          <h4>Purchase History</h4>
+          <div style="font-size:0.8rem;margin-bottom:1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:1rem">
+            <div style="background:#111;padding:1rem;border-radius:6px">
+              <div style="color:#999;font-size:0.7rem;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.05em">Total Spend</div>
+              <div style="color:#e63226;font-size:1.3rem;font-weight:700">${fmt(customer.totalSpend)}</div>
+            </div>
+            <div style="background:#111;padding:1rem;border-radius:6px">
+              <div style="color:#999;font-size:0.7rem;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.05em">Order Count</div>
+              <div style="color:#fff;font-size:1.3rem;font-weight:700">${customer.orderCount}</div>
+            </div>
+            <div style="background:#111;padding:1rem;border-radius:6px">
+              <div style="color:#999;font-size:0.7rem;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.05em">First Order</div>
+              <div style="color:#fff;font-size:0.85rem">${customer.firstOrderDate ? customer.firstOrderDate.toLocaleDateString() : 'N/A'}</div>
+            </div>
+            <div style="background:#111;padding:1rem;border-radius:6px">
+              <div style="color:#999;font-size:0.7rem;margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.05em">Last Order</div>
+              <div style="color:#fff;font-size:0.85rem">${customer.lastOrderDate ? customer.lastOrderDate.toLocaleDateString() : 'N/A'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="customer-detail-section">
+          <h4>Order Details</h4>
+          <div style="overflow-x:auto;margin-bottom:1.5rem">
+            <table class="crm-table" style="margin:0">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${orderHistoryRows || '<tr><td colspan="4" style="text-align:center;color:#666;padding:1rem">No orders</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="customer-detail-section">
+          <h4>Notes</h4>
+          <textarea class="customer-notes-editor" id="customer-notes-textarea" placeholder="Add internal notes about this customer...">${customer.notes || ''}</textarea>
+          <button class="btn" onclick="saveCustomerNotes('${customer.id}')" style="margin-top:0.8rem">Save Notes</button>
+        </div>
+      `;
+
+      document.getElementById('customer-modal-body').innerHTML = bodyHtml;
+      document.getElementById('customer-detail-modal').style.display = 'flex';
+    };
+
+    window.closeCustomerModal = function() {
+      document.getElementById('customer-detail-modal').style.display = 'none';
+    };
+
+    window.saveCustomerNotes = async function(customerId) {
+      const notes = document.getElementById('customer-notes-textarea').value.trim();
+      try {
+        await updateDoc(doc(db, 'customers', customerId), { notes });
+        alert('✓ Notes saved');
+      } catch(e) {
+        alert('⚠ Could not save notes: ' + e.message);
+      }
+    };
+
+    window.updateCampaignRecipientCount = function() {
+      const segment = document.getElementById('campaign-segment').value;
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+      let count = 0;
+      if (segment === 'all') {
+        count = allCustomers.length;
+      } else if (segment === 'vip') {
+        count = allCustomers.filter(c => c.totalSpend > 100).length;
+      } else if (segment === 'recent') {
+        count = allCustomers.filter(c => c.lastOrderDate && c.lastOrderDate > thirtyDaysAgo).length;
+      } else if (segment === 'atrisk') {
+        count = allCustomers.filter(c => c.orderCount > 0 && c.lastOrderDate && c.lastOrderDate < ninetyDaysAgo).length;
+      } else if (segment === 'members') {
+        count = allCustomers.filter(c => c.memberStatus === 'member').length;
+      }
+
+      document.getElementById('campaign-recipient-count').textContent = count;
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const subjectInput = document.getElementById('campaign-subject');
+      const bodyInput = document.getElementById('campaign-body');
+
+      if (subjectInput) {
+        subjectInput.addEventListener('input', function() {
+          document.getElementById('preview-subject').textContent = this.value || 'Your subject will appear here';
+        });
+      }
+
+      if (bodyInput) {
+        bodyInput.addEventListener('input', function() {
+          let preview = this.value || 'Your message preview will appear here';
+          preview = preview.replace(/{{name}}/g, 'John');
+          preview = preview.replace(/{{email}}/g, 'john@example.com');
+          preview = preview.replace(/{{totalSpend}}/g, '£150.00');
+          preview = preview.replace(/{{orderCount}}/g, '3');
+          document.getElementById('preview-body').textContent = preview;
+        });
+      }
+    });
+
+    window.sendEmailCampaign = async function() {
+      const segment = document.getElementById('campaign-segment').value;
+      const subject = document.getElementById('campaign-subject').value.trim();
+      const body = document.getElementById('campaign-body').value.trim();
+
+      if (!subject || !body) {
+        alert('Please fill in both subject and message body.');
+        return;
+      }
+
+      if (EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY') {
+        alert('EmailJS not yet configured. Set up EmailJS first to send campaigns.');
+        return;
+      }
+
+      const now = new Date();
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+      let recipients = [];
+      if (segment === 'all') {
+        recipients = allCustomers;
+      } else if (segment === 'vip') {
+        recipients = allCustomers.filter(c => c.totalSpend > 100);
+      } else if (segment === 'recent') {
+        recipients = allCustomers.filter(c => c.lastOrderDate && c.lastOrderDate > thirtyDaysAgo);
+      } else if (segment === 'atrisk') {
+        recipients = allCustomers.filter(c => c.orderCount > 0 && c.lastOrderDate && c.lastOrderDate < ninetyDaysAgo);
+      } else if (segment === 'members') {
+        recipients = allCustomers.filter(c => c.memberStatus === 'member');
+      }
+
+      if (recipients.length === 0) {
+        alert('No customers found for this segment.');
+        return;
+      }
+
+      if (!confirm(`Send to ${recipients.length} customers?`)) return;
+
+      let successCount = 0;
+      let failureCount = 0;
+
+      for (const customer of recipients) {
+        try {
+          const personalizedBody = body
+            .replace(/{{name}}/g, customer.name || 'there')
+            .replace(/{{email}}/g, customer.email || '')
+            .replace(/{{totalSpend}}/g, fmt(customer.totalSpend))
+            .replace(/{{orderCount}}/g, customer.orderCount);
+
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_CUSTOM_MSG_TEMPLATE, {
+            to_email: customer.email,
+            to_name: customer.name || 'Customer',
+            subject: subject,
+            message: personalizedBody,
+            shop_url: 'https://fitch83.github.io/dirtboxclub/shop.html'
+          });
+          successCount++;
+        } catch(e) {
+          console.error('Error sending to ' + customer.email, e);
+          failureCount++;
+        }
+      }
+
+      // Save campaign record
+      try {
+        await addDoc(collection(db, 'campaigns'), {
+          date: new Date().toISOString(),
+          subject: subject,
+          segment: segment,
+          recipients: recipients.length,
+          successCount: successCount,
+          failureCount: failureCount,
+          status: failureCount === 0 ? 'Sent' : 'Partial',
+          body: body
+        });
+      } catch(e) {
+        console.error('Error saving campaign record:', e);
+      }
+
+      alert(`Campaign sent! ${successCount} successful, ${failureCount} failed.`);
+      document.getElementById('campaign-subject').value = '';
+      document.getElementById('campaign-body').value = '';
+      document.getElementById('preview-subject').textContent = 'Your subject will appear here';
+      document.getElementById('preview-body').textContent = 'Your message preview will appear here';
+      await loadCampaignHistory();
+    };
+
+    async function loadCampaignHistory() {
+      try {
+        const snapshot = await getDocs(
+          query(collection(db, 'campaigns'), orderBy('date', 'desc'))
+        );
+
+        const tbody = document.getElementById('crm-campaigns-tbody');
+        if (snapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#666;padding:2rem">No campaigns yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = snapshot.docs.map(doc => {
+          const data = doc.data();
+          const date = data.date ? new Date(data.date).toLocaleDateString() : 'N/A';
+          const segmentLabel = {
+            'all': 'All Customers',
+            'vip': 'VIP Customers',
+            'recent': 'Recent Buyers',
+            'atrisk': 'At Risk',
+            'members': 'Members',
+            'subscribers': 'Newsletter Subscribers'
+          }[data.segment] || data.segment;
+
+          return `
+            <tr>
+              <td>${date}</td>
+              <td>${data.subject || 'N/A'}</td>
+              <td>${segmentLabel}</td>
+              <td>${data.recipients || 0}</td>
+              <td><span style="font-size:0.7rem;color:${data.status === 'Sent' ? '#4ade80' : '#fbbf24'}">${data.status || 'Draft'}</span></td>
+            </tr>
+          `;
+        }).join('');
+      } catch(e) {
+        console.error('Error loading campaign history:', e);
+      }
+    }
+
+    // Load customers when CRM tab is first switched to
+    const originalSwitchTab = window.switchTab;
+    window.switchTab = function(tabName, btn) {
+      originalSwitchTab(tabName, btn);
+      if (tabName === 'crm') {
+        loadCrmCustomers();
+      }
+    };
+
   </script>
 </body>
 </html>
