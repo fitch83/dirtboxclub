@@ -496,6 +496,9 @@ a {
         <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
       </svg>
     </a>
+    <a href="my-account.html" class="nav-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
     <a href="members-login.html" class="nav-cta">Member Login</a>
   </div>
 </nav>
@@ -581,6 +584,40 @@ a {
   </div>
 </footer>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+    authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+    projectId: "dirtboxclub-3d7a7",
+    storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+    messagingSenderId: "883493757389",
+    appId: "1:883493757389:web:749f668e2655fd168fe484"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  let inventoryMap = {};
+
+  // Load inventory on page load
+  async function loadInventory() {
+    try {
+      const invSnap = await getDocs(collection(db, 'inventory'));
+      invSnap.forEach(doc => {
+        inventoryMap[doc.id] = doc.data().sizes || {};
+      });
+      renderProducts();
+    } catch (e) {
+      console.warn('Could not load inventory:', e);
+      renderProducts();
+    }
+  }
+
+  window.getInventory = (sku) => inventoryMap[sku] || {};
+  loadInventory();
+</script>
 <script>
 const PRODUCTS = [
   {id: 1, name: "Awkward Since Birth Tee", desc: "Because normal was never an option. Stanley/Stella Freestyler relaxed fit.", cat: "tshirt", price: 34.99, exclusive: true},
@@ -607,11 +644,17 @@ function renderProducts() {
   const filtered = currentFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === currentFilter);
   const isMember = sessionStorage.getItem('dbc_member');
 
-  document.getElementById('shop-grid').innerHTML = filtered.map(p => `
-    <div class="drop-card">
+  document.getElementById('shop-grid').innerHTML = filtered.map(p => {
+    const sizes = window.getInventory(p.id);
+    const totalStock = Object.values(sizes).reduce((sum, qty) => sum + qty, 0);
+    const isSoldOut = totalStock === 0 && Object.keys(sizes).length > 0;
+
+    return `
+    <div class="drop-card" style="${isSoldOut ? 'opacity:0.6' : ''}">
       <div class="drop-card-img">
         <div class="drop-card-name-overlay">${p.name}</div>
         ${p.exclusive && !isMember ? '<div class="lock-icon">🔒</div>' : ''}
+        ${isSoldOut ? '<div style="position:absolute;top:0.8rem;right:0.8rem;background:#e63226;color:#fff;padding:0.4rem 0.8rem;border-radius:4px;font-size:0.6rem;font-weight:700">SOLD OUT</div>' : ''}
       </div>
       <div class="drop-card-info">
         <div class="drop-card-meta">
@@ -622,12 +665,12 @@ function renderProducts() {
         <div class="drop-card-bottom">
           ${p.exclusive && !isMember ?
             `<span class="price-blurred">£XX<span class="r">.</span>XX</span><a href="membership.html" class="join-link">🔒 Join to Access</a>`
-            : `<span style="font-family: 'Boldonse', sans-serif; font-size: 1rem; color: #fff;">£${p.price.toFixed(2)}</span>`
+            : `<span style="font-family: 'Boldonse', sans-serif; font-size: 1rem; color: #fff;">£${p.price.toFixed(2)}</span>${isSoldOut ? '<span style="color:#e63226;font-size:0.75rem;margin-left:0.5rem">• Out of Stock</span>' : ''}`
           }
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function filterProducts(category, button) {

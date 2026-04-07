@@ -1139,6 +1139,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('products', this)">📦 Products</button>
     <button class="tab-btn" id="orders-tab-btn" onclick="switchTab('orders', this)">🛒 Orders <span id="new-orders-badge" class="orders-badge" style="display:none">0</span></button>
+    <button class="tab-btn" onclick="switchTab('inventory', this)">📊 Inventory</button>
     <button class="tab-btn" onclick="switchTab('applications', this)">📋 Applications</button>
     <button class="tab-btn" onclick="switchTab('members', this)">👥 Members</button>
     <button class="tab-btn" onclick="switchTab('analytics', this)">📊 Analytics</button>
@@ -1172,6 +1173,43 @@
         </div>
       </div>
       <div id="orders-list"></div>
+    </div>
+
+    <!-- INVENTORY TAB -->
+    <div id="tab-inventory" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Inventory Management</h2>
+          <p>View and manage product stock levels</p>
+        </div>
+      </div>
+      <div id="inventory-list"></div>
+      <div style="margin-top:2rem;background:#1c1c1c;border:1px solid #2a2a2a;border-radius:8px;padding:1.5rem">
+        <h3 style="margin-top:0;margin-bottom:1rem">Update Stock</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div>
+            <label style="font-size:0.7rem;color:#999;text-transform:uppercase;display:block;margin-bottom:0.5rem">Product SKU</label>
+            <input type="text" id="update-sku" placeholder="DIRTBOX-TEE-BLACK" style="width:100%;background:#1a1a1a;border:1px solid #333;padding:0.6rem;border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;font-size:0.85rem">
+          </div>
+          <div>
+            <label style="font-size:0.7rem;color:#999;text-transform:uppercase;display:block;margin-bottom:0.5rem">Size</label>
+            <select id="update-size" style="width:100%;background:#1a1a1a;border:1px solid #333;padding:0.6rem;border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;font-size:0.85rem">
+              <option value="">Select Size</option>
+              <option value="XS">XS</option>
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+              <option value="XXL">XXL</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.7rem;color:#999;text-transform:uppercase;display:block;margin-bottom:0.5rem">New Stock Qty</label>
+            <input type="number" id="update-qty" min="0" placeholder="10" style="width:100%;background:#1a1a1a;border:1px solid #333;padding:0.6rem;border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;font-size:0.85rem">
+          </div>
+        </div>
+        <button class="btn" onclick="updateInventoryStock()" style="width:100%">Update Stock</button>
+      </div>
     </div>
 
     <!-- APPLICATIONS TAB -->
@@ -1518,7 +1556,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, writeBatch, updateDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, writeBatch, updateDoc, query, orderBy, where, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
@@ -1592,6 +1630,96 @@
       }
     }
 
+    // ─── INVENTORY MANAGEMENT ──────────────────────────────────────────
+    window.loadInventory = async function() {
+      try {
+        const invSnap = await getDocs(collection(db, 'inventory'));
+        let html = '<table style="width:100%;border-collapse:collapse;font-size:0.85rem">';
+        html += '<thead style="border-bottom:2px solid #333"><tr>';
+        html += '<th style="text-align:left;padding:0.8rem 0;font-weight:700;color:#999">SKU</th>';
+        html += '<th style="text-align:left;padding:0.8rem 0;font-weight:700;color:#999">Product Name</th>';
+        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">S</th>';
+        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">M</th>';
+        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">L</th>';
+        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">XL</th>';
+        html += '<th style="text-align:center;padding:0.8rem 0;font-weight:700;color:#999">Status</th>';
+        html += '</tr></thead><tbody>';
+
+        invSnap.forEach(doc => {
+          const inv = doc.data();
+          const sizes = inv.sizes || {};
+          const reorder = inv.reorderThreshold || 3;
+
+          let lowStock = false;
+          Object.values(sizes).forEach(qty => {
+            if (qty <= reorder) lowStock = true;
+          });
+
+          const rowBg = lowStock ? 'background:#2a1a1a' : '';
+          html += `<tr style="border-bottom:1px solid #2a2a2a;${rowBg}">`;
+          html += `<td style="padding:0.8rem 0;color:#e63226;font-weight:600">${doc.id}</td>`;
+          html += `<td style="padding:0.8rem 0">${inv.name || 'N/A'}</td>`;
+          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.S || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.S || 0}</td>`;
+          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.M || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.M || 0}</td>`;
+          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.L || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.L || 0}</td>`;
+          html += `<td style="padding:0.8rem 0;text-align:center;color:${(sizes.XL || 0) <= reorder ? '#f59e0b' : '#22c55e'}">${sizes.XL || 0}</td>`;
+          html += `<td style="padding:0.8rem 0;text-align:center">`;
+          if (lowStock) {
+            html += `<span style="background:rgba(245,158,11,0.15);color:#f59e0b;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">⚠ LOW STOCK</span>`;
+          } else {
+            html += `<span style="background:rgba(34,197,94,0.15);color:#22c55e;padding:0.3rem 0.6rem;border-radius:12px;font-size:0.7rem">✓ OK</span>`;
+          }
+          html += `</td></tr>`;
+        });
+
+        html += '</tbody></table>';
+        if (invSnap.empty) {
+          html = '<div style="color:#999;text-align:center;padding:2rem">No inventory data. Create products to manage stock.</div>';
+        }
+        document.getElementById('inventory-list').innerHTML = html;
+      } catch (e) {
+        console.error('Error loading inventory:', e);
+      }
+    };
+
+    window.updateInventoryStock = async function() {
+      const sku = document.getElementById('update-sku').value.trim();
+      const size = document.getElementById('update-size').value;
+      const qty = parseInt(document.getElementById('update-qty').value);
+
+      if (!sku || !size || isNaN(qty)) {
+        alert('All fields required');
+        return;
+      }
+
+      try {
+        const invRef = doc(db, 'inventory', sku);
+        const invSnap = await getDoc(invRef);
+
+        if (!invSnap.exists()) {
+          // Create new inventory record
+          await setDoc(invRef, {
+            name: 'Product ' + sku,
+            sizes: { [size]: qty },
+            reorderThreshold: 3
+          });
+        } else {
+          // Update existing
+          const sizes = invSnap.data().sizes || {};
+          sizes[size] = qty;
+          await updateDoc(invRef, { sizes });
+        }
+
+        alert('✓ Stock updated');
+        document.getElementById('update-sku').value = '';
+        document.getElementById('update-size').value = '';
+        document.getElementById('update-qty').value = '';
+        await loadInventory();
+      } catch (e) {
+        alert('Error updating stock: ' + e.message);
+      }
+    };
+
     window.switchTab = function(tabName, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1600,6 +1728,7 @@
       document.getElementById('add-product-btn').style.display = tabName === 'products' ? 'block' : 'none';
       // When switching to orders tab, refresh and clear badge
       if (tabName === 'orders') refreshOrders();
+      else if (tabName === 'inventory') loadInventory();
       else refreshAllData();
     };
 
