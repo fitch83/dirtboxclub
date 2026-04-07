@@ -48,8 +48,8 @@ a{color:inherit;text-decoration:none}
 .about-copy{font-size:1.1rem;color:var(--faded);line-height:1.75}
 .about-link{display:inline-flex;align-items:center;gap:0.4rem;font-size:1rem;color:var(--grey);margin:1.2rem 0;transition:color 0.2s}
 .about-link:hover{color:var(--white)}
-.btn-red{display:inline-flex;align-items:center;gap:0.6rem;padding:0.85rem 2rem;background:var(--red);color:#fff;font-size:1rem;border-radius:6px;border:none;cursor:pointer;transition:opacity 0.2s}
-.btn-red:hover{opacity:0.85}
+.btn-red{display:inline-flex;align-items:center;gap:0.6rem;padding:0.85rem 2rem;background:var(--red);color:#fff;font-size:1rem;border-radius:6px;border:2px solid var(--red);cursor:pointer;transition:all 0.2s}
+.btn-red:hover{background:transparent;color:var(--red);border-color:var(--red)}
 
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .stat{background:var(--card);border-radius:8px;padding:1.5rem 1.3rem}
@@ -233,13 +233,8 @@ a{color:inherit;text-decoration:none}
 </div>
 <div class="ftsub">
 <div class="ftsub-logo"><img src="assets/logo-horizontal-final.png" alt="Dirtbox Club" style="width:90px;height:auto"></div>
-<div class="ftsub-center"><h3><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg> Get Notified About New Drops</h3><p class="ftsp">Be the first to know when new exclusive items drop<span class="r">.</span></p>
-<div class="sf" id="newsletter-form-wrapper">
-  <input type="text" id="newsletter-name" placeholder="Name (optional)">
-  <input type="email" id="newsletter-email" placeholder="Enter your email" required>
-  <button id="newsletter-submit-btn" onclick="submitNewsletterSignup(event)">Subscribe</button>
-  <div id="newsletter-message" style="display:none;margin-left:1rem;font-size:0.7rem;color:#4ade80"></div>
-</div>
+<div class="ftsub-center"><h3>New drops coming<span class="r">.</span> Members get first access<span class="r">.</span></h3><p class="ftsp"></p>
+<a href="membership.html" class="btn-red">Apply for Membership →</a>
 </div>
 <div class="ftsub-logo"><img src="assets/logo-vertical-final.png" alt="Dirt Box Club" style="width:100px;height:auto"></div>
 </div>
