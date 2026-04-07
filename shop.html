@@ -524,6 +524,114 @@ textarea.review-field{resize:vertical;min-height:90px}
 .review-msg.err{background:rgba(230,50,38,0.15);color:#e63226;border:1px solid rgba(230,50,38,0.3);display:block}
 .drop-card-title-link{cursor:pointer;transition:color 0.2s}
 .drop-card-title-link:hover{color:#e63226}
+
+
+/* Mobile Navigation Dropdown */
+@media (max-width: 767px) {
+  .nav-links {
+    display: none !important;
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  .mobile-menu-btn:hover {
+    color: var(--red);
+  }
+
+  .mobile-menu-chevron {
+    display: inline-block;
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+    color: var(--red);
+  }
+
+  .mobile-menu-btn.open .mobile-menu-chevron {
+    transform: rotate(180deg);
+  }
+
+  #mobile-nav-dropdown {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: #0c0c0c;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+    z-index: 999;
+  }
+
+  #mobile-nav-dropdown.open {
+    max-height: 600px;
+  }
+
+  .mobile-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .mobile-nav-list li {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .mobile-nav-list a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0 1.5rem;
+    color: var(--white);
+    font-size: 0.95rem;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .mobile-nav-list a:active {
+    background-color: rgba(230, 50, 38, 0.1);
+    color: var(--red);
+  }
+
+  #mobile-nav-backdrop {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 998;
+  }
+
+  #mobile-nav-backdrop.open {
+    display: block;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-btn {
+    display: none !important;
+  }
+
+  #mobile-nav-dropdown,
+  #mobile-nav-backdrop {
+    display: none !important;
+  }
+}
+
 </style>
 <!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -533,7 +641,7 @@ textarea.review-field{resize:vertical;min-height:90px}
 <!-- Navigation -->
 <nav class="nav">
   <div class="nav-left">
-    <a href="index.html" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a>
+    <button id="mobile-menu-btn" class="mobile-menu-btn"><a href="index.html" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a><span class="mobile-menu-chevron">▾</span></button>
     <div class="nav-links">
       <a href="shop.html" class="nav-link active">Shop</a>
       <a href="index.html#exclusives" class="nav-link">Exclusives</a>
@@ -572,6 +680,24 @@ textarea.review-field{resize:vertical;min-height:90px}
     <a href="members-login.html" class="nav-cta">Member Login</a>
   </div>
 </nav>
+
+<!-- Mobile Navigation Dropdown -->
+<div id="mobile-nav-backdrop"></div>
+<div id="mobile-nav-dropdown">
+  <ul class="mobile-nav-list">
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="members-area.html">Exclusives</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="index.html#charities">Charities</a></li>
+    <li><a href="faq.html">FAQs</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="size-guide.html">Size Guide</a></li>
+    <li><a href="returns.html">Returns</a></li>
+    <li><a href="membership.html">Membership</a></li>
+    <li><a href="my-account.html">My Account</a></li>
+  </ul>
+</div>
+
 
 <!-- Shop Hero -->
 <section class="shop-hero">
@@ -1812,6 +1938,50 @@ function showInstallPrompt() {
     </div>
   </div>
 </div>
+
+
+<script>
+(function() {
+  const btn = document.getElementById('mobile-menu-btn');
+  const dropdown = document.getElementById('mobile-nav-dropdown');
+  const backdrop = document.getElementById('mobile-nav-backdrop');
+  const links = dropdown ? dropdown.querySelectorAll('a') : [];
+
+  if (!btn || !dropdown) return;
+
+  // Toggle menu on button click
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const isOpen = dropdown.classList.contains('open');
+    if (isOpen) {
+      dropdown.classList.remove('open');
+      backdrop.classList.remove('open');
+      btn.classList.remove('open');
+    } else {
+      dropdown.classList.add('open');
+      backdrop.classList.add('open');
+      btn.classList.add('open');
+    }
+  });
+
+  // Close menu when backdrop is clicked
+  backdrop.addEventListener('click', function(e) {
+    e.preventDefault();
+    dropdown.classList.remove('open');
+    backdrop.classList.remove('open');
+    btn.classList.remove('open');
+  });
+
+  // Close menu when a link is clicked
+  links.forEach(link => {
+    link.addEventListener('click', function() {
+      dropdown.classList.remove('open');
+      backdrop.classList.remove('open');
+      btn.classList.remove('open');
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
