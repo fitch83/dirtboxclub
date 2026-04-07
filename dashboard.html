@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DIRTBOXCLUB. — Admin Dashboard</title>
+  <link rel="manifest" href="/dirtboxclub/manifest.json">
+  <meta name="theme-color" content="#e63226">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dirtbox Club">
+  <link rel="apple-touch-icon" href="/dirtboxclub/icons/icon-192.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 
@@ -1146,6 +1152,7 @@
     <button class="tab-btn" onclick="switchTab('vat-tax', this)">🧾 VAT/Tax</button>
     <button class="tab-btn" onclick="switchTab('announcements', this)">📢 Announcements</button>
     <button class="tab-btn" onclick="switchTab('drops', this)">📅 Scheduled Drops</button>
+    <button class="tab-btn" onclick="switchTab('returns', this)">↩️ Returns</button>
     <button class="tab-btn" onclick="switchTab('crm', this)">💌 CRM</button>
     <button class="tab-btn" onclick="switchTab('discounts', this)">🏷️ Discount Codes</button>
   </div>
@@ -1348,6 +1355,28 @@
       </div>
 
       <div id="drops-container"></div>
+    </div>
+
+    <!-- RETURNS TAB -->
+    <div id="tab-returns" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Returns Management</h2>
+          <p>Review and process customer return requests</p>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <select id="returns-filter" onchange="filterReturns(this.value)" style="padding: 0.5rem 0.8rem; background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.75rem;">
+          <option value="all">All Returns</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="refunded">Refunded</option>
+        </select>
+      </div>
+
+      <div id="returns-container"></div>
     </div>
 
     <!-- CRM TAB -->
@@ -1616,22 +1645,32 @@
       <h2 style="margin: 0 0 1.5rem 0; font-size: 1.2rem; font-weight: 700;">Schedule Drop</h2>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product</span>
-        <input id="drop-product" type="text" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Name</span>
+        <input id="drop-name" type="text" placeholder="e.g. Spring Collection 2026" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Date</span>
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Product IDs (comma-separated)</span>
+        <input id="drop-product-ids" type="text" placeholder="prod1, prod2, prod3" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Drop Date & Time</span>
         <input id="drop-date" type="datetime-local" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <label style="display: block; margin-bottom: 1rem;">
-        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Quantity</span>
-        <input id="drop-quantity" type="number" value="100" style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Description</span>
+        <textarea id="drop-description" placeholder="Add drop details..." style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; resize: vertical; min-height: 80px;"></textarea>
+      </label>
+
+      <label style="display: block; margin-bottom: 1rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.3rem; text-transform: uppercase;">Banner Image URL</span>
+        <input id="drop-banner-url" type="text" placeholder="https://..." style="width: 100%; padding: 0.5rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif;">
       </label>
 
       <div style="display: flex; gap: 0.8rem;">
-        <button class="btn" onclick="scheduleDrop()" style="flex: 1;">Schedule</button>
+        <button class="btn" onclick="scheduleDrop()" style="flex: 1;">Create Drop</button>
         <button class="btn btn-outlined" onclick="closeModal('drop-modal')" style="flex: 1;">Cancel</button>
       </div>
     </div>
@@ -1844,6 +1883,7 @@
       if (tabName === 'orders') refreshOrders();
       else if (tabName === 'inventory') loadInventory();
       else if (tabName === 'discounts') refreshDiscountCodes();
+      else if (tabName === 'returns') refreshReturns();
       else refreshAllData();
     };
 
@@ -1892,18 +1932,34 @@
     };
 
     window.scheduleDrop = async function() {
-      const product = document.getElementById('drop-product').value.trim();
-      const date = document.getElementById('drop-date').value;
-      const quantity = parseInt(document.getElementById('drop-quantity').value);
-      if (!product || !date || !quantity) { alert('All fields are required.'); return; }
+      const name = document.getElementById('drop-name').value.trim();
+      const productIdsStr = document.getElementById('drop-product-ids').value.trim();
+      const dateStr = document.getElementById('drop-date').value;
+      const description = document.getElementById('drop-description').value.trim();
+      const bannerImageUrl = document.getElementById('drop-banner-url').value.trim();
+
+      if (!name || !productIdsStr || !dateStr) { alert('Drop name, product IDs, and date are required.'); return; }
+
+      const productIds = productIdsStr.split(',').map(id => id.trim()).filter(id => id.length > 0);
+      if (productIds.length === 0) { alert('Please provide at least one product ID.'); return; }
+
+      const dropAt = new Date(dateStr);
+
       await addDoc(collection(db, 'drops'), {
-        product, date, quantity,
-        created: new Date().toISOString()
+        name,
+        productIds,
+        dropAt: dropAt,
+        description,
+        bannerImageUrl,
+        active: true,
+        createdAt: new Date()
       });
       window.closeModal('drop-modal');
-      document.getElementById('drop-product').value = '';
+      document.getElementById('drop-name').value = '';
+      document.getElementById('drop-product-ids').value = '';
       document.getElementById('drop-date').value = '';
-      document.getElementById('drop-quantity').value = '100';
+      document.getElementById('drop-description').value = '';
+      document.getElementById('drop-banner-url').value = '';
       await refreshAllData();
     };
 
@@ -1915,6 +1971,7 @@
         refreshMembers(),
         refreshAnnouncements(),
         refreshDrops(),
+        refreshReturns(),
         refreshDiscountCodes()
       ]);
       refreshAnalytics();
@@ -2408,22 +2465,197 @@
         `;
         return;
       }
-      container.innerHTML = drops.map(d => `
-        <div class="card">
-          <div class="card-title">${d.product}</div>
-          <div style="font-size: 0.75rem; color: #777; margin-bottom: 1rem;">
-            <div>Date: ${new Date(d.date).toLocaleString()}</div>
-            <div>Quantity: ${d.quantity}</div>
+      container.innerHTML = drops.map(d => {
+        const dropTime = d.dropAt?.toDate ? d.dropAt.toDate() : new Date(d.dropAt);
+        const isActive = d.active !== false;
+        return `
+          <div class="card">
+            <div class="card-title">${d.name || d.product || 'Untitled Drop'}</div>
+            <div style="font-size: 0.75rem; color: #777; margin-bottom: 1rem;">
+              <div>Products: ${d.productIds?.join(', ') || d.product || 'N/A'}</div>
+              <div>Drop Date: ${dropTime.toLocaleString()}</div>
+              ${d.description ? `<div>Description: ${d.description.substring(0, 50)}...</div>` : ''}
+              <div>Status: ${isActive ? '✅ Active' : '❌ Inactive'}</div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn" onclick="toggleDropActive('${d.id}', ${!isActive})" style="flex: 1; font-size: 0.65rem;">${isActive ? 'Deactivate' : 'Activate'}</button>
+              <button class="btn-icon delete" onclick="deleteDrop('${d.id}')">🗑</button>
+            </div>
           </div>
-          <button class="btn-icon delete" onclick="deleteDrop('${d.id}')">🗑</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     window.deleteDrop = async function(id) {
       if (!confirm('Delete this drop?')) return;
       await deleteDoc(doc(db, 'drops', id));
       await refreshAllData();
+    };
+
+    window.toggleDropActive = async function(id, newActiveState) {
+      await updateDoc(doc(db, 'drops', id), { active: newActiveState });
+      await refreshAllData();
+    };
+
+    // ─────────────────────────────────────────────────────────────────
+    //  RETURNS MANAGEMENT
+    // ─────────────────────────────────────────────────────────────────
+
+    let returnsFilterStatus = 'all';
+
+    async function refreshReturns() {
+      const container = document.getElementById('returns-container');
+      const snap = await getDocs(collection(db, 'returns'));
+      let allReturns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      if (allReturns.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">↩️</div>
+            <div class="empty-title">No Return Requests Yet</div>
+            <div class="empty-desc">Customer return requests will appear here</div>
+          </div>
+        `;
+        return;
+      }
+
+      // Apply filter
+      if (returnsFilterStatus !== 'all') {
+        allReturns = allReturns.filter(r => r.status === returnsFilterStatus);
+      }
+
+      container.innerHTML = `
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;overflow:hidden">
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+              <thead>
+                <tr style="border-bottom:1px solid #2a2a2a;background:#161616">
+                  <th style="text-align:left;padding:1rem 1rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Order ID</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Email</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Item</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Reason</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Date</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Status</th>
+                  <th style="text-align:left;padding:1rem 0.8rem;color:#777;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allReturns.map(r => {
+                  const createdAt = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+                  const statusColor = r.status === 'pending' ? '#FFA500' : r.status === 'approved' ? '#00AA00' : r.status === 'rejected' ? '#CC0000' : '#0066CC';
+                  return `
+                    <tr style="border-bottom:1px solid #2a2a2a">
+                      <td style="padding:1rem 1rem;color:#fff">${r.orderId}</td>
+                      <td style="padding:1rem 0.8rem;color:#999;word-break:break-word">${r.email}</td>
+                      <td style="padding:1rem 0.8rem;color:#999">${r.item}</td>
+                      <td style="padding:1rem 0.8rem;color:#999">${r.reason}</td>
+                      <td style="padding:1rem 0.8rem;color:#777;font-size:0.7rem">${createdAt.toLocaleDateString()}</td>
+                      <td style="padding:1rem 0.8rem"><span style="display:inline-block;padding:0.3rem 0.6rem;background:${statusColor}33;color:${statusColor};border-radius:4px;font-size:0.65rem;text-transform:uppercase">${r.status || 'pending'}</span></td>
+                      <td style="padding:1rem 0.8rem">
+                        <button onclick="openReturnDetail('${r.id}')" style="background:none;border:none;color:#e63226;cursor:pointer;font-size:0.7rem;text-decoration:underline">View</button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    window.filterReturns = async function(status) {
+      returnsFilterStatus = status;
+      await refreshReturns();
+    };
+
+    window.openReturnDetail = async function(returnId) {
+      const docSnap = await getDoc(doc(db, 'returns', returnId));
+      if (!docSnap.exists()) return;
+      const r = docSnap.data();
+
+      const modal = document.createElement('div');
+      modal.id = 'return-detail-modal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:300;display:flex;align-items:center;justify-content:center';
+      modal.innerHTML = `
+        <div style="background:#1c1c1c;border:1px solid #2a2a2a;border-radius:10px;padding:2rem;width:90%;max-width:600px;max-height:90vh;overflow-y:auto">
+          <h2 style="margin:0 0 1.5rem 0;font-size:1.2rem;font-weight:700">Return Details</h2>
+          <div style="margin-bottom:1.5rem;font-size:0.8rem">
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Order ID</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.orderId}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Email</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.email}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Item</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.item}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Reason</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.reason}</div>
+            </div>
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Details</span>
+              <div style="color:#999;margin-top:0.3rem">${r.details || 'No additional details'}</div>
+            </div>
+            ${r.photoURL ? `<div style="margin-bottom:1rem"><a href="${r.photoURL}" target="_blank" style="color:#e63226;text-decoration:underline">View Photo</a></div>` : ''}
+            <div style="margin-bottom:1rem">
+              <span style="color:#777;text-transform:uppercase;font-size:0.65rem">Status</span>
+              <div style="color:#fff;margin-top:0.3rem">${r.status || 'pending'}</div>
+            </div>
+          </div>
+          <textarea id="return-notes" placeholder="Internal notes..." style="width:100%;padding:0.5rem;background:#111;border:1px solid #2a2a2a;border-radius:6px;color:#fff;font-family:'Boldonse',sans-serif;resize:vertical;min-height:80px;margin-bottom:1rem">${r.notes || ''}</textarea>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+            <button onclick="approveReturn('${returnId}', '${r.email}', '${r.item}')" style="flex:1;padding:0.6rem;background:#00AA00;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">✓ Approve</button>
+            <button onclick="rejectReturn('${returnId}', '${r.email}', '${r.item}')" style="flex:1;padding:0.6rem;background:#CC0000;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">✗ Reject</button>
+            <button onclick="markRefunded('${returnId}')" style="flex:1;padding:0.6rem;background:#0066CC;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.7rem">💰 Refunded</button>
+          </div>
+          <button onclick="closeReturnDetail()" style="width:100%;padding:0.6rem;background:#2a2a2a;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:'Boldonse',sans-serif;font-size:0.75rem">Close</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    };
+
+    window.closeReturnDetail = function() {
+      const modal = document.getElementById('return-detail-modal');
+      if (modal) modal.remove();
+    };
+
+    window.approveReturn = async function(returnId, email, itemName) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'approved', notes });
+      // Send approval email via EmailJS
+      emailjs.send('service_hpy2gvj', 'dbc_return_approved', {
+        to_email: email,
+        order_id: (await getDoc(doc(db, 'returns', returnId))).data().orderId,
+        item_name: itemName,
+        return_instructions: 'Please reply to this email for return shipping instructions.'
+      }, 'Se-YqzqLV7Zr-AYVt').catch(err => console.log('Email send failed:', err));
+      await closeReturnDetail();
+      await refreshReturns();
+    };
+
+    window.rejectReturn = async function(returnId, email, itemName) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'rejected', notes });
+      // Send rejection email via EmailJS
+      emailjs.send('service_hpy2gvj', 'dbc_return_rejected', {
+        to_email: email,
+        order_id: (await getDoc(doc(db, 'returns', returnId))).data().orderId,
+        item_name: itemName
+      }, 'Se-YqzqLV7Zr-AYVt').catch(err => console.log('Email send failed:', err));
+      await closeReturnDetail();
+      await refreshReturns();
+    };
+
+    window.markRefunded = async function(returnId) {
+      const notes = document.getElementById('return-notes')?.value || '';
+      await updateDoc(doc(db, 'returns', returnId), { status: 'refunded', notes });
+      await closeReturnDetail();
+      await refreshReturns();
     };
 
     // ─────────────────────────────────────────────────────────────────

@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIRTBOXCLUB. — Returns & Shipping</title>
+<link rel="manifest" href="/dirtboxclub/manifest.json">
+<meta name="theme-color" content="#e63226">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dirtbox Club">
+<link rel="apple-touch-icon" href="/dirtboxclub/icons/icon-192.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Boldonse&display=swap');
 
@@ -263,7 +269,56 @@
 
 <div class="page-wrap">
   <h1>RETURNS & SHIPPING<span class="r">.</span></h1>
-  <p class="page-sub">The boring but necessary stuff<span class="r">.</span> We'll keep it short<span class="r">.</span></p>
+  <p class="page-sub">Need to return something? We've got you<span class="r">.</span> Fill out the form below<span class="r">.</span></p>
+
+  <div id="return-form-container" style="background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 10px; padding: 2rem; margin-bottom: 3rem;">
+    <form id="return-form" onsubmit="submitReturn(event)">
+      <label style="display: block; margin-bottom: 1.5rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Order Number <span style="color: #e63226;">*</span></span>
+        <input type="text" id="return-order-id" placeholder="e.g. ORD-2024-12345" required style="width: 100%; padding: 0.7rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.9rem;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1.5rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Email Address <span style="color: #e63226;">*</span></span>
+        <input type="email" id="return-email" placeholder="your@email.com" required style="width: 100%; padding: 0.7rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.9rem;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1.5rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Item Name / Description <span style="color: #e63226;">*</span></span>
+        <input type="text" id="return-item" placeholder="e.g. Black T-Shirt Size L" required style="width: 100%; padding: 0.7rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.9rem;">
+      </label>
+
+      <label style="display: block; margin-bottom: 1.5rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Reason for Return <span style="color: #e63226;">*</span></span>
+        <select id="return-reason" required style="width: 100%; padding: 0.7rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.9rem; appearance: auto;">
+          <option value="">— Select a reason —</option>
+          <option value="Wrong size">Wrong Size</option>
+          <option value="Changed my mind">Changed My Mind</option>
+          <option value="Item damaged/defective">Item Damaged or Defective</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+
+      <label style="display: block; margin-bottom: 1.5rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Additional Details</span>
+        <textarea id="return-details" placeholder="Tell us more about your return (optional)..." style="width: 100%; padding: 0.7rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.9rem; resize: vertical; min-height: 100px;"></textarea>
+      </label>
+
+      <label style="display: block; margin-bottom: 1.5rem;">
+        <span style="display: block; font-size: 0.75rem; color: #777; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Upload Photo (optional)</span>
+        <input type="file" id="return-photo" accept="image/*" style="width: 100%; padding: 0.7rem; background: #111; border: 1px solid #2a2a2a; border-radius: 6px; color: #fff; font-family: 'Boldonse', sans-serif; font-size: 0.9rem;">
+      </label>
+
+      <button type="submit" style="width: 100%; padding: 0.8rem; background: #e63226; color: #fff; border: none; border-radius: 6px; font-family: 'Boldonse', sans-serif; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: opacity 0.3s;">
+        SUBMIT RETURN REQUEST
+      </button>
+    </form>
+
+    <div id="return-success-msg" style="display: none; margin-top: 1.5rem; padding: 1.5rem; background: #0a3a0a; border: 1px solid #00aa00; border-radius: 6px; color: #00aa00; text-align: center;">
+      <div style="font-size: 1rem; margin-bottom: 0.5rem;">✓ Return request submitted</div>
+      <div style="font-size: 0.85rem; color: #00dd00;">We'll be in touch within 2 business days</div>
+    </div>
+  </div>
 
   <div class="policy-section">
     <h2>SHIPPING<span class="r">.</span></h2>
@@ -305,19 +360,12 @@
   </div>
 
   <div class="policy-section">
-    <h2>RETURNS<span class="r">.</span></h2>
+    <h2>RETURN POLICY<span class="r">.</span></h2>
     <div class="prose">
-      <p><strong>Faulty or damaged items:</strong> If your order arrives damaged or there's a fault with the product, email us within 14 days at hello@dirtboxclub<span class="r">.</span>co<span class="r">.</span>uk with photos<span class="r">.</span> We'll sort it — either a replacement or full refund<span class="r">.</span></p>
-      <p><strong>Wrong size:</strong> We get it, sizing is annoying<span class="r">.</span> If the item is unworn with tags still on, we'll do an exchange<span class="r">.</span> You cover the return postage<span class="r">.</span> Check the <a href="size-guide.html">size guide</a> before ordering to avoid this<span class="r">.</span></p>
-      <p><strong>Changed your mind:</strong> That's a you problem<span class="r">.</span> We don't do refunds because you decided you don't like it after buying it<span class="r">.</span> Think of it as a life lesson in commitment<span class="r">.</span></p>
+      <p><strong>Faulty or damaged items:</strong> If your order arrives damaged or there's a fault with the product, submit a return request within 14 days with photos. We'll sort it — either a replacement or full refund<span class="r">.</span></p>
+      <p><strong>Wrong size:</strong> If the item is unworn with tags still on, we'll do an exchange. You cover the return postage<span class="r">.</span> Check the <a href="size-guide.html">size guide</a> before ordering to avoid this<span class="r">.</span></p>
+      <p><strong>Changed your mind:</strong> We don't offer refunds for items you simply don't want anymore. Think of it as a life lesson in commitment<span class="r">.</span></p>
       <p><strong>Mystery Boxes:</strong> Non-refundable<span class="r">.</span> That's literally the point of a mystery box<span class="r">.</span></p>
-    </div>
-  </div>
-
-  <div class="policy-section">
-    <h2>CANCELLATIONS<span class="r">.</span></h2>
-    <div class="prose">
-      <p>If you need to cancel an order, email us as soon as possible<span class="r">.</span> If we haven't shipped it yet, we'll cancel it<span class="r">.</span> If it's already on its way, see the returns section above<span class="r">.</span></p>
     </div>
   </div>
 </div>
@@ -327,6 +375,91 @@
     <div class="footer-copy">© 2026 DIRTBOXCLUB<span class="r">.</span> <span style="color:#e63226;">Members only<span class="r">.</span> Access restricted<span class="r">.</span></span></div>
   </div>
 </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+    authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+    projectId: "dirtboxclub-3d7a7",
+    storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+    messagingSenderId: "883493757389",
+    appId: "1:883493757389:web:749f668e2655fd168fe484"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  emailjs.init('Se-YqzqLV7Zr-AYVt');
+
+  window.submitReturn = async function(event) {
+    event.preventDefault();
+
+    const orderId = document.getElementById('return-order-id').value.trim();
+    const email = document.getElementById('return-email').value.trim();
+    const item = document.getElementById('return-item').value.trim();
+    const reason = document.getElementById('return-reason').value;
+    const details = document.getElementById('return-details').value.trim();
+    const photoFile = document.getElementById('return-photo').files[0];
+
+    if (!orderId || !email || !item || !reason) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    let photoURL = null;
+
+    // Upload photo if provided
+    if (photoFile) {
+      try {
+        const timestamp = Date.now();
+        const photoRef = ref(storage, `returns/${orderId}/${timestamp}_${photoFile.name}`);
+        await uploadBytes(photoRef, photoFile);
+        photoURL = await getDownloadURL(photoRef);
+      } catch (error) {
+        console.error('Photo upload error:', error);
+        alert('Photo upload failed. Continuing without photo.');
+      }
+    }
+
+    // Save to Firestore
+    try {
+      await addDoc(collection(db, 'returns'), {
+        orderId,
+        email,
+        item,
+        reason,
+        details,
+        photoURL,
+        status: 'pending',
+        createdAt: serverTimestamp()
+      });
+
+      // Send confirmation email
+      try {
+        await emailjs.send('service_hpy2gvj', 'dbc_return_received', {
+          to_email: email,
+          order_id: orderId,
+          item_name: item
+        });
+      } catch (emailError) {
+        console.log('Confirmation email send failed:', emailError);
+      }
+
+      // Show success message
+      document.getElementById('return-form').style.display = 'none';
+      document.getElementById('return-success-msg').style.display = 'block';
+    } catch (error) {
+      console.error('Return submission error:', error);
+      alert('Failed to submit return. Please try again.');
+    }
+  };
+</script>
 
 </body>
 </html>
