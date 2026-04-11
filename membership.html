@@ -619,6 +619,7 @@
     .steps-bar { padding: 1.5rem 1.2rem; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -895,6 +896,7 @@
     <p class="confirm-msg">
       You've just unlocked early access to future drops, secret codes, and inside info<span class="r">.</span>
       Keep an eye on your inbox<span class="r">.</span><br><br>
+      Check your email — we've sent you a confirmation<span class="r">.</span><br><br>
       <strong style="color:var(--accent)">DIRT BOX CLUB — Not For Everyone<span class="r">.</span></strong>
     </p>
 
@@ -942,15 +944,35 @@
   <p>© 2026 DIRTBOXCLUB<span class="r">.</span> Not for everyone<span class="r">.</span> Not sorry about it<span class="r">.</span></p>
 </div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDgpvF9rIy44h4whE7mon7m0mD-bV21kEg",
+    authDomain: "dirtboxclub-3d7a7.firebaseapp.com",
+    projectId: "dirtboxclub-3d7a7",
+    storageBucket: "dirtboxclub-3d7a7.firebasestorage.app",
+    messagingSenderId: "883493757389",
+    appId: "1:883493757389:web:749f668e2655fd168fe484"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const EMAILJS_PUBLIC_KEY = 'Se-YqzqLV7Zr-AYVt';
+  const EMAILJS_SERVICE_ID = 'service_hpy2gvj';
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
   // ═══ STATE ═══
   const answers = {};
   let quizResult = '';
+  let quizScore = 0;
   let selectedSize = '';
   let selectedMonth = '';
 
   // ═══ QUIZ ═══
-  function selectOption(el) {
+  window.selectOption = function(el) {
     const q = el.dataset.q;
     el.parentElement.querySelectorAll('.q-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
@@ -959,11 +981,13 @@
     if (Object.keys(answers).length === 5) {
       document.getElementById('quiz-submit').disabled = false;
     }
-  }
+  };
 
-  function submitQuiz() {
+  window.submitQuiz = function() {
+    const scoreMap = { a: 1, b: 2, c: 3, d: 3 };
     let counts = { a: 0, b: 0, c: 0, d: 0 };
-    Object.values(answers).forEach(v => counts[v]++);
+    quizScore = 0;
+    Object.values(answers).forEach(v => { counts[v]++; quizScore += (scoreMap[v] || 1); });
 
     let max = 'b';
     if (counts.a >= counts.b && counts.a >= counts.c) max = 'a';
@@ -978,19 +1002,19 @@
       rt.className = 'result-stamp tier-a';
       rm.textContent = "You're a bit too normal for us, to be honest. But you showed up, took the quiz, and answered honestly — that counts for something. Barely.";
       rv.textContent = 'DIAGNOSIS: BORDERLINE DIRT BOX';
-      quizResult = 'Borderline Dirt Box';
+      quizResult = 'Borderline';
     } else if (max === 'b') {
       rt.textContent = "YOU'RE EXACTLY OUR KIND OF PROBLEM.";
       rt.className = 'result-stamp tier-b';
       rm.textContent = "Awkward, self-aware, low social battery, and you'd rather talk to a pigeon. You're basically the target audience. Welcome to the chaos.";
       rv.textContent = 'DIAGNOSIS: CERTIFIED DIRT BOX';
-      quizResult = 'Certified Dirt Box';
+      quizResult = 'Certified';
     } else {
       rt.textContent = "SEEK HELP.";
       rt.className = 'result-stamp tier-c';
       rm.textContent = "You chose violence on every question. We respect it. You're either our biggest fan or a genuine menace to society. Either way, you're in.";
       rv.textContent = 'DIAGNOSIS: TERMINAL DIRT BOX';
-      quizResult = 'Terminal Dirt Box';
+      quizResult = 'Terminal';
     }
 
     document.getElementById('quiz').classList.remove('active');
@@ -999,65 +1023,103 @@
     document.getElementById('dot-1').classList.add('done');
     document.getElementById('dot-2').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  };
 
-  function showSignup() {
+  window.showSignup = function() {
     document.getElementById('results').classList.remove('active');
     document.getElementById('signup').classList.add('active');
     window.scrollTo({ top: document.querySelector('.steps-bar').offsetTop - 100, behavior: 'smooth' });
-  }
+  };
 
   // ═══ FORM SELECTORS ═══
-  function selectSize(el) {
+  window.selectSize = function(el) {
     document.querySelectorAll('.size-opt').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     selectedSize = el.textContent;
-  }
+  };
 
-  function selectMonth(el) {
+  window.selectMonth = function(el) {
     document.querySelectorAll('.month-opt').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     selectedMonth = el.textContent;
-  }
+  };
 
   // ═══ SUBMIT ═══
-  function submitApplication() {
-    const email = document.getElementById('email-input').value;
+  window.submitApplication = async function() {
+    const email = document.getElementById('email-input').value.trim();
     if (!email || !email.includes('@')) {
       document.getElementById('email-input').style.borderColor = 'var(--accent)';
       document.getElementById('email-input').setAttribute('placeholder', 'Seriously. We need an email.');
       return;
     }
 
-    const fname = document.getElementById('fname-input').value || '—';
-    const source = document.getElementById('source-input');
-    const sourceText = source.selectedIndex > 0 ? source.options[source.selectedIndex].text : '—';
+    const btn = document.getElementById('apply-btn');
+    btn.disabled = true;
+    btn.textContent = 'SUBMITTING...';
 
-    // Populate summary
-    document.getElementById('sum-name').textContent = fname;
+    const fname = document.getElementById('fname-input').value.trim() || null;
+    const source = document.getElementById('source-input');
+    const sourceVal = source.value || null;
+    const sourceText = source.selectedIndex > 0 ? source.options[source.selectedIndex].text : '—';
+    const marketingConsent = document.getElementById('consent-check').checked;
+
+    // ─── 1. Save to Firestore ──────────────────────────────────────
+    try {
+      await addDoc(collection(db, 'members'), {
+        email: email,
+        firstName: fname,
+        tshirtSize: selectedSize || null,
+        birthdayMonth: selectedMonth || null,
+        howFound: sourceVal,
+        marketingConsent: marketingConsent,
+        quizResult: quizResult,
+        quizScore: quizScore,
+        status: 'pending',
+        appliedAt: serverTimestamp(),
+        uid: null
+      });
+    } catch (err) {
+      console.error('Firestore write failed:', err);
+    }
+
+    // ─── 2. Welcome email to applicant ────────────────────────────
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, 'template_welcome', {
+        to_name: fname || 'Dirtbox',
+        to_email: email,
+        message: "Your application is in. We'll be in touch. Or we won't. Depends how we feel."
+      });
+    } catch (err) {
+      console.error('Welcome email failed:', err);
+    }
+
+    // ─── 3. Admin notification ────────────────────────────────────
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, 'dbc_admin_new_order', {
+        to_email: 'info@dirtboxclub.co.uk',
+        applicant_name: fname || '(not given)',
+        applicant_email: email,
+        quiz_result: quizResult,
+        quiz_score: quizScore,
+        tshirt_size: selectedSize || '—',
+        birthday_month: selectedMonth || '—',
+        how_found: sourceText,
+        marketing_consent: marketingConsent ? 'Yes' : 'No',
+        applied_at: new Date().toLocaleString('en-GB')
+      });
+    } catch (err) {
+      console.error('Admin notification failed:', err);
+    }
+
+    // ─── 4. Populate confirmation summary ─────────────────────────
+    document.getElementById('sum-name').textContent = fname || '—';
     document.getElementById('sum-email').textContent = email;
-    document.getElementById('sum-diagnosis').textContent = quizResult;
+    document.getElementById('sum-diagnosis').textContent = quizResult + ' Dirt Box';
     document.getElementById('sum-size').textContent = selectedSize || '—';
     document.getElementById('sum-bday').textContent = selectedMonth || '—';
     document.getElementById('sum-source').textContent = sourceText;
 
-    // ═══ DATA PAYLOAD ═══
-    const memberData = {
-      email: email,
-      first_name: fname !== '—' ? fname : null,
-      quiz_result: quizResult,
-      quiz_answers: { ...answers },
-      tshirt_size: selectedSize || null,
-      birthday_month: selectedMonth || null,
-      source: source.value || null,
-      signed_up_at: new Date().toISOString(),
-      consent_marketing: document.getElementById('consent-check').checked
-    };
-
-    console.log('Member data payload:', memberData);
-    // TODO: POST to your email platform API endpoint
-
-    // Transition to confirmation
+    // ─── 5. Transition to confirmation screen ─────────────────────
     document.getElementById('signup').classList.remove('active');
     document.getElementById('confirm').classList.add('active');
     document.getElementById('dot-2').classList.remove('active');
@@ -1065,7 +1127,7 @@
     document.getElementById('dot-3').classList.add('active');
     document.getElementById('dot-3').classList.add('done');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  };
 </script>
 
 </body>

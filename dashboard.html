@@ -2458,25 +2458,116 @@
       const container = document.getElementById('members-list');
       const snap = await getDocs(collection(db, 'members'));
       const members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
       if (members.length === 0) {
         container.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No Members Yet</div></div>';
         return;
       }
-      container.innerHTML = members.map(m => {
-        const joined = new Date(m.joined);
-        const dateStr = isNaN(joined) ? '—' : joined.toLocaleDateString('en-GB');
-        return `
-          <div class="member-card">
+
+      const pending  = members.filter(m => m.status === 'pending');
+      const approved = members.filter(m => m.status === 'approved');
+      const rejected = members.filter(m => m.status === 'rejected');
+      // Legacy docs (no status field) treated as approved
+      const legacy   = members.filter(m => !m.status);
+
+      let html = '';
+
+      // ── Pending Applications ─────────────────────────────────────
+      html += `<div style="margin-bottom:2rem;">
+        <h3 style="font-size:0.85rem;letter-spacing:0.1em;color:var(--accent);margin-bottom:1rem;text-transform:uppercase;">
+          Pending Applications (${pending.length})
+        </h3>`;
+      if (pending.length === 0) {
+        html += '<p style="font-size:0.8rem;color:var(--muted);">No pending applications.</p>';
+      } else {
+        html += pending.map(m => {
+          const ts = m.appliedAt?.seconds ? new Date(m.appliedAt.seconds * 1000) : null;
+          const dateStr = ts ? ts.toLocaleDateString('en-GB') : '—';
+          return `
+            <div class="application-card" style="margin-bottom:0.8rem;">
+              <div class="application-header">
+                <div>
+                  <div class="application-name">${m.firstName || m.name || '—'}</div>
+                  <div class="application-meta">${m.email || '—'}</div>
+                  <div class="application-meta">Quiz: ${m.quizResult || 'N/A'} (score: ${m.quizScore ?? '—'})</div>
+                  <div class="application-meta">Size: ${m.tshirtSize || '—'} &nbsp;|&nbsp; Birthday: ${m.birthdayMonth || '—'} &nbsp;|&nbsp; Via: ${m.howFound || '—'}</div>
+                  <div class="application-meta">Applied: ${dateStr}</div>
+                </div>
+                <div class="application-actions">
+                  <button class="application-btn approve" onclick="approveMember('${m.id}')">Approve</button>
+                  <button class="application-btn reject"  onclick="rejectMember('${m.id}')">Reject</button>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+      }
+      html += '</div>';
+
+      // ── Approved Members ─────────────────────────────────────────
+      const allApproved = [...approved, ...legacy];
+      html += `<div style="margin-bottom:2rem;">
+        <h3 style="font-size:0.85rem;letter-spacing:0.1em;color:#4ade80;margin-bottom:1rem;text-transform:uppercase;">
+          Approved Members (${allApproved.length})
+        </h3>`;
+      if (allApproved.length === 0) {
+        html += '<p style="font-size:0.8rem;color:var(--muted);">No approved members yet.</p>';
+      } else {
+        html += allApproved.map(m => {
+          const ts = m.appliedAt?.seconds ? new Date(m.appliedAt.seconds * 1000) : (m.joined ? new Date(m.joined) : null);
+          const dateStr = ts && !isNaN(ts) ? ts.toLocaleDateString('en-GB') : '—';
+          return `
+            <div class="member-card" style="margin-bottom:0.6rem;">
+              <div class="member-info">
+                <div class="member-name">${m.firstName || m.name || m.email || '—'}</div>
+                <div class="member-detail">${m.email || '—'}</div>
+                <div class="member-detail">Joined: ${dateStr} &nbsp;|&nbsp; ${m.quizResult || ''}</div>
+              </div>
+              <div class="member-icon">✅</div>
+            </div>`;
+        }).join('');
+      }
+      html += '</div>';
+
+      // ── Rejected ─────────────────────────────────────────────────
+      if (rejected.length > 0) {
+        html += `<div>
+          <h3 style="font-size:0.85rem;letter-spacing:0.1em;color:var(--muted);margin-bottom:1rem;text-transform:uppercase;">
+            Rejected (${rejected.length})
+          </h3>`;
+        html += rejected.map(m => `
+          <div class="member-card" style="margin-bottom:0.6rem;opacity:0.5;">
             <div class="member-info">
-              <div class="member-name">${m.name || m.email || '—'}</div>
+              <div class="member-name">${m.firstName || m.name || m.email || '—'}</div>
               <div class="member-detail">${m.email || '—'}</div>
-              <div class="member-detail">Joined: ${dateStr}</div>
             </div>
-            <div class="member-icon">👤</div>
-          </div>
-        `;
-      }).join('');
+            <div class="member-icon">❌</div>
+          </div>`).join('');
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
     }
+
+    window.approveMember = async function(id) {
+      await updateDoc(doc(db, 'members', id), { status: 'approved', approvedAt: serverTimestamp() });
+      try {
+        const snap = await getDocs(collection(db, 'members'));
+        const m = snap.docs.find(d => d.id === id)?.data();
+        if (m) {
+          await emailjs.send('service_hpy2gvj', 'template_welcome', {
+            to_name: m.firstName || 'Dirtbox',
+            to_email: m.email,
+            message: "You're approved. Welcome to the club. Try not to ruin it."
+          });
+        }
+      } catch (err) { console.error('Approval email failed:', err); }
+      await refreshAllData();
+    };
+
+    window.rejectMember = async function(id) {
+      await updateDoc(doc(db, 'members', id), { status: 'rejected', rejectedAt: serverTimestamp() });
+      await refreshAllData();
+    };
 
     function refreshAnalytics() {
       // Calculate revenue metrics based on allOrders
