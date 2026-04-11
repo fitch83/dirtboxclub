@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIRTBOXCLUB. â Not For Everyone</title>
+<title>DIRTBOXCLUB. — Not For Everyone</title>
 <link rel="manifest" href="/dirtboxclub/manifest.json">
 <meta name="theme-color" content="#e63226">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -252,13 +252,14 @@ a{color:inherit;text-decoration:none}
 .btn-buy{display:block;width:100%;padding:.75rem;background:#e63946;color:#fff;text-align:center;text-decoration:none;font-weight:700;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:background .2s;box-sizing:border-box}
 .btn-buy:hover{background:#c0303b}
 .section-sub{color:#888;font-size:.9rem;margin-top:.5rem}
+@media(max-width:480px){.pg{grid-template-columns:1fr}.dg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <nav class="nav">
 <div class="nav-left">
-<button id="mobile-menu-btn" class="mobile-menu-btn"><a href="index.html" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a><span class="mobile-menu-chevron">â¾</span></button>
+<button id="mobile-menu-btn" class="mobile-menu-btn"><a href="index.html" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a><span class="mobile-menu-chevron">▾</span></button>
 <div class="nav-links">
 <a href="shop.html" class="nav-link">Shop</a>
 <a href="#drops" class="nav-link">Exclusives</a>
@@ -299,27 +300,27 @@ a{color:inherit;text-decoration:none}
 <div class="hero-badge">MEMBERS ONLY</div>
 <div class="hero-logo"><img src="data:image/png;base64,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" alt="DIRT BOX CLUB"></div>
 <div class="hero-est">EST<span class="r">.</span> WHENEVER WE FELT LIKE IT<span class="r">.</span></div>
-<div class="hero-scroll">â</div>
+<div class="hero-scroll">⌄</div>
 </section>
 
 <section class="about" id="about">
 <div>
 <h2>WE DIDN'T START THIS TO MAKE FRIENDS<span class="r">.</span></h2>
 <p class="about-copy">Not for everyone<span class="r">.</span> That's the whole point<span class="r">.</span> Born from being sick of the nonsense and having zero interest in pretending otherwise<span class="r">.</span></p>
-<a href="about.html" class="about-link">Our story â</a><br>
-<a href="membership.html" class="btn-red">Apply for Membership â</a>
+<a href="about.html" class="about-link">Our story →</a><br>
+<a href="membership.html" class="btn-red">Apply for Membership →</a>
 </div>
 <div class="stats-grid">
 <div class="stat"><div class="stat-num">0<span class="r">.</span></div><div class="stat-label">APOLOGIES GIVEN<span class="r">.</span><br>EVER<span class="r">.</span></div></div>
 <div class="stat"><div class="stat-num">100%<span class="r">.</span></div><div class="stat-label">COTTON & HONESTY</div></div>
-<div class="stat"><div class="stat-num">â<span class="r">.</span></div><div class="stat-label">PEOPLE OFFENDED</div></div>
+<div class="stat"><div class="stat-num">∞<span class="r">.</span></div><div class="stat-label">PEOPLE OFFENDED</div></div>
 <div class="stat"><div class="stat-num">1<span class="r">.</span></div><div class="stat-label">RULE: GIVE LESS OF A SHIT</div></div>
 </div>
 </section>
 
 <div class="ticker">
 <div class="ticker-track">
-<span class="ti">EXPECT DISAPPOINTMENT</span><span class="dia">â</span><span class="ti">I'D RATHER TALK TO A PIGEON</span><span class="dia">â</span><span class="ti">NO REFUNDS ON HURT FEELINGS</span><span class="dia">â</span><span class="ti">NOT FOR EVERYONE</span><span class="dia">â</span><span class="ti">ZERO FILTER</span><span class="dia">â</span><span class="ti">I ONLY WISH I GAVE MORE OF A SHIT</span><span class="dia">â</span><span class="ti">EXPECT DISAPPOINTMENT</span><span class="dia">â</span><span class="ti">I'D RATHER TALK TO A PIGEON</span><span class="dia">â</span><span class="ti">NO REFUNDS ON HURT FEELINGS</span><span class="dia">â</span><span class="ti">NOT FOR EVERYONE</span><span class="dia">â</span><span class="ti">ZERO FILTER</span><span class="dia">â</span><span class="ti">I ONLY WISH I GAVE MORE OF A SHIT</span><span class="dia">â</span>
+<span class="ti">EXPECT DISAPPOINTMENT</span><span class="dia">◆</span><span class="ti">I'D RATHER TALK TO A PIGEON</span><span class="dia">◆</span><span class="ti">NO REFUNDS ON HURT FEELINGS</span><span class="dia">◆</span><span class="ti">NOT FOR EVERYONE</span><span class="dia">◆</span><span class="ti">ZERO FILTER</span><span class="dia">◆</span><span class="ti">I ONLY WISH I GAVE MORE OF A SHIT</span><span class="dia">◆</span><span class="ti">EXPECT DISAPPOINTMENT</span><span class="dia">◆</span><span class="ti">I'D RATHER TALK TO A PIGEON</span><span class="dia">◆</span><span class="ti">NO REFUNDS ON HURT FEELINGS</span><span class="dia">◆</span><span class="ti">NOT FOR EVERYONE</span><span class="dia">◆</span><span class="ti">ZERO FILTER</span><span class="dia">◆</span><span class="ti">I ONLY WISH I GAVE MORE OF A SHIT</span><span class="dia">◆</span>
 </div>
 </div>
 
@@ -377,7 +378,7 @@ a{color:inherit;text-decoration:none}
 <div class="wi-lk"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
 <h2>WANT IN<span class="r">?</span><br>PROVE IT<span class="r">.</span></h2>
 <p>We'll decide if you're club material<span class="r">.</span> No promises<span class="r">.</span> No participation trophies<span class="r">.</span> Just early access to drops, secret codes, and inside info<span class="r">.</span></p>
-<a href="membership.html" class="btn-red">Apply Now â</a>
+<a href="membership.html" class="btn-red">Apply Now →</a>
 </div>
 </section>
 
@@ -387,7 +388,7 @@ a{color:inherit;text-decoration:none}
 <div class="pg">
 <div><div class="pi" style="color:var(--red)">ð</div><div class="pt">Welcome Pin</div><div class="pd">Wear your badge with pride<span class="r">.</span> And if you see someone else wearing one, you'll know they're also a piece of shit<span class="r">.</span> In a good way<span class="r">.</span> Yay<span class="r">!</span></div></div>
 <div><div class="pi" style="color:#e63226">ð</div><div class="pt">Exclusive Access</div><div class="pd">First dibs on limited drops and member-only collections</div></div>
-<div><div class="pi" style="color:#e63226">â¬</div><div class="pt">Digital Downloads</div><div class="pd">Free wallpapers, exclusive rule book, and member-only content</div></div>
+<div><div class="pi" style="color:#e63226">⬇</div><div class="pt">Digital Downloads</div><div class="pd">Free wallpapers, exclusive rule book, and member-only content</div></div>
 <div><div class="pi" style="color:#e63226">ð¥</div><div class="pt">Underground Community</div><div class="pd">Join a select group who appreciate blunt, straight to the point people<span class="r">.</span></div></div>
 </div>
 </section>
@@ -397,7 +398,7 @@ a{color:inherit;text-decoration:none}
 <p>We believe in using our platform to make a difference<span class="r">.</span> A portion of every purchase goes to causes we're passionate about<span class="r">.</span></p>
 <div class="cg">
 <div class="cc"><div class="ci" style="color:var(--red)">ð¥</div><div class="cn">Ben Automotive Charity</div><div class="cd">Supporting the people who work in the automotive industry with their mental health, physical health and financial wellbeing<span class="r">.</span> Looking after our own<span class="r">.</span></div></div>
-<div class="cc"><div class="ci" style="color:var(--red)">â¤ï¸</div><div class="cn">Myeloma UK</div><div class="cd">Funding research, providing support and raising awareness of myeloma, a blood cancer affecting thousands<span class="r">.</span> Together we can make a difference<span class="r">.</span></div></div>
+<div class="cc"><div class="ci" style="color:var(--red)">❤ï¸</div><div class="cn">Myeloma UK</div><div class="cd">Funding research, providing support and raising awareness of myeloma, a blood cancer affecting thousands<span class="r">.</span> Together we can make a difference<span class="r">.</span></div></div>
 <div class="cc"><div class="ci" style="color:var(--red)">ð</div><div class="cn">Teenage Cancer Trust</div><div class="cd">Supporting young people aged 13-24 through cancer<span class="r">.</span> Providing specialist nurses, support workers and bringing young people together so they don't face it alone<span class="r">.</span></div></div>
 </div>
 <p class="gn">5% of all profits are donated to these causes<span class="r">.</span> When you shop with us, you're making a difference<span class="r">.</span></p>
@@ -412,7 +413,7 @@ a{color:inherit;text-decoration:none}
 <div class="ftsub">
 <div class="ftsub-logo"><img src="assets/logo-horizontal-final.png" alt="Dirtbox Club" style="width:90px;height:auto"></div>
 <div class="ftsub-center"><h3>New drops coming<span class="r">.</span> Members get first access<span class="r">.</span></h3><p class="ftsp"></p>
-<a href="membership.html" class="btn-red">Apply for Membership â</a>
+<a href="membership.html" class="btn-red">Apply for Membership →</a>
 </div>
 <div class="ftsub-logo"><img src="assets/logo-vertical-final.png" alt="Dirt Box Club" style="width:100px;height:auto"></div>
 </div>
@@ -572,7 +573,7 @@ a{color:inherit;text-decoration:none}
     const messageDiv = document.getElementById('newsletter-message');
 
     if (!email) {
-      messageDiv.textContent = 'â Please enter an email address';
+      messageDiv.textContent = '✗ Please enter an email address';
       messageDiv.style.color = '#ef4444';
       messageDiv.style.display = 'inline';
       setTimeout(() => messageDiv.style.display = 'none', 3000);
@@ -580,7 +581,7 @@ a{color:inherit;text-decoration:none}
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      messageDiv.textContent = 'â Please enter a valid email address';
+      messageDiv.textContent = '✗ Please enter a valid email address';
       messageDiv.style.color = '#ef4444';
       messageDiv.style.display = 'inline';
       setTimeout(() => messageDiv.style.display = 'none', 3000);
@@ -594,7 +595,7 @@ a{color:inherit;text-decoration:none}
       );
 
       if (!existing.empty) {
-        messageDiv.textContent = 'â Already subscribed!';
+        messageDiv.textContent = '✓ Already subscribed!';
         messageDiv.style.color = '#4ade80';
         messageDiv.style.display = 'inline';
         document.getElementById('newsletter-email').value = '';
@@ -611,7 +612,7 @@ a{color:inherit;text-decoration:none}
         source: window.location.pathname
       });
 
-      messageDiv.textContent = 'â Welcome to the club!';
+      messageDiv.textContent = '✓ Welcome to the club!';
       messageDiv.style.color = '#4ade80';
       messageDiv.style.display = 'inline';
       document.getElementById('newsletter-email').value = '';
@@ -619,7 +620,7 @@ a{color:inherit;text-decoration:none}
       setTimeout(() => messageDiv.style.display = 'none', 3000);
     } catch(e) {
       console.error('Error subscribing:', e);
-      messageDiv.textContent = 'â Something went wrong. Try again.';
+      messageDiv.textContent = '✗ Something went wrong. Try again.';
       messageDiv.style.color = '#ef4444';
       messageDiv.style.display = 'inline';
       setTimeout(() => messageDiv.style.display = 'none', 3000);
@@ -703,7 +704,7 @@ a{color:inherit;text-decoration:none}
       };
 
       const dismissBtn = document.createElement('button');
-      dismissBtn.textContent = 'â';
+      dismissBtn.textContent = '✕';
       dismissBtn.style.cssText = `
         padding: 0.5rem 0.8rem;
         background: #2a2a2a;
