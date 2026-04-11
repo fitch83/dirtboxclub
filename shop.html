@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIRTBOXCLUB. â Shop</title>
+<title>DIRTBOXCLUB. — Shop</title>
 <link rel="manifest" href="/dirtboxclub/manifest.json">
 <meta name="theme-color" content="#e63226">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -642,7 +642,7 @@ textarea.review-field{resize:vertical;min-height:90px}
 <!-- Navigation -->
 <nav class="nav">
   <div class="nav-left">
-    <button id="mobile-menu-btn" class="mobile-menu-btn"><a href="index.html" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a><span class="mobile-menu-chevron">â¾</span></button>
+    <button id="mobile-menu-btn" class="mobile-menu-btn"><a href="index.html" class="nav-logo"><img src="assets/logo-nav-grid.png" alt="DIRT BOX CLUB" style="height:48px;width:auto"></a><span class="mobile-menu-chevron">▾</span></button>
     <div class="nav-links">
       <a href="shop.html" class="nav-link active">Shop</a>
       <a href="index.html#exclusives" class="nav-link">Exclusives</a>
@@ -726,7 +726,7 @@ textarea.review-field{resize:vertical;min-height:90px}
 <!-- Product / Reviews Modal -->
 <div class="product-modal-overlay" id="product-modal">
   <div class="product-modal-box">
-    <button class="pm-close" onclick="window.closeProductModal()">Ã</button>
+    <button class="pm-close" onclick="window.closeProductModal()">×</button>
     <div class="pm-header">
       <div class="pm-title" id="pm-title"></div>
       <div class="pm-stars-row">
@@ -805,7 +805,7 @@ textarea.review-field{resize:vertical;min-height:90px}
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-copy">Â© 2026 DIRTBOXCLUB<span class="r">.</span> Members only. Access restricted.</div>
+    <div class="footer-copy">© 2026 DIRTBOXCLUB<span class="r">.</span> Members only. Access restricted.</div>
   </div>
 </footer>
 
@@ -950,7 +950,7 @@ textarea.review-field{resize:vertical;min-height:90px}
     const isMember = sessionStorage.getItem('dbc_member');
     document.getElementById('pm-title').textContent = PRODUCTS_MAP[productId] || `Product #${productId}`;
     document.getElementById('pm-desc').textContent  = DESCS[productId] || '';
-    document.getElementById('pm-price').textContent = (isMember || true) ? `Â£${(PRICES[productId]||0).toFixed(2)}` : 'ð Members Only';
+    document.getElementById('pm-price').textContent = (isMember || true) ? `£${(PRICES[productId]||0).toFixed(2)}` : 'ð Members Only';
 
     const summary = reviewSummaries[String(productId)];
     document.getElementById('pm-stars-display').innerHTML  = renderStarsHtml(summary ? summary.avg : 0);
@@ -982,7 +982,7 @@ textarea.review-field{resize:vertical;min-height:90px}
     container.innerHTML = '<div class="no-reviews-msg">Loading...</div>';
     try {
       const snap = await getDocs(query(collection(db, 'reviews'), where('productId', '==', productId), where('status', '==', 'approved')));
-      if (snap.empty) { container.innerHTML = '<div class="no-reviews-msg">No reviews yet â be the first!</div>'; return; }
+      if (snap.empty) { container.innerHTML = '<div class="no-reviews-msg">No reviews yet — be the first!</div>'; return; }
       const reviews = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
       container.innerHTML = reviews.map(r => {
         const date = r.createdAt ? new Date(r.createdAt.seconds * 1000).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) : '';
@@ -990,7 +990,7 @@ textarea.review-field{resize:vertical;min-height:90px}
           <div class="review-top">
             <span>${[1,2,3,4,5].map(i=>`<span style="color:${i<=r.rating?'#f59e0b':'#333'}">â</span>`).join('')}</span>
             <span style="font-size:0.85rem;font-weight:700">${(r.title||'').replace(/</g,'&lt;')}</span>
-            ${r.verified ? '<span class="verified-badge">â Verified Purchase</span>' : ''}
+            ${r.verified ? '<span class="verified-badge">✓ Verified Purchase</span>' : ''}
           </div>
           <div class="review-body">${(r.body||'').replace(/</g,'&lt;')}</div>
           <div class="review-date">${date}</div>
@@ -1008,7 +1008,7 @@ textarea.review-field{resize:vertical;min-height:90px}
     }
     // Already reviewed?
     const existSnap = await getDocs(query(collection(db, 'reviews'), where('productId','==',productId), where('customerId','==',currentUser.uid)));
-    if (!existSnap.empty) { content.innerHTML = '<div class="write-review-locked" style="color:#22c55e">â You\'ve already reviewed this product</div>'; return; }
+    if (!existSnap.empty) { content.innerHTML = '<div class="write-review-locked" style="color:#22c55e">✓ You\'ve already reviewed this product</div>'; return; }
     // Purchased?
     let hasPurchased = false;
     try {
@@ -1283,7 +1283,7 @@ textarea.review-field{resize:vertical;min-height:90px}
 
   async function sendAbandonedEmail(email, items, total) {
     const code = 'COMEBACK' + Math.random().toString(36).slice(2, 6).toUpperCase();
-    const itemsText = items.map(i => `${i.name} (${i.size || 'One Size'}) x${i.qty} â Â£${(i.price * i.qty).toFixed(2)}`).join('\n');
+    const itemsText = items.map(i => `${i.name} (${i.size || 'One Size'}) x${i.qty} — £${(i.price * i.qty).toFixed(2)}`).join('\n');
     try {
       // Save discount code to Firestore
       await addDoc(collection(db, 'discountCodes'), {
@@ -1301,7 +1301,7 @@ textarea.review-field{resize:vertical;min-height:90px}
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ABANDONED_TEMPLATE, {
         to_email:      email,
         cart_items:    itemsText,
-        cart_total:    'Â£' + total.toFixed(2),
+        cart_total:    '£' + total.toFixed(2),
         discount_code: code,
         shop_url:      'https://fitch83.github.io/dirtboxclub/shop.html'
       });
@@ -1368,22 +1368,22 @@ textarea.review-field{resize:vertical;min-height:90px}
 
     if (!cart.length) {
       document.getElementById('cart-items').innerHTML = '<p style="color:#777;font-size:0.8rem;text-align:center;padding:2rem 0">Your cart is empty</p>';
-      document.getElementById('cart-total').textContent = 'Â£0.00';
+      document.getElementById('cart-total').textContent = '£0.00';
       return;
     }
     document.getElementById('cart-items').innerHTML = cart.map(i => `
       <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 0;border-bottom:1px solid #2a2a2a">
         <div>
           <div style="font-size:0.8rem;color:#fff">${i.name}</div>
-          <div style="font-size:0.7rem;color:#999">${i.size !== 'One Size' ? 'Size: ' + i.size + ' Â· ' : ''}Qty: ${i.qty}</div>
+          <div style="font-size:0.7rem;color:#999">${i.size !== 'One Size' ? 'Size: ' + i.size + ' · ' : ''}Qty: ${i.qty}</div>
         </div>
         <div style="display:flex;align-items:center;gap:0.8rem">
-          <span style="color:#e63226;font-size:0.85rem">Â£${(i.price * i.qty).toFixed(2)}</span>
+          <span style="color:#e63226;font-size:0.85rem">£${(i.price * i.qty).toFixed(2)}</span>
           <button onclick="window.removeFromCart('${i.key}')" style="background:none;border:none;color:#777;cursor:pointer;font-size:1rem">â</button>
         </div>
       </div>
     `).join('');
-    document.getElementById('cart-total').textContent = 'Â£' + total.toFixed(2);
+    document.getElementById('cart-total').textContent = '£' + total.toFixed(2);
   };
 
   function showCartToast(name, size) {
@@ -1517,12 +1517,12 @@ function renderProducts() {
     let bottomHtml = '';
     if (isMembersLocked) {
       bottomHtml = `
-        <span class="price-blurred">Â£XX<span class="r">.</span>XX</span>
+        <span class="price-blurred">£XX<span class="r">.</span>XX</span>
         <a href="membership.html" class="join-link">ð Join to Access</a>
       `;
     } else {
       // Price line
-      bottomHtml += `<span style="font-family:'Boldonse',sans-serif;font-size:1rem;color:#fff">Â£${p.price.toFixed(2)}</span>`;
+      bottomHtml += `<span style="font-family:'Boldonse',sans-serif;font-size:1rem;color:#fff">£${p.price.toFixed(2)}</span>`;
 
       if (hasSizes) {
         // Show sizes from inventory if available, else default set
@@ -1551,10 +1551,10 @@ function renderProducts() {
         bottomHtml += `<div style="margin-top:0.8rem;display:flex;flex-wrap:wrap;gap:0.4rem">${sizeButtons}</div>`;
 
       } else if (overallSoldOut) {
-        // Whole product sold out â notify for "One Size"
+        // Whole product sold out — notify for "One Size"
         bottomHtml += `
           <div style="margin-top:0.8rem">
-            <span style="color:#e63226;font-size:0.7rem">OUT OF STOCK Â· </span>
+            <span style="color:#e63226;font-size:0.7rem">OUT OF STOCK · </span>
             <button onclick="window.openNotifyModal(${p.id},'${p.name.replace(/'/g,"\\'")}','One Size')"
               style="background:none;border:none;color:#f59e0b;font-family:'Boldonse',sans-serif;font-size:0.7rem;cursor:pointer;padding:0">
               ð Notify Me
@@ -1879,15 +1879,15 @@ function showInstallPrompt() {
   <div class="cart-footer">
     <div class="cart-total-row">
       <span style="font-size:0.8rem;color:#999">TOTAL</span>
-      <span style="color:#e63226" id="cart-total">Â£0.00</span>
+      <span style="color:#e63226" id="cart-total">£0.00</span>
     </div>
-    <button class="cart-checkout-btn" onclick="alert('Checkout coming soon â the team is setting it up!')">Checkout</button>
+    <button class="cart-checkout-btn" onclick="alert('Checkout coming soon — the team is setting it up!')">Checkout</button>
   </div>
 </div>
 
 <!-- Cart Toast -->
 <div id="cart-toast">
-  <span style="color:#22c55e">â</span>
+  <span style="color:#22c55e">✓</span>
   <span id="toast-text">Item added to cart</span>
 </div>
 
@@ -1903,7 +1903,7 @@ function showInstallPrompt() {
     <div class="notify-title">ð Back in Stock Alert</div>
     <div class="notify-subtitle">
       <strong id="notify-product-label" style="color:#fff"></strong>
-      â Size: <strong id="notify-size-label" style="color:#e63226"></strong>
+      — Size: <strong id="notify-size-label" style="color:#e63226"></strong>
     </div>
     <input type="hidden" id="notify-product-id">
     <input type="hidden" id="notify-product-name">
