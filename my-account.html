@@ -236,6 +236,7 @@
   }
 }
 
+.table-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
 </style>
 </head>
 <body>
@@ -645,13 +646,13 @@
       orders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       if (recentOnly) orders = orders.slice(0, 3);
 
-      let html = '<table class="orders-table"><thead><tr><th>Order ID</th><th>Date</th><th>Status</th><th>Total</th><th></th></tr></thead><tbody>';
+      let html = '<div class="table-scroll-wrapper"><table class="orders-table"><thead><tr><th>Order ID</th><th>Date</th><th>Status</th><th>Total</th><th></th></tr></thead><tbody>';
       orders.forEach(o => {
         const date   = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleDateString('en-GB') : 'N/A';
         const status = o.status || 'pending';
         html += `<tr><td><span class="order-id">${o.ref || o.docId}</span></td><td>${date}</td><td><span class="order-status status-${status}">${status}</span></td><td>£${parseFloat(o.total||0).toFixed(2)}</td><td><button class="btn-track" onclick="window._showOrderDetails('${o.docId}','${o.ref||''}')">View</button></td></tr>`;
       });
-      html += '</tbody></table>';
+      html += '</tbody></table></div>';
       container.innerHTML = html;
     } catch(e) {
       container.innerHTML = '<div class="loading" style="color:#e63226">Error loading orders</div>';
