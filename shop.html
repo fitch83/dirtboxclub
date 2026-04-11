@@ -142,7 +142,7 @@ a {
 
 /* Shop Hero */
 .shop-hero {
-  padding: calc(64px + 4rem) 2.5rem 3rem;
+  padding: calc(100px + 4rem) 2.5rem 3rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -638,7 +638,7 @@ textarea.review-field{resize:vertical;min-height:90px}
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
-<div id="delivery-banner" style="position:sticky;top:0;z-index:9999;background:#e63946;color:#fff;text-align:center;padding:0.5rem;font-size:0.75rem;font-weight:700;letter-spacing:0.1em;font-family:'Boldonse',sans-serif;width:100%;box-sizing:border-box;">FREE DELIVERY ON ALL ORDERS OVER Â£50</div>
+<div id="delivery-banner" style="position:fixed;top:64px;left:0;right:0;z-index:9998;background:#e63946;color:#fff;text-align:center;padding:4px 8px;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;font-family:'Boldonse',sans-serif;width:100%;box-sizing:border-box;max-height:36px;line-height:28px;overflow:hidden;">FREE DELIVERY ON ALL ORDERS OVER £50</div>
 
 <!-- Navigation -->
 <nav class="nav">
@@ -952,7 +952,7 @@ textarea.review-field{resize:vertical;min-height:90px}
     const isMember = sessionStorage.getItem('dbc_member');
     document.getElementById('pm-title').textContent = PRODUCTS_MAP[productId] || `Product #${productId}`;
     document.getElementById('pm-desc').textContent  = DESCS[productId] || '';
-    document.getElementById('pm-price').textContent = (isMember || true) ? `ÃÂ£${(PRICES[productId]||0).toFixed(2)}` : 'ÃÂ°ÃÂÃÂÃÂ Members Only';
+    document.getElementById('pm-price').textContent = (isMember || true) ? `£${(PRICES[productId]||0).toFixed(2)}` : 'ÃÂ°ÃÂÃÂÃÂ Members Only';
 
     const summary = reviewSummaries[String(productId)];
     document.getElementById('pm-stars-display').innerHTML  = renderStarsHtml(summary ? summary.avg : 0);
@@ -1285,7 +1285,7 @@ textarea.review-field{resize:vertical;min-height:90px}
 
   async function sendAbandonedEmail(email, items, total) {
     const code = 'COMEBACK' + Math.random().toString(36).slice(2, 6).toUpperCase();
-    const itemsText = items.map(i => `${i.name} (${i.size || 'One Size'}) x${i.qty} Ã¢ÂÂ ÃÂ£${(i.price * i.qty).toFixed(2)}`).join('\n');
+    const itemsText = items.map(i => `${i.name} (${i.size || 'One Size'}) x${i.qty} Ã¢ÂÂ £${(i.price * i.qty).toFixed(2)}`).join('\n');
     try {
       // Save discount code to Firestore
       await addDoc(collection(db, 'discountCodes'), {
@@ -1303,7 +1303,7 @@ textarea.review-field{resize:vertical;min-height:90px}
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_ABANDONED_TEMPLATE, {
         to_email:      email,
         cart_items:    itemsText,
-        cart_total:    'ÃÂ£' + total.toFixed(2),
+        cart_total:    '£' + total.toFixed(2),
         discount_code: code,
         shop_url:      'https://fitch83.github.io/dirtboxclub/shop.html'
       });
@@ -1370,7 +1370,7 @@ textarea.review-field{resize:vertical;min-height:90px}
 
     if (!cart.length) {
       document.getElementById('cart-items').innerHTML = '<p style="color:#777;font-size:0.8rem;text-align:center;padding:2rem 0">Your cart is empty</p>';
-      document.getElementById('cart-total').textContent = 'ÃÂ£0.00';
+      document.getElementById('cart-total').textContent = '£0.00';
       return;
     }
     document.getElementById('cart-items').innerHTML = cart.map(i => `
@@ -1380,12 +1380,12 @@ textarea.review-field{resize:vertical;min-height:90px}
           <div style="font-size:0.7rem;color:#999">${i.size !== 'One Size' ? 'Size: ' + i.size + ' ÃÂ· ' : ''}Qty: ${i.qty}</div>
         </div>
         <div style="display:flex;align-items:center;gap:0.8rem">
-          <span style="color:#e63226;font-size:0.85rem">ÃÂ£${(i.price * i.qty).toFixed(2)}</span>
+          <span style="color:#e63226;font-size:0.85rem">£${(i.price * i.qty).toFixed(2)}</span>
           <button onclick="window.removeFromCart('${i.key}')" style="background:none;border:none;color:#777;cursor:pointer;font-size:1rem">ÃÂ¢ÃÂÃÂ</button>
         </div>
       </div>
     `).join('');
-    document.getElementById('cart-total').textContent = 'ÃÂ£' + total.toFixed(2);
+    document.getElementById('cart-total').textContent = '£' + total.toFixed(2);
   };
 
   function showCartToast(name, size) {
@@ -1516,12 +1516,12 @@ function renderProducts() {
     let bottomHtml = '';
     if (isMembersLocked) {
       bottomHtml = `
-        <span class="price-blurred">ÃÂ£XX<span class="r">.</span>XX</span>
+        <span class="price-blurred">£XX<span class="r">.</span>XX</span>
         <a href="membership.html" class="join-link">ÃÂ°ÃÂÃÂÃÂ Join to Access</a>
       `;
     } else {
       // Price line
-      bottomHtml += `<span style="font-family:'Boldonse',sans-serif;font-size:1rem;color:#fff">ÃÂ£${p.price.toFixed(2)}</span>`;
+      bottomHtml += `<span style="font-family:'Boldonse',sans-serif;font-size:1rem;color:#fff">£${p.price.toFixed(2)}</span>`;
 
       if (hasSizes) {
         // Show sizes from inventory if available, else default set
@@ -1878,7 +1878,7 @@ function showInstallPrompt() {
   <div class="cart-footer">
     <div class="cart-total-row">
       <span style="font-size:0.8rem;color:#999">TOTAL</span>
-      <span style="color:#e63226" id="cart-total">ÃÂ£0.00</span>
+      <span style="color:#e63226" id="cart-total">£0.00</span>
     </div>
     <button class="cart-checkout-btn" onclick="alert('Checkout coming soon Ã¢ÂÂ the team is setting it up!')">Checkout</button>
   </div>
