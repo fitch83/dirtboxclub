@@ -920,41 +920,57 @@ textarea.review-field{resize:vertical;min-height:90px}
 
   // ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Product Modal ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
   window.openProductModal = async function(productId) {
-    const PRODUCTS_MAP = {
-      1:'Awkward Since Birth Tee',2:'Born Defiant Tee',3:'Cancer Can Get Fucked Tee',
-      4:'Chaos Coordinator Tee',5:'Dirt Box Club Cap',6:'Dirt Box Club Collab Tee',
-      7:'Dirt Box Club Mug',8:'Dirt Box Club Tank Top',9:'Emotionally Unavailable Tee',
-      10:"I'm With This Idiot Tee",11:'Mentally Misfiring Tee',12:'Mystery Box',
-      13:'Not Your Average Tee',14:"Pretending Everything's Fine Tee",
-      15:'Professionally Unprofessional Tee',16:'The Voice In My Head Tee'
-    };
-    const PRICES = {1:34.99,2:34.99,3:34.99,4:34.99,5:20,6:34.99,7:8.99,8:22,9:34.99,10:42,11:34.99,12:29.99,13:34.99,14:34.99,15:34.99,16:34.99};
-    const DESCS  = {
-      1:'Because normal was never an option. Stanley/Stella Freestyler relaxed fit.',
-      2:'In support of Teenage Cancer Trust. Born defiant, staying that way.',
-      3:'In support of Teenage Cancer Trust. Because cancer can get absolutely fucked.',
-      4:'Managing the madness since day one. Stanley/Stella Freestyler relaxed fit.',
-      5:'Black dad cap with embroidered Dirt Box Club logo. Adjustable strap.',
-      6:'The official Dirt Box Club collaboration tee. Limited run.',
-      7:'Start your morning with the right attitude. Dishwasher safe.',
-      8:'For when sleeves are too much commitment.',
-      9:'Setting expectations early. Stanley/Stella Freestyler relaxed fit.',
-      10:"You know who you are. Stanley/Stella Freestyler relaxed fit.",
-      11:"In support of Ben - Support for Life. When the brain does its own thing.",
-      12:"You don't know what's inside. That's the point. Every box is different.",
-      13:"For those who never were. Stanley/Stella Freestyler relaxed fit.",
-      14:"In support of Ben - Support for Life. The daily uniform.",
-      15:"The balance we all strive for. Stanley/Stella Freestyler relaxed fit.",
-      16:"In support of Ben - Support for Life. It's louder than you think."
-    };
-
-    currentModalProductId = productId;
-    const isMember = sessionStorage.getItem('dbc_member');
-    document.getElementById('pm-title').textContent = PRODUCTS_MAP[productId] || `Product #${productId}`;
-    document.getElementById('pm-desc').textContent  = DESCS[productId] || '';
-    document.getElementById('pm-price').textContent = (isMember || true) ? `£${(PRICES[productId]||0).toFixed(2)}` : 'ÃÂ°ÃÂÃÂÃÂ Members Only';
-
-    const summary = reviewSummaries[String(productId)];
+    const PRODUCTS = [
+  {
+    id: 1, name: "DBC Logo Tee",
+    desc: "Black tee. DIRT BOX CLUB. back print. Grid logo chest. Organic cotton.",
+    cat: "tshirt", price: 22.99, exclusive: false,
+    img: "https://files.cdn.printful.com/upload/product-templates/fc/fc4fcbc1e1922eabff1523fc66f2edde_t",
+    badge: "BEST SELLER", sizes: ["S","M","L","XL","2XL"], alsoLiked: [2,3]
+  },
+  {
+    id: 2, name: "Grid Tee",
+    desc: "Black tee. Grid logo on the chest. Front and back print. Organic cotton.",
+    cat: "tshirt", price: 22.99, exclusive: false,
+    img: "https://files.cdn.printful.com/upload/product-templates/91/916730d2b2e2d2770b1552faf5a9a994_t",
+    sizes: ["S","M","L","XL","2XL"], alsoLiked: [1,3]
+  },
+  {
+    id: 3, name: "Oversized Faded Tee",
+    desc: "Oversized fit. Faded black. Embroidered grid logo left chest. Wears in.",
+    cat: "tshirt", price: 23.99, exclusive: false,
+    img: "https://files.cdn.printful.com/upload/product-templates/b0/b0f3e4beb141307d251dec8f8725e0b6_t",
+    badge: "RECOMMENDED", sizes: ["S","M","L","XL","2XL"], alsoLiked: [1,2]
+  },
+  {
+    id: 4, name: "Distressed Dad Hat",
+    desc: "Distressed black cap. 3D puff embroidered DBC logo. One size.",
+    cat: "hat", price: 21.99, exclusive: false,
+    img: "https://files.cdn.printful.com/upload/product-templates/b4/b4b042480b9fed4507aa039f9c2d856a_t",
+    sizes: ["One Size"], alsoLiked: [5,1]
+  },
+  {
+    id: 5, name: "DBC Beanie",
+    desc: "Black knit beanie. Embroidered DBC logo. One size. No nonsense.",
+    cat: "hat", price: 17, exclusive: false,
+    img: "https://cdn.shopify.com/s/files/1/0970/0130/8492/files/knit-beanie-black-front-69d93a881ef15_medium.png",
+    sizes: ["One Size"], alsoLiked: [4,1]
+  },
+  {
+    id: 6, name: "Black Glossy Mug",
+    desc: "Black glossy ceramic mug. DBC logo. Two sizes. Dishwasher safe.",
+    cat: "mug", price: 9.50, exclusive: false,
+    img: "https://cdn.shopify.com/s/files/1/0970/0130/8492/files/black-glossy-mug-black-11-oz-handle-on-right-69d94344b4b9a_grande.png",
+    sizes: ["11oz","15oz"], alsoLiked: [7,5]
+  },
+  {
+    id: 7, name: "Mug with Color Inside",
+    desc: "White mug. Black inside. DBC grid print. Two sizes. Morning done.",
+    cat: "mug", price: 9.50, exclusive: false,
+    img: "https://cdn.shopify.com/s/files/1/0970/0130/8492/files/white-ceramic-mug-with-color-inside-black-11-oz-front-69d64b197be23_medium.jpg",
+    sizes: ["11oz","15oz"], alsoLiked: [6,5]
+  }
+]
     document.getElementById('pm-stars-display').innerHTML  = renderStarsHtml(summary ? summary.avg : 0);
     document.getElementById('pm-avg-score').textContent    = summary ? summary.avg.toFixed(1) : '';
     document.getElementById('pm-review-count').textContent = summary
@@ -1590,7 +1606,7 @@ function renderProducts() {
 
     return `
     <div class="drop-card" style="${overallSoldOut && !hasSizes ? 'opacity:0.65' : ''}">
-      <div class="drop-card-img" style="display:flex;align-items:stretch;background:#0c0c0c;overflow:hidden;"><div style="flex:1;${p.img?'background-image:url('+p.img+');background-size:cover;background-position:center':''}"></div><div style="flex:1;border-left:1px solid rgba(0,0,0,0.25);${p.img?'background-image:url('+(p.imgBack||p.img)+');background-size:cover;background-position:center':''}"></div>
+      <div class="drop-card-img" style="display:flex;align-items:stretch;background:#0c0c0c;overflow:hidden;"><div style="flex:1;overflow:hidden;">${p.img?'<img src="'+p.img+'" alt="'+p.name+'" style="width:100%;height:100%;object-fit:cover;display:block;">':''}</div><div style="flex:1;border-left:1px solid rgba(0,0,0,0.25);${p.img?'background-image:url('+(p.imgBack||p.img)+');background-size:cover;background-position:center':''}"></div>
         <div class="drop-card-name-overlay">${p.name}</div>
         ${isMembersLocked ? '<div class="lock-icon">ÃÂ°ÃÂÃÂÃÂ</div>' : ''}
         ${dropBadge}${productBadge}${heartBtn}
