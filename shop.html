@@ -1479,7 +1479,106 @@ textarea.review-field{resize:vertical;min-height:90px}
   loadReviewSummaries().then(() => renderProducts());
 </script>
 <script>
-const PRODUCTS = [{"id":1,"name":"DBC Logo Tee","desc":"Black tee. DIRT BOX CLUB. on the front in white. Grid logo on the back. Organic cotton. Does what it says.","cat":"tshirt","price":22.99,"exclusive":false,"img":"https://files.cdn.printful.com/upload/product-templates/fc/fc4fcbc1e1922eabff1523fc66f2edde_t","imgBack":"https://raw.githubusercontent.com/fitch83/dirtboxclub/main/assets/back-dbc-logo-tee.png","badge":"BEST SELLER","alsoLiked":[4,5]},{"id":2,"name":"Grid Tee","desc":"Black tee. Grid logo on the chest. Front and back print. Organic cotton. No excuses.","cat":"tshirt","price":22.99,"exclusive":false,"img":"https://files.cdn.printful.com/upload/product-templates/91/916730d2b2e2d2770b1552faf5a9a994_t","imgBack":"https://raw.githubusercontent.com/fitch83/dirtboxclub/main/assets/back-grid-tee.png","alsoLiked":[4,5]},{"id":3,"name":"Oversized Faded Tee","desc":"Oversized fit. Faded black. Embroidered grid logo on the left chest. Wears in.","cat":"tshirt","price":23.99,"exclusive":false,"img":"https://files.cdn.printful.com/upload/product-templates/b0/b0f3e4beb141307d251dec8f8725e0b6_t","imgBack":"https://raw.githubusercontent.com/fitch83/dirtboxclub/main/assets/back-oversized-tee.png","badge":"RECOMMENDED","alsoLiked":[4,5]},{"id":4,"name":"Distressed Dad Hat","desc":"Distressed black cap. 3D puff embroidered logo on the front. One size. Put it on.","cat":"hat","price":21.99,"exclusive":false,"img":"https://files.cdn.printful.com/upload/product-templates/b4/b4b042480b9fed4507aa039f9c2d856a_t","imgBack":null,"alsoLiked":[1,5]},{"id":5,"name":"iPhone Snap Case","desc":"Dirtbox Club on the back of your phone. Slim snap case. Keeps it clean. iPhone 11.","cat":"accessories","price":17.99,"exclusive":false,"img":"https://files.cdn.printful.com/upload/product-templates/79/79329def72d086ee364327dd5feadd50_t","imgBack":null,"alsoLiked":[1,4]}];
+const PRODUCTS = [
+  {
+    "id": 1,
+    "name": "DBC Logo Tee",
+    "desc": "Black tee. DIRT BOX CLUB. on the front in white. Grid logo on the back. Organic cotton. Does what it says.",
+    "cat": "tshirt",
+    "price": 22.99,
+    "exclusive": false,
+    "img": "https://files.cdn.printful.com/upload/product-templates/fc/fc4fcbc1e1922eabff1523fc66f2edde_t",
+    "badge": "BEST SELLER",
+    "alsoLiked": [
+      2,
+      3
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Grid Tee",
+    "desc": "The grid. Clean and minimal. Washed black. You know what it is.",
+    "cat": "tshirt",
+    "price": 22.99,
+    "exclusive": false,
+    "img": "https://files.cdn.printful.com/upload/product-templates/91/916730d2b2e2d2770b1552faf5a9a994_t",
+    "badge": "",
+    "alsoLiked": [
+      1,
+      3
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Oversized Faded Tee",
+    "desc": "Heavyweight oversized fit. Acid washed. DBC logo chest hit. Built to last.",
+    "cat": "tshirt",
+    "price": 23.99,
+    "exclusive": false,
+    "img": "https://files.cdn.printful.com/upload/product-templates/b0/b0f3e4beb141307d251dec8f8725e0b6_t",
+    "badge": "RECOMMENDED",
+    "alsoLiked": [
+      1,
+      2
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Distressed Dad Hat",
+    "desc": "Six panel. Pre-distressed. DBC embroidered. Adjustable strap. Worn-in from day one.",
+    "cat": "hat",
+    "price": 21.99,
+    "exclusive": false,
+    "img": "https://files.cdn.printful.com/upload/product-templates/b4/b4b042480b9fed4507aa039f9c2d856a_t",
+    "badge": "",
+    "alsoLiked": [
+      5,
+      1
+    ]
+  },
+  {
+    "id": 5,
+    "name": "DBC Beanie",
+    "desc": "Ribbed knit. DBC logo patch. One size. Pull it low.",
+    "cat": "hat",
+    "price": 17.0,
+    "exclusive": false,
+    "img": "https://via.placeholder.com/400x400/000000/e63946?text=DBC",
+    "badge": "",
+    "alsoLiked": [
+      4,
+      1
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Black Glossy Mug",
+    "desc": "11oz black ceramic. DBC logo. High gloss finish. Fill it with whatever gets you through.",
+    "cat": "accessories",
+    "price": 9.5,
+    "exclusive": false,
+    "img": "https://via.placeholder.com/400x400/000000/e63946?text=DBC",
+    "badge": "",
+    "alsoLiked": [
+      7,
+      1
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Mug with Color Inside",
+    "desc": "11oz white ceramic with colour inside. DBC logo on the front. Pick your colour. Fill it up.",
+    "cat": "accessories",
+    "price": 9.5,
+    "exclusive": false,
+    "img": "https://via.placeholder.com/400x400/000000/e63946?text=DBC",
+    "badge": "",
+    "alsoLiked": [
+      6,
+      1
+    ]
+  }
+];
 
 let currentFilter = 'all';
 
@@ -1643,7 +1742,7 @@ function filterProducts(category, button) {
 }
 
 // Load all data on page load
-loadInventory();
+renderProducts();
 loadDropsBanner();
 
 // Service Worker Registration
